@@ -1,0 +1,111 @@
+import { useEffect, useState } from "react";
+import { Link, useParams } from "wouter";
+import { fetchCatalogItem, createCart, addCartItem } from "../api.js";
+
+export function ProductPage() {
+  const params = useParams();
+  const id = Number(params.id);
+  const [data, setData] = useState<
+    Awaited<ReturnType<typeof fetchCatalogItem>> | null
+  >(null);
+  const [err, setErr] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [adding, setAdding] = useState(false);
+  const [cartId, setCartId] = useState<string | null>(() =>
+    localStorage.getItem("sf_cart_id"),
+  );
+
+  useEffect(() => {
+    if (!Number.isInteger(id) || id < 1) {
+      setErr("invalid item");
+      setLoading(false);
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      try {
+        const row = await fetchCatalogItem(id);
+        if (!cancelled) {
+          setData(row);
+          setErr(null);
+        }
+      } catch {
+        if (!cancelled) setErr("not found or unavailable");
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [id]);
+
+  async function ensureCart() {
+    if (cartId) return cartId;
+    const { cartId: newId } = await createCart();
+    localStorage.setItem("sf_cart_id", newId);
+    setCartId(newId);
+    return newId;
+  }
+
+  async function addToCart() {
+    if (!data) return;
+    try {
+      setAdding(true);
+      const cid = await ensureCart();
+      await addCartItem(cid, { inventoryItemId: data.inventoryItemId, quantity: 1 });
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : "add failed");
+    } finally {
+      setAdding(false);
+    }
+  }
+
+  if (loading) return <p className="muted">Loading…</p>;
+  if (err || !data) {
+    return (
+      <div>
+        <p className="error">{err ?? "Not found"}</p>
+        <Link href="/">← Back</Link>
+      </div>
+    );
+  }
+
+  const img = data.card.largeImage || data.card.image;
+
+  return (
+    <article className="detail">
+      <Link href="/" className="back muted">
+        ← Catalog
+      </Link>
+      <div className="detail-grid">
+        <div className="detail-media">
+          {img ? <img src={img} alt="" /> : <div className="ph" />}
+        </div>
+        <div>
+          <h1 className="title">{data.card.name}</h1>
+          <p className="muted">
+            {[data.card.collection, data.card.rare, data.condition && `NM ${data.condition}`]
+              .filter(Boolean)
+              .join(" · ")}
+          </p>
+          {data.psaId && (
+            <p className="muted small">
+              PSA ID: <code>{data.psaId}</code>
+            </p>
+          )}
+          <p className="price big">${data.listPrice.toFixed(2)}</p>
+          <p className="muted">In stock: {data.quantity}</p>
+          <button
+            type="button"
+            className="btn"
+            disabled={adding}
+            onClick={addToCart}
+          >
+            {adding ? "Adding…" : "Add to cart"}
+          </button>
+        </div>
+      </div>
+    </article>
+  );
+}
