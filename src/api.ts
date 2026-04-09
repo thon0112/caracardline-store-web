@@ -1,3 +1,12 @@
+const debugApi =
+  import.meta.env.DEV ||
+  import.meta.env.VITE_DEBUG_API === "1" ||
+  import.meta.env.VITE_DEBUG_API === "true";
+
+function logApi(method: string, url: string) {
+  if (debugApi) console.debug(`[api] ${method}`, url);
+}
+
 function apiPath(path: string) {
   const prefix = (import.meta.env.VITE_API_URL ?? "").replace(/\/$/, "");
   if (import.meta.env.DEV) return path;
@@ -32,7 +41,9 @@ export async function fetchCatalog(params: {
   const u = new URL("/api/catalog", window.location.origin);
   if (params.limit) u.searchParams.set("limit", String(params.limit));
   if (params.cursor) u.searchParams.set("cursor", params.cursor);
-  const res = await fetch(apiPath(u.pathname + u.search));
+  const url = apiPath(u.pathname + u.search);
+  logApi("GET", url);
+  const res = await fetch(url);
   if (!res.ok) throw new Error(`catalog ${res.status}`);
   return res.json() as Promise<CatalogResponse>;
 }
@@ -41,14 +52,18 @@ export async function fetchCatalogItem(
   inventoryItemId: number,
 ): Promise<CatalogListItem & { psaId: string | null }> {
   const path = `/api/catalog/item/${inventoryItemId}`;
-  const res = await fetch(apiPath(path));
+  const url = apiPath(path);
+  logApi("GET", url);
+  const res = await fetch(url);
   if (!res.ok) throw new Error(`item ${res.status}`);
   return res.json() as Promise<CatalogListItem & { psaId: string | null }>;
 }
 
 export async function createCart(): Promise<{ cartId: string }> {
   const path = "/api/carts";
-  const res = await fetch(apiPath(path), {
+  const url = apiPath(path);
+  logApi("POST", url);
+  const res = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: "{}",
@@ -62,7 +77,9 @@ export async function addCartItem(
   body: { inventoryItemId: number; quantity?: number },
 ): Promise<void> {
   const path = `/api/carts/${cartId}/items`;
-  const res = await fetch(apiPath(path), {
+  const url = apiPath(path);
+  logApi("POST", url);
+  const res = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
