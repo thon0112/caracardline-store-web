@@ -9,9 +9,10 @@ function logApi(method: string, url: string) {
 
 function apiPath(path: string) {
   const prefix = (import.meta.env.VITE_API_URL ?? "").replace(/\/$/, "");
-  if (import.meta.env.DEV) return path;
-  if (!prefix) return path;
-  return `${prefix}${path}`;
+  // When set, always use it (local dev can hit the deployed worker; prod Pages build must set this).
+  if (prefix) return `${prefix}${path}`;
+  // Dev without VITE_API_URL: same-origin /api → Vite proxy (see vite.config.ts).
+  return path;
 }
 
 export type CatalogListItem = {
