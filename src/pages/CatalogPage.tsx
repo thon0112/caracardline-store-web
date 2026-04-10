@@ -7,6 +7,18 @@ import {
   type CatalogListItem,
 } from "../api.js";
 
+function primaryImage(item: CatalogListItem): string | null {
+  const fromProduct = item.imageUrls?.[0];
+  if (fromProduct) return fromProduct;
+  const c = item.card;
+  if (!c) return null;
+  return c.largeImage || c.image;
+}
+
+function displayTitle(item: CatalogListItem): string {
+  return item.title || item.card?.name || "Product";
+}
+
 export function CatalogPage() {
   const [items, setItems] = useState<CatalogListItem[]>([]);
   const [nextCursor, setNextCursor] = useState<string | null>(null);
@@ -60,9 +72,9 @@ export function CatalogPage() {
 
   async function addToCart(item: CatalogListItem) {
     try {
-      setAdding(item.inventoryItemId);
+      setAdding(item.productId);
       const id = await ensureCart();
-      await addCartItem(id, { inventoryItemId: item.inventoryItemId, quantity: 1 });
+      await addCartItem(id, { productId: item.productId, quantity: 1 });
     } catch (e) {
       setErr(e instanceof Error ? e.message : "add to cart failed");
     } finally {
@@ -75,44 +87,53 @@ export function CatalogPage() {
 
   return (
     <div>
-      <h1 className="title">Available inventory</h1>
+      <h1 className="title">Catalog</h1>
       <p className="lede muted">
-        Prices and stock match your shared Neon inventory (status{" "}
-        <code>available</code>).
+        Published products with available stock (linked via{" "}
+        <code>product_stock_links</code>).
       </p>
       <ul className="grid">
         {items.map((item) => (
-          <li key={item.inventoryItemId} className="card">
-            <Link href={`/item/${item.inventoryItemId}`} className="card-link">
+          <li key={item.productId} className="card">
+            <Link href={`/item/${item.productId}`} className="card-link">
               <div className="card-media">
-                {(item.card.largeImage || item.card.image) && (
+                {primaryImage(item) && (
                   <img
-                    src={item.card.largeImage || item.card.image || ""}
+                    src={primaryImage(item) || ""}
                     alt=""
                     loading="lazy"
                   />
                 )}
               </div>
               <div className="card-body">
-                <h2 className="card-title">{item.card.name}</h2>
+                <h2 className="card-title">{displayTitle(item)}</h2>
                 <p className="muted small">
-                  {[item.card.collection, item.card.rare].filter(Boolean).join(" · ")}
+                  {[
+                    item.card?.collection,
+                    item.card?.rare,
+                    item.productType,
+                  ]
+                    .filter(Boolean)
+                    .join(" · ")}
                 </p>
                 <p className="price">${item.listPrice.toFixed(2)}</p>
-                <p className="muted small">Qty {item.quantity}</p>
+                <p className="muted small">In stock: {item.availableQuantity}</p>
               </div>
             </Link>
             <button
               type="button"
               className="btn"
-              disabled={adding === item.inventoryItemId}
+              disabled={adding === item.productId}
               onClick={() => addToCart(item)}
             >
-              {adding === item.inventoryItemId ? "Adding…" : "Add to cart"}
+              {adding === item.productId ? "Adding…" : "Add to cart"}
             </button>
           </li>
         ))}
       </ul>
+      {items.length === 0 && !loading && (
+        <p className="muted">No products yet. Publish a product and link stock.</p>
+      )}
       {nextCursor && (
         <button type="button" className="btn secondary" onClick={loadMore}>
           Load more

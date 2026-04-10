@@ -2,6 +2,14 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "wouter";
 import { fetchCatalogItem, createCart, addCartItem } from "../api.js";
 
+function primaryImage(item: Awaited<ReturnType<typeof fetchCatalogItem>>) {
+  const fromProduct = item.imageUrls?.[0];
+  if (fromProduct) return fromProduct;
+  const c = item.card;
+  if (!c) return null;
+  return c.largeImage || c.image;
+}
+
 export function ProductPage() {
   const params = useParams();
   const id = Number(params.id);
@@ -53,7 +61,7 @@ export function ProductPage() {
     try {
       setAdding(true);
       const cid = await ensureCart();
-      await addCartItem(cid, { inventoryItemId: data.inventoryItemId, quantity: 1 });
+      await addCartItem(cid, { productId: data.productId, quantity: 1 });
     } catch (e) {
       setErr(e instanceof Error ? e.message : "add failed");
     } finally {
@@ -71,7 +79,14 @@ export function ProductPage() {
     );
   }
 
-  const img = data.card.largeImage || data.card.image;
+  const img = primaryImage(data);
+  const subtitle = [
+    data.card?.collection,
+    data.card?.rare,
+    data.condition && `NM ${data.condition}`,
+  ]
+    .filter(Boolean)
+    .join(" · ");
 
   return (
     <article className="detail">
@@ -83,19 +98,20 @@ export function ProductPage() {
           {img ? <img src={img} alt="" /> : <div className="ph" />}
         </div>
         <div>
-          <h1 className="title">{data.card.name}</h1>
-          <p className="muted">
-            {[data.card.collection, data.card.rare, data.condition && `NM ${data.condition}`]
-              .filter(Boolean)
-              .join(" · ")}
-          </p>
+          <h1 className="title">{data.title}</h1>
+          {subtitle && <p className="muted">{subtitle}</p>}
+          {data.description && (
+            <p className="lede" style={{ marginTop: "0.75rem" }}>
+              {data.description}
+            </p>
+          )}
           {data.psaId && (
             <p className="muted small">
               PSA ID: <code>{data.psaId}</code>
             </p>
           )}
           <p className="price big">${data.listPrice.toFixed(2)}</p>
-          <p className="muted">In stock: {data.quantity}</p>
+          <p className="muted">In stock: {data.availableQuantity}</p>
           <button
             type="button"
             className="btn"
