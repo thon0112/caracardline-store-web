@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "wouter";
 import { fetchCatalogItem, createCart, addCartItem } from "../api.js";
+import { useCart } from "../cart-context.js";
 
 const UUID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -26,6 +27,7 @@ export function ProductPage() {
   const [err, setErr] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [adding, setAdding] = useState(false);
+  const { refreshCart } = useCart();
   const [cartId, setCartId] = useState<string | null>(() =>
     localStorage.getItem("sf_cart_id"),
   );
@@ -69,6 +71,7 @@ export function ProductPage() {
       setAdding(true);
       const cid = await ensureCart();
       await addCartItem(cid, { productId: data.productId, quantity: 1 });
+      await refreshCart();
     } catch (e) {
       setErr(e instanceof Error ? e.message : "add failed");
     } finally {

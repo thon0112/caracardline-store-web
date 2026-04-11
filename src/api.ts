@@ -36,6 +36,46 @@ export type CatalogListItem = {
   } | null;
 };
 
+/** Cart line payload mirrors `GET /api/carts/:id` catalog entries (stock may be hidden). */
+export type CartCatalogItem = Omit<CatalogListItem, "availableQuantity"> & {
+  availableQuantity?: number;
+  hideQuantity?: boolean;
+};
+
+export type CartLine = {
+  lineId: string;
+  quantity: number;
+  catalog: CartCatalogItem;
+};
+
+export type CartResponse = {
+  cartId: string;
+  items: CartLine[];
+};
+
+export async function readApiErrorMessage(res: Response): Promise<string> {
+  try {
+    const j: unknown = await res.json();
+    if (j && typeof j === "object" && "error" in j) {
+      const err = (j as { error: unknown }).error;
+      if (typeof err === "string") return err;
+      if (err && typeof err === "object") return JSON.stringify(err);
+    }
+  } catch {
+    /* ignore */
+  }
+  return `request failed (${res.status})`;
+}
+
+export function isNotFoundError(e: unknown): boolean {
+  return (
+    typeof e === "object" &&
+    e !== null &&
+    "status" in e &&
+    (e as { status: unknown }).status === 404
+  );
+}
+
 export type CatalogResponse = {
   items: CatalogListItem[];
   nextCursor: string | null;
@@ -75,7 +115,7 @@ export async function createCart(): Promise<{ cartId: string }> {
     headers: { "Content-Type": "application/json" },
     body: "{}",
   });
-  if (!res.ok) throw new Error(`create cart ${res.status}`);
+  if (!res.ok) throw new Error(await readApiErrorMessage(res));
   return res.json() as Promise<{ cartId: string }>;
 }
 
@@ -91,5 +131,47 @@ export async function addCartItem(
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
   });
-  if (!res.ok) throw new Error(`add to cart ${res.status}`);
+  if (!res.ok) throw new Error(await readApiErrorMessage(res));
+}
+
+export async function fetchCart(cartId: string): Promise<CartResponse> {
+  const path = `/api/carts/${encodeURIComponent(cartId)}`;
+  const url = apiPath(path);
+  logApi("GET", url);
+  const res = await fetch(url);
+  if (!res.ok) {
+    const err = new Error(await readApiErrorMessage(res)) as Error & {
+      status: number;
+    };
+    err.status = res.status;
+    throw err;
+  }
+  return res.json() as Promise<CartResponse>;
+}
+
+export async function patchCartLineQuantity(
+  cartId: string,
+  lineId: string,
+  quantity: number,
+): Promise<void> {
+  const path = `/api/carts/${encodeURIComponent(cartId)}/items/${encodeURIComponent(lineId)}`;
+  const url = apiPath(path);
+  logApi("PATCH", url);
+  const res = await fetch(url, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ quantity }),
+  });
+  if (!res.ok) throw new Error(await readApiErrorMessage(res));
+}
+
+export async function deleteCartLine(
+  cartId: string,
+  lineId: string,
+): Promise<void> {
+  const path = `/api/carts/${encodeURIComponent(cartId)}/items/${encodeURIComponent(lineId)}`;
+  const url = apiPath(path);
+  logApi("DELETE", url);
+  const res = await fetch(url, { method: "DELETE" });
+  if (!res.ok) throw new Error(await readApiErrorMessage(res));
 }

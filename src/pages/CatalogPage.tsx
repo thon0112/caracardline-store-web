@@ -6,6 +6,7 @@ import {
   addCartItem,
   type CatalogListItem,
 } from "../api.js";
+import { useCart } from "../cart-context.js";
 
 function primaryImage(item: CatalogListItem): string | null {
   const fromProduct = item.imageUrls?.[0];
@@ -24,6 +25,7 @@ export function CatalogPage() {
   const [nextCursor, setNextCursor] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState<string | null>(null);
+  const { refreshCart } = useCart();
   const [cartId, setCartId] = useState<string | null>(() =>
     localStorage.getItem("sf_cart_id"),
   );
@@ -75,6 +77,7 @@ export function CatalogPage() {
       setAdding(item.productId);
       const id = await ensureCart();
       await addCartItem(id, { productId: item.productId, quantity: 1 });
+      await refreshCart();
     } catch (e) {
       setErr(e instanceof Error ? e.message : "add to cart failed");
     } finally {
