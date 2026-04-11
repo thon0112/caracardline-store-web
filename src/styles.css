@@ -492,3 +492,151 @@ code {
     animation: none;
   }
 }
+
+.form-stack {
+  display: grid;
+  gap: 1rem;
+  max-width: 28rem;
+}
+
+.form-field label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+}
+
+.form-field input {
+  width: 100%;
+  padding: 0.5rem 0.65rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--fg);
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+.form-field input::placeholder {
+  color: var(--muted);
+}
+
+.form-field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem 1rem;
+}
+
+@media (max-width: 520px) {
+  .form-field-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.checkout-preview-lines {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0 0;
+  font-size: 0.9375rem;
+}
+
+.checkout-preview-lines li {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.35rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.checkout-preview-lines li:last-child {
+  border-bottom: none;
+}
+
+.checkout-preview-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin: 0.85rem 0 0;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+  font-weight: 600;
+}
+
+.checkout-submit {
+  margin: 0.5rem 0 0;
+  width: 100%;
+  max-width: 28rem;
+}
+
+.order-section-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 0.65rem;
+}
+
+.order-lines {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.order-line {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--border);
+  align-items: flex-start;
+}
+
+.order-line-title {
+  font-weight: 600;
+}
+
+.order-line-total {
+  font-weight: 700;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.order-total-row {
+  display: flex;
+  justify-content: flex-end;
+  align-items: baseline;
+  gap: 1rem;
+  margin-top: 1rem;
+  font-size: 1.15rem;
+}
+
+.fps-section .order-section-title {
+  margin-bottom: 0.5rem;
+}
+
+.fps-amount {
+  margin: 0.75rem 0;
+  font-size: 1.05rem;
+}
+
+.fps-memo {
+  word-break: break-all;
+}
+
+.fps-receiver {
+  margin: 0.65rem 0 0;
+}
+
+.fps-receiver code {
+  font-size: 0.95rem;
+}
+
+.fps-qr-wrap {
+  margin-top: 1rem;
+}
+
+.fps-qr {
+  display: block;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  max-width: 100%;
+  height: auto;
+}

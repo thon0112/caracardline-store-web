@@ -135,7 +135,11 @@ export function ProductPage() {
             </p>
           )}
           <p className="price big">{formatPriceUsd(data.listPrice)}</p>
-          <p className="muted">{formatInStock(data.availableQuantity)}</p>
+          <p className="muted">
+            {data.hideQuantity
+              ? zhHant.catalogStockHidden
+              : formatInStock(data.availableQuantity ?? 0)}
+          </p>
           <button
             type="button"
             className="btn"

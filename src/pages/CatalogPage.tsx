@@ -134,7 +134,9 @@ export function CatalogPage() {
                 </p>
                 <p className="price">{formatPriceUsd(item.listPrice)}</p>
                 <p className="muted small">
-                  {formatInStock(item.availableQuantity)}
+                  {item.hideQuantity
+                    ? zhHant.catalogStockHidden
+                    : formatInStock(item.availableQuantity ?? 0)}
                 </p>
               </div>
             </Link>

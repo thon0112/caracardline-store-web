@@ -30,13 +30,18 @@ export function isApiError(e: unknown): e is ApiError {
   return e instanceof ApiError;
 }
 
+/** Mirrors store-worker `buildCatalogListItem` / catalog JSON. */
 export type CatalogListItem = {
   productId: string;
+  /** ISO timestamp; used by `/api/catalog` cursor pagination. */
+  createdAt: string;
   slug: string;
   title: string;
   description: string | null;
   listPrice: number;
-  availableQuantity: number;
+  hideQuantity: boolean;
+  /** Omitted when `hideQuantity` is true. */
+  availableQuantity?: number;
   productType: string;
   condition: string | null;
   psaId: string | null;
@@ -51,11 +56,8 @@ export type CatalogListItem = {
   } | null;
 };
 
-/** Cart line payload mirrors `GET /api/carts/:id` catalog entries (stock may be hidden). */
-export type CartCatalogItem = Omit<CatalogListItem, "availableQuantity"> & {
-  availableQuantity?: number;
-  hideQuantity?: boolean;
-};
+/** Cart line payload mirrors `GET /api/carts/:id` catalog entries. */
+export type CartCatalogItem = CatalogListItem;
 
 export type CartLine = {
   lineId: string;
@@ -183,4 +185,91 @@ export async function deleteCartLine(
   logApi("DELETE", url);
   const res = await fetch(url, { method: "DELETE" });
   await throwIfNotOk(res);
+}
+
+export type PlaceOrderBody = {
+  cartId: string;
+  email: string;
+  shipRecipientName?: string;
+  shipPhone?: string;
+  shipAddressLine1?: string;
+  shipAddressLine2?: string;
+  shipCity?: string;
+  shipRegion?: string;
+  shipPostalCode?: string;
+  shipCountry?: string;
+};
+
+export type PlaceOrderResponse = {
+  orderId: string;
+  status: string;
+  reservationExpiresAt: string;
+};
+
+export async function placeOrder(body: PlaceOrderBody): Promise<PlaceOrderResponse> {
+  const path = "/api/orders";
+  const url = apiPath(path);
+  logApi("POST", url);
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  await throwIfNotOk(res);
+  return res.json() as Promise<PlaceOrderResponse>;
+}
+
+export type OrderLineItem = {
+  productId: string;
+  slug: string;
+  title: string;
+  quantity: number;
+  unitPrice: number;
+};
+
+export type OrderDetailResponse = {
+  orderId: string;
+  status: string;
+  email: string | null;
+  shipRecipientName: string | null;
+  shipPhone: string | null;
+  shipAddressLine1: string | null;
+  shipAddressLine2: string | null;
+  shipCity: string | null;
+  shipRegion: string | null;
+  shipPostalCode: string | null;
+  shipCountry: string | null;
+  createdAt: string;
+  reservationExpiresAt: string | null;
+  items: OrderLineItem[];
+};
+
+export async function fetchOrder(orderId: string): Promise<OrderDetailResponse> {
+  const path = `/api/orders/${encodeURIComponent(orderId)}`;
+  const url = apiPath(path);
+  logApi("GET", url);
+  const res = await fetch(url);
+  await throwIfNotOk(res);
+  return res.json() as Promise<OrderDetailResponse>;
+}
+
+export type PaymentSubmittedResponse = {
+  orderId: string;
+  status: string;
+  reservationExpiresAt: string | null;
+};
+
+export async function submitPaymentSubmitted(
+  orderId: string,
+): Promise<PaymentSubmittedResponse> {
+  const path = `/api/orders/${encodeURIComponent(orderId)}/payment-submitted`;
+  const url = apiPath(path);
+  logApi("POST", url);
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: "{}",
+  });
+  await throwIfNotOk(res);
+  return res.json() as Promise<PaymentSubmittedResponse>;
 }

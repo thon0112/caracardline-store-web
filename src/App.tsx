@@ -7,6 +7,8 @@ import { ToastProvider } from "./toast-context.js";
 import { CatalogPage } from "./pages/CatalogPage.js";
 import { ProductPage } from "./pages/ProductPage.js";
 import { CartPage } from "./pages/CartPage.js";
+import { CheckoutPage } from "./pages/CheckoutPage.js";
+import { OrderPage } from "./pages/OrderPage.js";
 
 function AppShell() {
   return (
@@ -16,6 +18,8 @@ function AppShell() {
         <Switch>
           <Route path="/" component={CatalogPage} />
           <Route path="/cart" component={CartPage} />
+          <Route path="/checkout" component={CheckoutPage} />
+          <Route path="/order/:orderId" component={OrderPage} />
           <Route path="/item/:id" component={ProductPage} />
           <Route>
             <p className="muted">{zhHant.notFound}</p>

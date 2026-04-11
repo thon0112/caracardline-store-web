@@ -192,6 +192,9 @@ export function CartPage() {
       <p className="muted small" style={{ marginTop: "1.25rem" }}>
         {zhHant.cartCheckoutNote}
       </p>
+      <Link href="/checkout" className="btn" style={{ display: "inline-block", marginTop: "0.75rem" }}>
+        {zhHant.cartGoCheckout}
+      </Link>
       <Link href="/" className="back muted" style={{ marginTop: "0.75rem" }}>
         ← {zhHant.continueShopping}
       </Link>
