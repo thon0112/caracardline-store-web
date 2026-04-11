@@ -2,6 +2,13 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "wouter";
 import { fetchCatalogItem, createCart, addCartItem } from "../api.js";
 import { useCart } from "../cart-context.js";
+import {
+  formatInStock,
+  formatPriceUsd,
+  zhHant,
+} from "../locale/zh-Hant.js";
+import { tryToastBadRequest } from "../notify-bad-request.js";
+import { useToast } from "../toast-context.js";
 
 const UUID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -19,6 +26,7 @@ function primaryImage(item: Awaited<ReturnType<typeof fetchCatalogItem>>) {
 }
 
 export function ProductPage() {
+  const { showToast } = useToast();
   const params = useParams();
   const id = params.id;
   const [data, setData] = useState<
@@ -34,7 +42,7 @@ export function ProductPage() {
 
   useEffect(() => {
     if (!isProductIdParam(id)) {
-      setErr("invalid item");
+      setErr(zhHant.productInvalid);
       setLoading(false);
       return;
     }
@@ -46,8 +54,12 @@ export function ProductPage() {
           setData(row);
           setErr(null);
         }
-      } catch {
-        if (!cancelled) setErr("not found or unavailable");
+      } catch (e) {
+        if (!cancelled) {
+          if (!tryToastBadRequest(e, showToast)) {
+            setErr(zhHant.productNotFound);
+          }
+        }
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -55,7 +67,7 @@ export function ProductPage() {
     return () => {
       cancelled = true;
     };
-  }, [id]);
+  }, [id, showToast]);
 
   async function ensureCart() {
     if (cartId) return cartId;
@@ -73,18 +85,20 @@ export function ProductPage() {
       await addCartItem(cid, { productId: data.productId, quantity: 1 });
       await refreshCart();
     } catch (e) {
-      setErr(e instanceof Error ? e.message : "add failed");
+      if (!tryToastBadRequest(e, showToast)) {
+        setErr(e instanceof Error ? e.message : zhHant.errAddFailed);
+      }
     } finally {
       setAdding(false);
     }
   }
 
-  if (loading) return <p className="muted">Loading…</p>;
+  if (loading) return <p className="muted">{zhHant.productLoading}</p>;
   if (err || !data) {
     return (
       <div>
-        <p className="error">{err ?? "Not found"}</p>
-        <Link href="/">← Back</Link>
+        <p className="error">{err ?? zhHant.productNotFound}</p>
+        <Link href="/">← {zhHant.productBack}</Link>
       </div>
     );
   }
@@ -101,7 +115,7 @@ export function ProductPage() {
   return (
     <article className="detail">
       <Link href="/" className="back muted">
-        ← Catalog
+        ← {zhHant.productBackCatalog}
       </Link>
       <div className="detail-grid">
         <div className="detail-media">
@@ -117,18 +131,18 @@ export function ProductPage() {
           )}
           {data.psaId && (
             <p className="muted small">
-              PSA ID: <code>{data.psaId}</code>
+              {zhHant.productPsaId}：<code>{data.psaId}</code>
             </p>
           )}
-          <p className="price big">${data.listPrice.toFixed(2)}</p>
-          <p className="muted">In stock: {data.availableQuantity}</p>
+          <p className="price big">{formatPriceUsd(data.listPrice)}</p>
+          <p className="muted">{formatInStock(data.availableQuantity)}</p>
           <button
             type="button"
             className="btn"
             disabled={adding}
             onClick={addToCart}
           >
-            {adding ? "Adding…" : "Add to cart"}
+            {adding ? zhHant.adding : zhHant.addToCart}
           </button>
         </div>
       </div>

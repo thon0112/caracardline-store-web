@@ -7,6 +7,12 @@ import {
   type CartLine,
 } from "../api.js";
 import { useCart } from "../cart-context.js";
+import {
+  formatPriceUsd,
+  zhHant,
+} from "../locale/zh-Hant.js";
+import { tryToastBadRequest } from "../notify-bad-request.js";
+import { useToast } from "../toast-context.js";
 
 function primaryImage(item: CartCatalogItem): string | null {
   const fromProduct = item.imageUrls?.[0];
@@ -17,7 +23,7 @@ function primaryImage(item: CartCatalogItem): string | null {
 }
 
 function displayTitle(item: CartCatalogItem): string {
-  return item.title || item.card?.name || "Product";
+  return item.title || item.card?.name || zhHant.productFallback;
 }
 
 function maxLineQty(catalog: CartCatalogItem): number {
@@ -28,6 +34,7 @@ function maxLineQty(catalog: CartCatalogItem): number {
 }
 
 export function CartPage() {
+  const { showToast } = useToast();
   const { cartId, lines, subtotal, loading, error, refreshCart } = useCart();
   const [busyLineId, setBusyLineId] = useState<string | null>(null);
   const [actionErr, setActionErr] = useState<string | null>(null);
@@ -43,7 +50,9 @@ export function CartPage() {
       await patchCartLineQuantity(cartId, line.lineId, q);
       await refreshCart();
     } catch (e) {
-      setActionErr(e instanceof Error ? e.message : "update failed");
+      if (!tryToastBadRequest(e, showToast)) {
+        setActionErr(e instanceof Error ? e.message : zhHant.errUpdateFailed);
+      }
     } finally {
       setBusyLineId(null);
     }
@@ -57,7 +66,9 @@ export function CartPage() {
       await deleteCartLine(cartId, lineId);
       await refreshCart();
     } catch (e) {
-      setActionErr(e instanceof Error ? e.message : "remove failed");
+      if (!tryToastBadRequest(e, showToast)) {
+        setActionErr(e instanceof Error ? e.message : zhHant.errRemoveFailed);
+      }
     } finally {
       setBusyLineId(null);
     }
@@ -66,29 +77,29 @@ export function CartPage() {
   if (error) {
     return (
       <div>
-        <h1 className="title">Cart</h1>
+        <h1 className="title">{zhHant.cartTitle}</h1>
         <p className="error">{error}</p>
         <button type="button" className="btn secondary" onClick={() => void refreshCart()}>
-          Retry
+          {zhHant.cartRetry}
         </button>
         <p className="muted small" style={{ marginTop: "1rem" }}>
-          <Link href="/">← Continue shopping</Link>
+          <Link href="/">← {zhHant.continueShopping}</Link>
         </p>
       </div>
     );
   }
 
   if (loading) {
-    return <p className="muted">Loading cart…</p>;
+    return <p className="muted">{zhHant.cartLoading}</p>;
   }
 
   if (!cartId || lines.length === 0) {
     return (
       <div>
-        <h1 className="title">Cart</h1>
-        <p className="lede muted">Your cart is empty.</p>
+        <h1 className="title">{zhHant.cartTitle}</h1>
+        <p className="lede muted">{zhHant.cartEmpty}</p>
         <Link href="/" className="btn secondary" style={{ display: "inline-block" }}>
-          Browse catalog
+          {zhHant.browseCatalog}
         </Link>
       </div>
     );
@@ -96,9 +107,11 @@ export function CartPage() {
 
   return (
     <div>
-      <h1 className="title">Cart</h1>
+      <h1 className="title">{zhHant.cartTitle}</h1>
       <p className="lede muted">
-        {lines.length} {lines.length === 1 ? "item" : "items"}
+        {lines.length === 1
+          ? zhHant.cartItemOne
+          : zhHant.cartItemsMany(lines.length)}
       </p>
       {actionErr && <p className="error">{actionErr}</p>}
       <ul className="cart-lines">
@@ -127,12 +140,13 @@ export function CartPage() {
                   {displayTitle(line.catalog)}
                 </Link>
                 <p className="muted small cart-line-meta">
-                  ${line.catalog.listPrice.toFixed(2)} each
+                  {formatPriceUsd(line.catalog.listPrice)} {zhHant.cartEach}
                   {!line.catalog.hideQuantity &&
                     line.catalog.availableQuantity != null && (
                       <>
                         {" · "}
-                        {line.catalog.availableQuantity} available
+                        {zhHant.cartAvailable}{" "}
+                        {line.catalog.availableQuantity}
                       </>
                     )}
                 </p>
@@ -141,7 +155,7 @@ export function CartPage() {
                     type="button"
                     className="qty-btn"
                     disabled={busy || line.quantity <= 1}
-                    aria-label="Decrease quantity"
+                    aria-label={zhHant.cartDecreaseAria}
                     onClick={() => void setQuantity(line, line.quantity - 1)}
                   >
                     −
@@ -151,7 +165,7 @@ export function CartPage() {
                     type="button"
                     className="qty-btn"
                     disabled={busy || line.quantity >= max}
-                    aria-label="Increase quantity"
+                    aria-label={zhHant.cartIncreaseAria}
                     onClick={() => void setQuantity(line, line.quantity + 1)}
                   >
                     +
@@ -162,24 +176,24 @@ export function CartPage() {
                     disabled={busy}
                     onClick={() => void removeLine(line.lineId)}
                   >
-                    Remove
+                    {zhHant.cartRemove}
                   </button>
                 </div>
               </div>
-              <div className="cart-line-price">${lineTotal.toFixed(2)}</div>
+              <div className="cart-line-price">{formatPriceUsd(lineTotal)}</div>
             </li>
           );
         })}
       </ul>
       <div className="cart-summary">
-        <span className="cart-subtotal-label">Subtotal</span>
-        <span className="cart-subtotal-value">${subtotal.toFixed(2)}</span>
+        <span className="cart-subtotal-label">{zhHant.cartSubtotal}</span>
+        <span className="cart-subtotal-value">{formatPriceUsd(subtotal)}</span>
       </div>
       <p className="muted small" style={{ marginTop: "1.25rem" }}>
-        Checkout is not wired yet—this total is for reference only.
+        {zhHant.cartCheckoutNote}
       </p>
       <Link href="/" className="back muted" style={{ marginTop: "0.75rem" }}>
-        ← Continue shopping
+        ← {zhHant.continueShopping}
       </Link>
     </div>
   );

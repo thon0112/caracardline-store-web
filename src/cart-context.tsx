@@ -8,6 +8,9 @@ import {
   type ReactNode,
 } from "react";
 import { fetchCart, isNotFoundError, type CartLine } from "./api.js";
+import { zhHant } from "./locale/zh-Hant.js";
+import { tryToastBadRequest } from "./notify-bad-request.js";
+import { useToast } from "./toast-context.js";
 
 const CART_STORAGE_KEY = "sf_cart_id";
 
@@ -24,6 +27,7 @@ export type CartContextValue = {
 const CartContext = createContext<CartContextValue | null>(null);
 
 export function CartProvider({ children }: { children: ReactNode }) {
+  const { showToast } = useToast();
   const [cartId, setCartId] = useState<string | null>(() =>
     localStorage.getItem(CART_STORAGE_KEY),
   );
@@ -53,13 +57,17 @@ export function CartProvider({ children }: { children: ReactNode }) {
         setCartId(null);
         setLines([]);
         setError(null);
+      } else if (tryToastBadRequest(e, showToast)) {
+        setError(null);
       } else {
-        setError(e instanceof Error ? e.message : "failed to load cart");
+        setError(
+          e instanceof Error ? e.message : zhHant.errCartLoadFailed,
+        );
       }
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [showToast]);
 
   useEffect(() => {
     void refreshCart();

@@ -7,6 +7,13 @@ import {
   type CatalogListItem,
 } from "../api.js";
 import { useCart } from "../cart-context.js";
+import {
+  formatInStock,
+  formatPriceUsd,
+  zhHant,
+} from "../locale/zh-Hant.js";
+import { tryToastBadRequest } from "../notify-bad-request.js";
+import { useToast } from "../toast-context.js";
 
 function primaryImage(item: CatalogListItem): string | null {
   const fromProduct = item.imageUrls?.[0];
@@ -17,10 +24,11 @@ function primaryImage(item: CatalogListItem): string | null {
 }
 
 function displayTitle(item: CatalogListItem): string {
-  return item.title || item.card?.name || "Product";
+  return item.title || item.card?.name || zhHant.productFallback;
 }
 
 export function CatalogPage() {
+  const { showToast } = useToast();
   const [items, setItems] = useState<CatalogListItem[]>([]);
   const [nextCursor, setNextCursor] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -43,7 +51,11 @@ export function CatalogPage() {
           setErr(null);
         }
       } catch (e) {
-        if (!cancelled) setErr(e instanceof Error ? e.message : "failed to load");
+        if (!cancelled) {
+          if (!tryToastBadRequest(e, showToast)) {
+            setErr(e instanceof Error ? e.message : zhHant.errLoadCatalog);
+          }
+        }
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -51,7 +63,7 @@ export function CatalogPage() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [showToast]);
 
   async function loadMore() {
     if (!nextCursor) return;
@@ -60,7 +72,9 @@ export function CatalogPage() {
       setItems((prev) => [...prev, ...data.items]);
       setNextCursor(data.nextCursor);
     } catch (e) {
-      setErr(e instanceof Error ? e.message : "failed to load more");
+      if (!tryToastBadRequest(e, showToast)) {
+        setErr(e instanceof Error ? e.message : zhHant.errLoadMore);
+      }
     }
   }
 
@@ -79,22 +93,21 @@ export function CatalogPage() {
       await addCartItem(id, { productId: item.productId, quantity: 1 });
       await refreshCart();
     } catch (e) {
-      setErr(e instanceof Error ? e.message : "add to cart failed");
+      if (!tryToastBadRequest(e, showToast)) {
+        setErr(e instanceof Error ? e.message : zhHant.errAddToCart);
+      }
     } finally {
       setAdding(null);
     }
   }
 
-  if (loading) return <p className="muted">Loading catalog…</p>;
+  if (loading) return <p className="muted">{zhHant.loadingCatalog}</p>;
   if (err) return <p className="error">{err}</p>;
 
   return (
     <div>
-      <h1 className="title">Catalog</h1>
-      <p className="lede muted">
-        Published products with available stock (linked via{" "}
-        <code>product_stock_links</code>).
-      </p>
+      <h1 className="title">{zhHant.catalogTitle}</h1>
+      <p className="lede muted">{zhHant.catalogLede}</p>
       <ul className="grid">
         {items.map((item) => (
           <li key={item.productId} className="card">
@@ -119,8 +132,10 @@ export function CatalogPage() {
                     .filter(Boolean)
                     .join(" · ")}
                 </p>
-                <p className="price">${item.listPrice.toFixed(2)}</p>
-                <p className="muted small">In stock: {item.availableQuantity}</p>
+                <p className="price">{formatPriceUsd(item.listPrice)}</p>
+                <p className="muted small">
+                  {formatInStock(item.availableQuantity)}
+                </p>
               </div>
             </Link>
             <button
@@ -129,17 +144,17 @@ export function CatalogPage() {
               disabled={adding === item.productId}
               onClick={() => addToCart(item)}
             >
-              {adding === item.productId ? "Adding…" : "Add to cart"}
+              {adding === item.productId ? zhHant.adding : zhHant.addToCart}
             </button>
           </li>
         ))}
       </ul>
       {items.length === 0 && !loading && (
-        <p className="muted">No products yet. Publish a product and link stock.</p>
+        <p className="muted">{zhHant.noProducts}</p>
       )}
       {nextCursor && (
         <button type="button" className="btn secondary" onClick={loadMore}>
-          Load more
+          {zhHant.loadMore}
         </button>
       )}
     </div>

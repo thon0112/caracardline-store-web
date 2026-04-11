@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,600;0,9..40,700;1,9..40,400&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;600;700&display=swap");
 
 :root {
   --bg: #0f1419;
@@ -8,7 +9,7 @@
   --card: #1a222c;
   --border: #2a3441;
   --err: #f87171;
-  font-family: "DM Sans", system-ui, sans-serif;
+  font-family: "Noto Sans TC", "DM Sans", system-ui, sans-serif;
 }
 
 * {
@@ -25,7 +26,11 @@ body {
 .shell {
   max-width: 1100px;
   margin: 0 auto;
-  padding: 1.25rem 1.5rem 3rem;
+  padding: 1.25rem 1.5rem 1.5rem;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
 }
 
 .header {
@@ -76,13 +81,42 @@ body {
 .brand {
   font-weight: 700;
   letter-spacing: 0.04em;
-  text-transform: lowercase;
   color: var(--fg);
   text-decoration: none;
 }
 
 .main {
-  min-height: 50vh;
+  flex: 1;
+  min-height: 0;
+}
+
+.footer {
+  margin-top: auto;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border);
+}
+
+.footer-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem 1.25rem;
+}
+
+.footer-copy {
+  margin: 0;
+}
+
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.5rem;
+}
+
+.footer-sep {
+  user-select: none;
 }
 
 .title {
@@ -388,4 +422,73 @@ code {
   font-size: 1.35rem;
   font-weight: 700;
   color: var(--accent);
+}
+
+.toast-host {
+  position: fixed;
+  left: 50%;
+  bottom: 1.5rem;
+  transform: translateX(-50%);
+  z-index: 9999;
+  max-width: min(32rem, calc(100vw - 2rem));
+  pointer-events: none;
+}
+
+.toast {
+  pointer-events: auto;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  padding: 0.85rem 1rem;
+  border-radius: 10px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  box-shadow: 0 10px 36px rgba(0, 0, 0, 0.38);
+  animation: toast-in 0.2s ease-out;
+}
+
+.toast-message {
+  margin: 0;
+  flex: 1;
+  font-size: 0.9375rem;
+  line-height: 1.45;
+  color: var(--fg);
+}
+
+.toast-dismiss {
+  flex-shrink: 0;
+  width: 1.75rem;
+  height: 1.75rem;
+  margin: -0.2rem -0.35rem -0.2rem 0;
+  padding: 0;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 1.35rem;
+  line-height: 1;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.toast-dismiss:hover {
+  color: var(--fg);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast {
+    animation: none;
+  }
 }
