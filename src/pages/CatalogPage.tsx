@@ -27,7 +27,7 @@ export function CatalogPage() {
   const [cartId, setCartId] = useState<string | null>(() =>
     localStorage.getItem("sf_cart_id"),
   );
-  const [adding, setAdding] = useState<number | null>(null);
+  const [adding, setAdding] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;

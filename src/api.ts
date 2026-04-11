@@ -16,7 +16,7 @@ function apiPath(path: string) {
 }
 
 export type CatalogListItem = {
-  productId: number;
+  productId: string;
   slug: string;
   title: string;
   description: string | null;
@@ -56,9 +56,9 @@ export async function fetchCatalog(params: {
 }
 
 export async function fetchCatalogItem(
-  productId: number,
+  productId: string,
 ): Promise<CatalogListItem> {
-  const path = `/api/catalog/item/${productId}`;
+  const path = `/api/catalog/item/${encodeURIComponent(productId)}`;
   const url = apiPath(path);
   logApi("GET", url);
   const res = await fetch(url);
@@ -81,7 +81,7 @@ export async function createCart(): Promise<{ cartId: string }> {
 
 export async function addCartItem(
   cartId: string,
-  body: { productId: number; quantity?: number },
+  body: { productId: string; quantity?: number },
 ): Promise<void> {
   const path = `/api/carts/${cartId}/items`;
   const url = apiPath(path);

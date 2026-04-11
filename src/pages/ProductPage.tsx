@@ -2,6 +2,13 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "wouter";
 import { fetchCatalogItem, createCart, addCartItem } from "../api.js";
 
+const UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+function isProductIdParam(raw: string | undefined): raw is string {
+  return typeof raw === "string" && raw.length > 0 && UUID_RE.test(raw);
+}
+
 function primaryImage(item: Awaited<ReturnType<typeof fetchCatalogItem>>) {
   const fromProduct = item.imageUrls?.[0];
   if (fromProduct) return fromProduct;
@@ -12,7 +19,7 @@ function primaryImage(item: Awaited<ReturnType<typeof fetchCatalogItem>>) {
 
 export function ProductPage() {
   const params = useParams();
-  const id = Number(params.id);
+  const id = params.id;
   const [data, setData] = useState<
     Awaited<ReturnType<typeof fetchCatalogItem>> | null
   >(null);
@@ -24,7 +31,7 @@ export function ProductPage() {
   );
 
   useEffect(() => {
-    if (!Number.isInteger(id) || id < 1) {
+    if (!isProductIdParam(id)) {
       setErr("invalid item");
       setLoading(false);
       return;
