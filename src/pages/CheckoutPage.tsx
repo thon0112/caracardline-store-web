@@ -10,6 +10,10 @@ import {
 import { tryToastBadRequest } from "../notify-bad-request.js";
 import { useToast } from "../toast-context.js";
 
+/** Checkout only ships to Hong Kong; locality fields fixed until multi-region shipping. */
+const SHIP_COUNTRY_HK = "HK" as const;
+const SHIP_LOCALITY_HK = "香港";
+
 export function CheckoutPage() {
   const { showToast } = useToast();
   const [, setLocation] = useLocation();
@@ -22,10 +26,6 @@ export function CheckoutPage() {
   const [shipPhone, setShipPhone] = useState("");
   const [shipAddressLine1, setShipAddressLine1] = useState("");
   const [shipAddressLine2, setShipAddressLine2] = useState("");
-  const [shipCity, setShipCity] = useState("");
-  const [shipRegion, setShipRegion] = useState("");
-  const [shipPostalCode, setShipPostalCode] = useState("");
-  const [shipCountry, setShipCountry] = useState("");
 
   useEffect(() => {
     if (loading || error) return;
@@ -38,24 +38,28 @@ export function CheckoutPage() {
     e.preventDefault();
     if (!cartId || lines.length === 0) return;
     setFormErr(null);
-    const trimmed = email.trim();
-    if (!trimmed) {
+    const trimmedEmail = email.trim();
+    if (!trimmedEmail) {
       setFormErr(zhHant.checkoutEmailRequired);
+      return;
+    }
+    const trimmedPhone = shipPhone.trim();
+    if (!trimmedPhone) {
+      setFormErr(zhHant.checkoutPhoneRequired);
       return;
     }
     setSubmitting(true);
     try {
       const body: PlaceOrderBody = {
         cartId,
-        email: trimmed,
+        email: trimmedEmail,
         shipRecipientName: shipRecipientName.trim() || undefined,
-        shipPhone: shipPhone.trim() || undefined,
+        shipPhone: trimmedPhone,
         shipAddressLine1: shipAddressLine1.trim() || undefined,
         shipAddressLine2: shipAddressLine2.trim() || undefined,
-        shipCity: shipCity.trim() || undefined,
-        shipRegion: shipRegion.trim() || undefined,
-        shipPostalCode: shipPostalCode.trim() || undefined,
-        shipCountry: shipCountry.trim() || undefined,
+        shipCity: SHIP_LOCALITY_HK,
+        shipRegion: SHIP_LOCALITY_HK,
+        shipCountry: SHIP_COUNTRY_HK,
       };
       const res = await placeOrder(body);
       await refreshCart();
@@ -159,7 +163,19 @@ export function CheckoutPage() {
             autoComplete="tel"
             value={shipPhone}
             onChange={(e) => setShipPhone(e.target.value)}
+            required
             maxLength={32}
+          />
+        </div>
+        <div className="form-field">
+          <label htmlFor="co-country">{zhHant.checkoutShipCountry}</label>
+          <input
+            id="co-country"
+            name="shipCountry"
+            type="text"
+            readOnly
+            aria-readonly="true"
+            value={zhHant.checkoutShipCountryHongKongDisplay}
           />
         </div>
         <div className="form-field">
@@ -186,59 +202,7 @@ export function CheckoutPage() {
             maxLength={255}
           />
         </div>
-        <div className="form-field-row">
-          <div className="form-field">
-            <label htmlFor="co-city">{zhHant.checkoutShipCity}</label>
-            <input
-              id="co-city"
-              name="shipCity"
-              type="text"
-              autoComplete="address-level2"
-              value={shipCity}
-              onChange={(e) => setShipCity(e.target.value)}
-              maxLength={128}
-            />
-          </div>
-          <div className="form-field">
-            <label htmlFor="co-region">{zhHant.checkoutShipRegion}</label>
-            <input
-              id="co-region"
-              name="shipRegion"
-              type="text"
-              autoComplete="address-level1"
-              value={shipRegion}
-              onChange={(e) => setShipRegion(e.target.value)}
-              maxLength={128}
-            />
-          </div>
-        </div>
-        <div className="form-field-row">
-          <div className="form-field">
-            <label htmlFor="co-postal">{zhHant.checkoutShipPostal}</label>
-            <input
-              id="co-postal"
-              name="shipPostalCode"
-              type="text"
-              autoComplete="postal-code"
-              value={shipPostalCode}
-              onChange={(e) => setShipPostalCode(e.target.value)}
-              maxLength={32}
-            />
-          </div>
-          <div className="form-field">
-            <label htmlFor="co-country">{zhHant.checkoutShipCountry}</label>
-            <input
-              id="co-country"
-              name="shipCountry"
-              type="text"
-              autoComplete="country"
-              placeholder="HK"
-              value={shipCountry}
-              onChange={(e) => setShipCountry(e.target.value.toUpperCase())}
-              maxLength={2}
-            />
-          </div>
-        </div>
+
 
         <p className="muted small">{zhHant.checkoutFpsNote}</p>
 

@@ -191,7 +191,7 @@ export type PlaceOrderBody = {
   cartId: string;
   email: string;
   shipRecipientName?: string;
-  shipPhone?: string;
+  shipPhone: string;
   shipAddressLine1?: string;
   shipAddressLine2?: string;
   shipCity?: string;

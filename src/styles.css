@@ -517,6 +517,11 @@ code {
   font-size: 1rem;
 }
 
+.form-field input:read-only {
+  color: var(--muted);
+  cursor: default;
+}
+
 .form-field input::placeholder {
   color: var(--muted);
 }
