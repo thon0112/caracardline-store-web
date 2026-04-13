@@ -6,6 +6,7 @@ import {
   addCartItem,
   type CatalogListItem,
 } from "../api.js";
+import { displayTitle, primaryImage } from "../catalog-helpers.js";
 import { useCart } from "../cart-context.js";
 import {
   formatInStock,
@@ -14,18 +15,6 @@ import {
 } from "../locale/zh-Hant.js";
 import { tryToastBadRequest } from "../notify-bad-request.js";
 import { useToast } from "../toast-context.js";
-
-function primaryImage(item: CatalogListItem): string | null {
-  const fromProduct = item.imageUrls?.[0];
-  if (fromProduct) return fromProduct;
-  const c = item.card;
-  if (!c) return null;
-  return c.largeImage || c.image;
-}
-
-function displayTitle(item: CatalogListItem): string {
-  return item.title || item.card?.name || zhHant.productFallback;
-}
 
 export function CatalogPage() {
   const { showToast } = useToast();

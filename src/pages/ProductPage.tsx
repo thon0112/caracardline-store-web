@@ -114,7 +114,7 @@ export function ProductPage() {
 
   return (
     <article className="detail">
-      <Link href="/" className="back muted">
+      <Link href="/catalog" className="back muted">
         ← {zhHant.productBackCatalog}
       </Link>
       <div className="detail-grid">

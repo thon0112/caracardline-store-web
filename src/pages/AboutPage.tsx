@@ -19,7 +19,7 @@ export function AboutPage() {
         <h2 className="about-section-title">{zhHant.aboutContactTitle}</h2>
         <p className="about-p muted">{zhHant.aboutContactP1}</p>
       </section>
-      <Link href="/" className="btn secondary">
+      <Link href="/catalog" className="btn secondary">
         {zhHant.aboutBackCatalog}
       </Link>
     </div>

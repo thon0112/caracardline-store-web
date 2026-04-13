@@ -98,7 +98,7 @@ export function CartPage() {
       <div>
         <h1 className="title">{zhHant.cartTitle}</h1>
         <p className="lede muted">{zhHant.cartEmpty}</p>
-        <Link href="/" className="btn secondary" style={{ display: "inline-block" }}>
+        <Link href="/catalog" className="btn secondary" style={{ display: "inline-block" }}>
           {zhHant.browseCatalog}
         </Link>
       </div>

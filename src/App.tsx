@@ -5,6 +5,7 @@ import { CartProvider } from "./cart-context.js";
 import { zhHant } from "./locale/zh-Hant.js";
 import { ToastProvider } from "./toast-context.js";
 import { CatalogPage } from "./pages/CatalogPage.js";
+import { HomePage } from "./pages/HomePage.js";
 import { ProductPage } from "./pages/ProductPage.js";
 import { CartPage } from "./pages/CartPage.js";
 import { CheckoutPage } from "./pages/CheckoutPage.js";
@@ -17,7 +18,8 @@ function AppShell() {
       <SiteHeader />
       <main className="main">
         <Switch>
-          <Route path="/" component={CatalogPage} />
+          <Route path="/" component={HomePage} />
+          <Route path="/catalog" component={CatalogPage} />
           <Route path="/cart" component={CartPage} />
           <Route path="/checkout" component={CheckoutPage} />
           <Route path="/order/:orderId" component={OrderPage} />

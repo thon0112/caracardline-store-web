@@ -6,6 +6,15 @@ export const zhHant = {
   navSiteAria: "網站導覽",
   navCart: "購物車",
   navHome: "首頁",
+  navCatalog: "商品目錄",
+  /** Instagram @cara.cardline — opens in a new tab */
+  navInstagramAria:
+    "Instagram：開啟 Caracardline 官方帳號（新視窗）",
+  navInstagram: "Instagram",
+  navMenuOpen: "開啟選單",
+  navMenuClose: "關閉選單",
+  navDrawerAria: "網站選單",
+  navDrawerClose: "關閉選單",
   notFound: "找不到頁面。",
   footerCopyright: (year: number) => `© ${year} Caracardline。保留所有權利。`,
   footerNavAria: "頁尾連結",
@@ -32,6 +41,18 @@ export const zhHant = {
   catalogTitle: "商品目錄",
   catalogLede:
     "以下為已上架且有庫存之商品，實際可購數量以各品項標示為準。",
+
+  homeIntro:
+    "依類別瀏覽精選上架；手機上可左右滑動橫列，快速找卡不必一直往下捲。",
+  homeGroupOther: "其他",
+  homeViewAll: "查看全部",
+  homeFullCatalog: "瀏覽完整目錄",
+  homeBannerAria: "主視覺圖片輪播",
+  homeBannerPrev: "上一張橫幅",
+  homeBannerNext: "下一張橫幅",
+  homeBannerDots: "選擇橫幅",
+  homeBannerSlide: "橫幅",
+  homeRailHint: "可左右滑動瀏覽",
   catalogStockHidden: "庫存數量未公開",
   loadingCatalog: "載入商品目錄中…",
   loadMore: "載入更多",
@@ -130,6 +151,10 @@ export const zhHant = {
   orderPaymentSubmitFailed: "無法更新狀態",
   orderAwaitingConfirmationHint: "我們收到通知後會核對銀行入數；通過後會再與您聯絡。",
 } as const;
+
+export function homeRailAriaLabel(groupName: string): string {
+  return `「${groupName}」，${zhHant.homeRailHint}`;
+}
 
 export function formatInStock(quantity: number): string {
   return `${zhHant.productInStock}：${quantity}`;
