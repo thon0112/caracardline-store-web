@@ -8,8 +8,26 @@ export const zhHant = {
   navHome: "首頁",
   notFound: "找不到頁面。",
   footerCopyright: (year: number) => `© ${year} Caracardline。保留所有權利。`,
+  footerNavAria: "頁尾連結",
   footerContact: "聯絡我們",
   footerPrivacy: "隱私權政策",
+  footerAbout: "關於我們",
+
+  aboutTitle: "關於我們",
+  aboutLede:
+    "Caracardline 專注於收藏卡與相關商品的策展與販售，希望為同好提供清楚標示、可信來源的購物體驗。",
+  aboutWhoTitle: "我們是誰",
+  aboutWhoP1:
+    "團隊成員本身也是卡牌收藏者，熟悉鑑定、品相與市場常見流程。我們以小而精的選品為起點，逐步擴充目錄，並維持庫存與價格資訊的即時更新。",
+  aboutWhoP2:
+    "以下內容為範例文案，實際公司介紹、地址與客服管道請日後替換為正式版本。",
+  aboutMissionTitle: "我們在意的事",
+  aboutMissionP1:
+    "透明：商品狀態與可購數量盡量清楚呈現。穩妥：訂單與付款流程簡潔，減少來回確認。尊重：您的聯絡與訂單資料僅用於履行訂單與必要客服聯繫。",
+  aboutContactTitle: "聯絡方式",
+  aboutContactP1:
+    "若有批發、鑑定合作或其他商務洽詢，歡迎透過網站頁尾「聯絡我們」與我們聯繫（此為範例說明）。",
+  aboutBackCatalog: "返回商品目錄",
 
   catalogTitle: "商品目錄",
   catalogLede:

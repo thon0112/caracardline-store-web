@@ -1,3 +1,4 @@
+import { Link } from "wouter";
 import { zhHant } from "../locale/zh-Hant.js";
 
 export function SiteFooter() {
@@ -9,13 +10,19 @@ export function SiteFooter() {
         <p className="footer-copy muted small">
           {zhHant.footerCopyright(year)}
         </p>
-        <div className="footer-links">
+        <nav className="footer-links" aria-label={zhHant.footerNavAria}>
+          <Link href="/about" className="footer-link muted small">
+            {zhHant.footerAbout}
+          </Link>
+          <span className="footer-sep muted small" aria-hidden>
+            ·
+          </span>
           <span className="footer-link muted small">{zhHant.footerContact}</span>
           <span className="footer-sep muted small" aria-hidden>
             ·
           </span>
           <span className="footer-link muted small">{zhHant.footerPrivacy}</span>
-        </div>
+        </nav>
       </div>
     </footer>
   );
