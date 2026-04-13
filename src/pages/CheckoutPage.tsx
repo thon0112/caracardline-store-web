@@ -98,7 +98,7 @@ export function CheckoutPage() {
   }
 
   if (loading || !cartId || lines.length === 0) {
-    return <p className="muted">{zhHant.checkoutLoading}</p>;
+    return <p className="muted">{zhHant.loadingPage}</p>;
   }
 
   return (

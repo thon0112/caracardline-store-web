@@ -94,7 +94,7 @@ export function OrderPage() {
   }
 
   if (loading) {
-    return <p className="muted">{zhHant.orderLoading}</p>;
+    return <p className="muted">{zhHant.loadingPage}</p>;
   }
 
   if (loadErr || !order) {

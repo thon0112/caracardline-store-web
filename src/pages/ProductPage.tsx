@@ -94,7 +94,7 @@ export function ProductPage() {
     }
   }
 
-  if (loading) return <p className="muted">{zhHant.productLoading}</p>;
+  if (loading) return <p className="muted">{zhHant.loadingPage}</p>;
   if (err || !data) {
     return (
       <div>

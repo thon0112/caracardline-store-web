@@ -94,7 +94,7 @@ export function CartPage() {
   if (loading) {
     return (
       <div className="cart-page">
-        <p className="muted">{zhHant.cartLoading}</p>
+        <p className="muted">{zhHant.loadingPage}</p>
       </div>
     );
   }

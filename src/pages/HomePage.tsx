@@ -137,7 +137,7 @@ export function HomePage() {
     setSlide((i) => (i + delta + bannerCount) % bannerCount);
   }
 
-  if (loading) return <p className="muted">{zhHant.loadingCatalog}</p>;
+  if (loading) return <p className="muted">{zhHant.loadingPage}</p>;
   if (err) return <p className="error">{err}</p>;
 
   return (

@@ -91,7 +91,7 @@ export function CatalogPage() {
     }
   }
 
-  if (loading) return <p className="muted">{zhHant.loadingCatalog}</p>;
+  if (loading) return <p className="muted">{zhHant.loadingPage}</p>;
   if (err) return <p className="error">{err}</p>;
 
   return (

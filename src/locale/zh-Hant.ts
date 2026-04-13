@@ -50,7 +50,8 @@ export const zhHant = {
   homeBannerSlide: "橫幅",
   homeRailHint: "可左右滑動瀏覽",
   catalogStockHidden: "庫存數量未公開",
-  loadingCatalog: "載入商品目錄中…",
+  /** Full-page / main view while data is loading */
+  loadingPage: "載入中...",
   loadMore: "載入更多",
   addToCart: "加入購物車",
   /** Shown briefly after a product is added from listing or detail. */
@@ -62,7 +63,6 @@ export const zhHant = {
   errAddToCart: "加入購物車失敗",
 
   productFallback: "商品",
-  productLoading: "載入中…",
   productInvalid: "商品連結無效",
   productNotFound: "找不到商品或暫不提供",
   productBack: "返回",
@@ -72,7 +72,6 @@ export const zhHant = {
   errAddFailed: "加入失敗",
 
   cartTitle: "購物車",
-  cartLoading: "載入購物車中…",
   cartEmpty: "購物車目前是空的。",
   browseCatalog: "瀏覽商品",
   cartRetry: "重試",
@@ -104,7 +103,6 @@ export const zhHant = {
   checkoutTitle: "結帳",
   checkoutLede:
     "目前僅送香港。請填寫電子郵件、電話與香港境內收貨地址（其餘欄位可選填或稍後再補）。完成後將為您暫留庫存並顯示轉帳資訊。",
-  checkoutLoading: "載入中…",
   checkoutOrderPreview: "訂單預覽",
   checkoutEmail: "電子郵件（必填）",
   checkoutEmailRequired: "請填寫電子郵件。",
@@ -123,7 +121,6 @@ export const zhHant = {
   backToCart: "返回購物車",
 
   orderTitle: "訂單",
-  orderLoading: "載入訂單中…",
   orderInvalidId: "訂單編號無效。",
   orderNotFound: "找不到此訂單。",
   orderLoadFailed: "無法載入訂單",
