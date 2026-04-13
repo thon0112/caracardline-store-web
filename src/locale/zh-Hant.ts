@@ -39,11 +39,7 @@ export const zhHant = {
   aboutBackCatalog: "返回商品目錄",
 
   catalogTitle: "商品目錄",
-  catalogLede:
-    "以下為已上架且有庫存之商品，實際可購數量以各品項標示為準。",
 
-  homeIntro:
-    "依類別瀏覽精選上架；手機上可左右滑動橫列，快速找卡不必一直往下捲。",
   homeGroupOther: "其他",
   homeViewAll: "查看全部",
   homeFullCatalog: "瀏覽完整目錄",
@@ -57,6 +53,8 @@ export const zhHant = {
   loadingCatalog: "載入商品目錄中…",
   loadMore: "載入更多",
   addToCart: "加入購物車",
+  /** Shown briefly after a product is added from listing or detail. */
+  addToCartSuccess: "已成功加入購物車。",
   adding: "加入中…",
   noProducts: "尚無商品。請先上架商品並連結庫存。",
   errLoadCatalog: "無法載入目錄",

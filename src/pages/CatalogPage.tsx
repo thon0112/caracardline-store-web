@@ -14,7 +14,7 @@ import {
   zhHant,
 } from "../locale/zh-Hant.js";
 import { tryToastBadRequest } from "../notify-bad-request.js";
-import { useToast } from "../toast-context.js";
+import { TOAST_DURATION_SHORT_MS, useToast } from "../toast-context.js";
 
 export function CatalogPage() {
   const { showToast } = useToast();
@@ -81,6 +81,7 @@ export function CatalogPage() {
       const id = await ensureCart();
       await addCartItem(id, { productId: item.productId, quantity: 1 });
       await refreshCart();
+      showToast(zhHant.addToCartSuccess, TOAST_DURATION_SHORT_MS);
     } catch (e) {
       if (!tryToastBadRequest(e, showToast)) {
         setErr(e instanceof Error ? e.message : zhHant.errAddToCart);
@@ -96,7 +97,6 @@ export function CatalogPage() {
   return (
     <div>
       <h1 className="title">{zhHant.catalogTitle}</h1>
-      <p className="lede muted">{zhHant.catalogLede}</p>
       <ul className="grid">
         {items.map((item) => (
           <li key={item.productId} className="card">

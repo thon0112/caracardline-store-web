@@ -76,26 +76,32 @@ export function CartPage() {
 
   if (error) {
     return (
-      <div>
+      <div className="cart-page">
         <h1 className="title">{zhHant.cartTitle}</h1>
         <p className="error">{error}</p>
         <button type="button" className="btn secondary" onClick={() => void refreshCart()}>
           {zhHant.cartRetry}
         </button>
-        <p className="muted small" style={{ marginTop: "1rem" }}>
-          <Link href="/">← {zhHant.continueShopping}</Link>
+        <p className="muted small cart-page-footnote">
+          <Link href="/" className="cart-page-text-link">
+            ← {zhHant.continueShopping}
+          </Link>
         </p>
       </div>
     );
   }
 
   if (loading) {
-    return <p className="muted">{zhHant.cartLoading}</p>;
+    return (
+      <div className="cart-page">
+        <p className="muted">{zhHant.cartLoading}</p>
+      </div>
+    );
   }
 
   if (!cartId || lines.length === 0) {
     return (
-      <div>
+      <div className="cart-page">
         <h1 className="title">{zhHant.cartTitle}</h1>
         <p className="lede muted">{zhHant.cartEmpty}</p>
         <Link href="/catalog" className="btn secondary" style={{ display: "inline-block" }}>
@@ -106,7 +112,7 @@ export function CartPage() {
   }
 
   return (
-    <div>
+    <div className="cart-page">
       <h1 className="title">{zhHant.cartTitle}</h1>
       <p className="lede muted">
         {lines.length === 1
@@ -189,15 +195,15 @@ export function CartPage() {
         <span className="cart-subtotal-label">{zhHant.cartSubtotal}</span>
         <span className="cart-subtotal-value">{formatPriceUsd(subtotal)}</span>
       </div>
-      <p className="muted small" style={{ marginTop: "1.25rem" }}>
-        {zhHant.cartCheckoutNote}
-      </p>
-      <Link href="/checkout" className="btn" style={{ display: "inline-block", marginTop: "0.75rem" }}>
-        {zhHant.cartGoCheckout}
-      </Link>
-      <Link href="/" className="back muted" style={{ marginTop: "0.75rem" }}>
-        ← {zhHant.continueShopping}
-      </Link>
+      <p className="muted small cart-checkout-note">{zhHant.cartCheckoutNote}</p>
+      <div className="cart-actions">
+        <Link href="/" className="btn secondary cart-actions-shop">
+          ← {zhHant.continueShopping}
+        </Link>
+        <Link href="/checkout" className="btn cart-actions-checkout">
+          {zhHant.cartGoCheckout}
+        </Link>
+      </div>
     </div>
   );
 }

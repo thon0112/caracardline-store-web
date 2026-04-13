@@ -16,7 +16,7 @@ import {
 } from "../locale/zh-Hant.js";
 import { homeBannerSlides } from "../home-banner-slides.js";
 import { tryToastBadRequest } from "../notify-bad-request.js";
-import { useToast } from "../toast-context.js";
+import { TOAST_DURATION_SHORT_MS, useToast } from "../toast-context.js";
 
 const BANNER_INTERVAL_MS = 6500;
 const CATALOG_HOME_LIMIT = 96;
@@ -121,6 +121,7 @@ export function HomePage() {
         const id = await ensureCart();
         await addCartItem(id, { productId: item.productId, quantity: 1 });
         await refreshCart();
+        showToast(zhHant.addToCartSuccess, TOAST_DURATION_SHORT_MS);
       } catch (e) {
         if (!tryToastBadRequest(e, showToast)) {
           showToast(e instanceof Error ? e.message : zhHant.errAddToCart);
@@ -202,8 +203,6 @@ export function HomePage() {
           </div>
         </div>
       </section>
-
-      <p className="home-intro lede muted">{zhHant.homeIntro}</p>
 
       {items.length === 0 ? (
         <p className="muted">{zhHant.noProducts}</p>

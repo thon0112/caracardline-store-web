@@ -13,19 +13,22 @@ const toastDismissAria = "關閉提示";
 type ToastItem = { id: number; message: string };
 
 type ToastContextValue = {
-  showToast: (message: string) => void;
+  showToast: (message: string, durationMs?: number) => void;
 };
 
 const ToastContext = createContext<ToastContextValue | null>(null);
 
-const TOAST_MS = 5200;
+/** Default auto-dismiss for general toasts (errors, API messages). */
+export const TOAST_DURATION_DEFAULT_MS = 5200;
+/** Brief confirmation toasts (e.g. add to cart). */
+export const TOAST_DURATION_SHORT_MS = 1000;
 
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [toast, setToast] = useState<ToastItem | null>(null);
   const idRef = useRef(0);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const showToast = useCallback((message: string) => {
+  const showToast = useCallback((message: string, durationMs = TOAST_DURATION_DEFAULT_MS) => {
     const text = message.trim() || "—";
     const id = ++idRef.current;
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
@@ -33,7 +36,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     timeoutRef.current = setTimeout(() => {
       setToast((t) => (t?.id === id ? null : t));
       timeoutRef.current = null;
-    }, TOAST_MS);
+    }, durationMs);
   }, []);
 
   const dismiss = useCallback(() => {

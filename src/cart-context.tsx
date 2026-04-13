@@ -17,7 +17,8 @@ const CART_STORAGE_KEY = "sf_cart_id";
 export type CartContextValue = {
   cartId: string | null;
   lines: CartLine[];
-  totalQty: number;
+  /** Distinct cart lines (SKU / product rows), not sum of quantities — used for nav badge. */
+  cartLineCount: number;
   subtotal: number;
   loading: boolean;
   error: string | null;
@@ -81,10 +82,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     return () => window.removeEventListener("storage", onStorage);
   }, [refreshCart]);
 
-  const totalQty = useMemo(
-    () => lines.reduce((sum, l) => sum + l.quantity, 0),
-    [lines],
-  );
+  const cartLineCount = useMemo(() => lines.length, [lines]);
   const subtotal = useMemo(
     () => lines.reduce((sum, l) => sum + l.quantity * l.catalog.listPrice, 0),
     [lines],
@@ -94,13 +92,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
     () => ({
       cartId,
       lines,
-      totalQty,
+      cartLineCount,
       subtotal,
       loading,
       error,
       refreshCart,
     }),
-    [cartId, lines, totalQty, subtotal, loading, error, refreshCart],
+    [cartId, lines, cartLineCount, subtotal, loading, error, refreshCart],
   );
 
   return (

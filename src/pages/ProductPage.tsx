@@ -8,7 +8,7 @@ import {
   zhHant,
 } from "../locale/zh-Hant.js";
 import { tryToastBadRequest } from "../notify-bad-request.js";
-import { useToast } from "../toast-context.js";
+import { TOAST_DURATION_SHORT_MS, useToast } from "../toast-context.js";
 
 const UUID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -84,6 +84,7 @@ export function ProductPage() {
       const cid = await ensureCart();
       await addCartItem(cid, { productId: data.productId, quantity: 1 });
       await refreshCart();
+      showToast(zhHant.addToCartSuccess, TOAST_DURATION_SHORT_MS);
     } catch (e) {
       if (!tryToastBadRequest(e, showToast)) {
         setErr(e instanceof Error ? e.message : zhHant.errAddFailed);
@@ -98,7 +99,9 @@ export function ProductPage() {
     return (
       <div>
         <p className="error">{err ?? zhHant.productNotFound}</p>
-        <Link href="/">← {zhHant.productBack}</Link>
+        <Link href="/" className="back muted">
+          ← {zhHant.productBack}
+        </Link>
       </div>
     );
   }

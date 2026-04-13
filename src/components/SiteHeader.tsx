@@ -113,7 +113,7 @@ function IconClose({ size = 22 }: { size?: number }) {
 }
 
 export function SiteHeader() {
-  const { totalQty } = useCart();
+  const { cartLineCount } = useCart();
   const [loc] = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const drawerId = useId();
@@ -177,15 +177,39 @@ export function SiteHeader() {
             <span>{zhHant.brand}</span>
           </Link>
         </div>
+        <Link
+          href="/cart"
+          className="header-cart-mobile"
+          aria-label={
+            cartLineCount > 0
+              ? `${zhHant.navCart}，${
+                  cartLineCount === 1
+                    ? zhHant.cartItemOne
+                    : zhHant.cartItemsMany(cartLineCount)
+                }`
+              : zhHant.navCart
+          }
+          title={zhHant.navCart}
+        >
+          <span className="header-cart-mobile-icon" aria-hidden>
+            <IconCart size={22} />
+          </span>
+          {cartLineCount > 0 ? (
+            <span className="cart-badge header-cart-mobile-badge">{cartLineCount}</span>
+          ) : null}
+        </Link>
         <nav className="header-nav header-nav--desktop" aria-label={zhHant.navSiteAria}>
           <a
             href="https://www.instagram.com/cara.cardline/"
-            className="header-link"
+            className="header-link header-link--icon"
             target="_blank"
             rel="noopener noreferrer"
             aria-label={zhHant.navInstagramAria}
+            title={zhHant.navInstagram}
           >
-            {zhHant.navInstagram}
+            <span className="header-link-icon" aria-hidden>
+              <IconInstagram size={22} />
+            </span>
           </a>
           <Link href="/" className="header-link">
             {zhHant.navHome}
@@ -195,8 +219,8 @@ export function SiteHeader() {
           </Link>
           <Link href="/cart" className="header-link">
             {zhHant.navCart}
-            {totalQty > 0 ? (
-              <span className="cart-badge">{totalQty}</span>
+            {cartLineCount > 0 ? (
+              <span className="cart-badge">{cartLineCount}</span>
             ) : null}
           </Link>
         </nav>
@@ -259,8 +283,8 @@ export function SiteHeader() {
               <IconCart size={20} />
             </span>
             <span className="header-drawer-link-text">{zhHant.navCart}</span>
-            {totalQty > 0 ? (
-              <span className="cart-badge header-drawer-badge">{totalQty}</span>
+            {cartLineCount > 0 ? (
+              <span className="cart-badge header-drawer-badge">{cartLineCount}</span>
             ) : null}
           </Link>
         </nav>
