@@ -11,6 +11,7 @@ import { CartPage } from "./pages/CartPage.js";
 import { CheckoutPage } from "./pages/CheckoutPage.js";
 import { OrderPage } from "./pages/OrderPage.js";
 import { AboutPage } from "./pages/AboutPage.js";
+import { DisclaimerPage } from "./pages/DisclaimerPage.js";
 
 function AppShell() {
   return (
@@ -25,6 +26,7 @@ function AppShell() {
           <Route path="/order/:orderId" component={OrderPage} />
           <Route path="/item/:id" component={ProductPage} />
           <Route path="/about" component={AboutPage} />
+          <Route path="/disclaimer" component={DisclaimerPage} />
           <Route>
             <p className="muted">{zhHant.notFound}</p>
           </Route>

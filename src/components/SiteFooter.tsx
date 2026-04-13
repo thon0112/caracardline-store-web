@@ -17,6 +17,12 @@ export function SiteFooter() {
           <span className="footer-sep muted small" aria-hidden>
             ·
           </span>
+          <Link href="/disclaimer" className="footer-link muted small">
+            {zhHant.footerDisclaimer}
+          </Link>
+          <span className="footer-sep muted small" aria-hidden>
+            ·
+          </span>
           <span className="footer-link muted small">{zhHant.footerContact}</span>
           <span className="footer-sep muted small" aria-hidden>
             ·

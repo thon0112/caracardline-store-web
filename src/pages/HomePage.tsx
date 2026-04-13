@@ -264,12 +264,6 @@ export function HomePage() {
           </section>
         ))
       )}
-
-      <div className="home-footer-cta">
-        <Link href="/catalog" className="btn secondary home-catalog-btn">
-          {zhHant.homeFullCatalog}
-        </Link>
-      </div>
     </div>
   );
 }

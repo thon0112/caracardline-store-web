@@ -21,6 +21,23 @@ export const zhHant = {
   footerContact: "聯絡我們",
   footerPrivacy: "隱私權政策",
   footerAbout: "關於我們",
+  footerDisclaimer: "免責聲明",
+
+  disclaimerTitle: "免責聲明",
+  disclaimerLede:
+    "使用本網站與購買商品前，請詳閱以下說明。若您繼續瀏覽或下單，即表示您已了解並同意相關內容。",
+  disclaimerGeneralTitle: "網站與資訊",
+  disclaimerGeneralP1:
+    "本網站所載之文字、圖片、價格、庫存與商品描述力求正確，但仍可能因系統更新、人為輸入或第三方資料而有誤差或延遲。我們得隨時修正內容，無須事先通知。",
+  disclaimerGeneralP2:
+    "網站可能包含連結至第三方服務或內容；該等網站由其營運者負責，非本網站所能控制，造訪與使用風險請自行評估。",
+  disclaimerProductsTitle: "商品與收藏品相關",
+  disclaimerProductsP1:
+    "收藏卡、鑑定品與二手／開封品之品相、色差與主觀感受因人而異；商品圖片與說明僅供參考，不構成任何投資、保值或增值保證。實際以您收到之商品為準。",
+  disclaimerLimitTitle: "責任限制",
+  disclaimerLimitP1:
+    "在法律允許之最大範圍內，對於因使用或無法使用本網站、或依賴網站資訊所生之任何直接、間接、附帶或衍生損害，本網站營運方不負賠償責任。若您對條款或商品有任何疑問，請透過頁尾聯絡方式與我們聯繫。",
+  disclaimerBackCatalog: "返回商品目錄",
 
   aboutTitle: "關於我們",
   aboutLede:
@@ -42,7 +59,6 @@ export const zhHant = {
 
   homeGroupOther: "其他",
   homeViewAll: "查看全部",
-  homeFullCatalog: "瀏覽完整目錄",
   homeBannerAria: "主視覺圖片輪播",
   homeBannerPrev: "上一張橫幅",
   homeBannerNext: "下一張橫幅",
