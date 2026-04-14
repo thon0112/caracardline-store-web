@@ -11,6 +11,7 @@ import {
   formatPriceUsd,
   zhHant,
 } from "../locale/zh-Hant.js";
+import { PageLoadingSkeleton } from "../components/PageLoadingSkeleton.js";
 import { tryToastBadRequest } from "../notify-bad-request.js";
 import { useToast } from "../toast-context.js";
 
@@ -92,11 +93,7 @@ export function CartPage() {
   }
 
   if (loading) {
-    return (
-      <div className="cart-page">
-        <p className="muted">{zhHant.loadingPage}</p>
-      </div>
-    );
+    return <PageLoadingSkeleton variant="cart" />;
   }
 
   if (!cartId || lines.length === 0) {

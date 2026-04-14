@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "wouter";
 import { fetchCatalogItem, createCart, addCartItem } from "../api.js";
 import { useCart } from "../cart-context.js";
-import { formatPriceUsd, zhHant } from "../locale/zh-Hant.js";
+import { displayProductType, formatPriceUsd, zhHant } from "../locale/zh-Hant.js";
+import { PageLoadingSkeleton } from "../components/PageLoadingSkeleton.js";
 import { tryToastBadRequest } from "../notify-bad-request.js";
 import { TOAST_DURATION_SHORT_MS, useToast } from "../toast-context.js";
 
@@ -90,7 +91,7 @@ export function ProductPage() {
     }
   }
 
-  if (loading) return <p className="muted">{zhHant.loadingPage}</p>;
+  if (loading) return <PageLoadingSkeleton variant="product" />;
   if (err || !data) {
     return (
       <div>
@@ -107,6 +108,7 @@ export function ProductPage() {
     data.card?.collection,
     data.card?.rare,
     data.condition && `NM ${data.condition}`,
+    displayProductType(data.productType),
   ]
     .filter(Boolean)
     .join(" · ");

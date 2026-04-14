@@ -11,11 +11,14 @@ import {
   toastTextForBadRequest,
   zhHant,
 } from "../locale/zh-Hant.js";
+import { PageLoadingSkeleton } from "../components/PageLoadingSkeleton.js";
 import { tryToastBadRequest } from "../notify-bad-request.js";
 import { useToast } from "../toast-context.js";
 
 const fpsReceiverId = (import.meta.env.VITE_FPS_RECEIVER_ID ?? "").trim();
-const fpsQrUrl = (import.meta.env.VITE_FPS_QR_IMAGE_URL ?? "").trim();
+/** Env overrides; otherwise bundled poster under `public/fps-payment-qr.png`. */
+const fpsQrSrc =
+  (import.meta.env.VITE_FPS_QR_IMAGE_URL ?? "").trim() || "/fps-payment-qr.png";
 
 function formatDeadline(iso: string | null): string | null {
   if (!iso) return null;
@@ -94,12 +97,12 @@ export function OrderPage() {
   }
 
   if (loading) {
-    return <p className="muted">{zhHant.loadingPage}</p>;
+    return <PageLoadingSkeleton variant="order" />;
   }
 
   if (loadErr || !order) {
     return (
-      <div>
+      <div className="order-page">
         <h1 className="title">{zhHant.orderTitle}</h1>
         <p className="error">{loadErr ?? zhHant.orderNotFound}</p>
         <Link href="/" className="back muted">
@@ -110,6 +113,8 @@ export function OrderPage() {
   }
 
   const deadline = formatDeadline(order.reservationExpiresAt);
+  const showFpsBlock =
+    order.status === "awaiting_payment" || order.status === "awaiting_confirmation";
   const statusLabel =
     order.status === "awaiting_payment"
       ? zhHant.orderStatusAwaitingPayment
@@ -122,30 +127,16 @@ export function OrderPage() {
             : order.status;
 
   return (
-    <div>
+    <div className="order-page">
       <h1 className="title">{zhHant.orderTitle}</h1>
-      <p className="lede muted">
+      <p className="lede muted order-page-ref">
         {zhHant.orderRef}{" "}
-        <code translate="no">{order.orderId}</code>
+        <code className="order-page-id" translate="no">
+          {order.orderId}
+        </code>
       </p>
 
-      <div className="order-meta card" style={{ padding: "1rem 1.15rem", marginBottom: "1.25rem" }}>
-        <p style={{ margin: "0 0 0.35rem" }}>
-          <strong>{zhHant.orderStatus}</strong> {statusLabel}
-        </p>
-        {deadline && (order.status === "awaiting_payment" || order.status === "awaiting_confirmation") && (
-          <p className="muted small" style={{ margin: 0 }}>
-            {zhHant.orderHoldUntil} {deadline}
-          </p>
-        )}
-        {order.status === "expired" && (
-          <p className="muted small" style={{ margin: "0.5rem 0 0" }}>
-            {zhHant.orderExpiredHint}
-          </p>
-        )}
-      </div>
-
-      <h2 className="order-section-title">{zhHant.orderItems}</h2>
+      <h2 className="order-section-title order-items-heading">{zhHant.orderItems}</h2>
       <ul className="order-lines">
         {order.items.map((item, idx) => (
           <li key={`${item.productId}-${idx}`} className="order-line">
@@ -163,62 +154,93 @@ export function OrderPage() {
         ))}
       </ul>
       <div className="order-total-row">
-        <span>{zhHant.orderAmountDue}</span>
-        <strong>{formatPriceUsd(total)}</strong>
+        <span className="order-total-label">{zhHant.orderAmountDue}</span>
+        <strong className="order-total-value">{formatPriceUsd(total)}</strong>
       </div>
 
-      {(order.status === "awaiting_payment" || order.status === "awaiting_confirmation") && (
-        <section className="fps-section card" style={{ padding: "1.15rem 1.25rem", marginTop: "1.75rem" }}>
-          <h2 className="order-section-title" style={{ marginTop: 0 }}>
-            {zhHant.fpsTitle}
-          </h2>
-          <p className="muted small">{zhHant.fpsInstructions}</p>
-          <p className="fps-amount">
-            {zhHant.fpsPayExact} <strong>{formatPriceUsd(total)}</strong>
+      <div className="order-meta card order-meta-card">
+        <p className="order-meta-status">
+          <strong>{zhHant.orderStatus}</strong> {statusLabel}
+        </p>
+        {deadline && showFpsBlock && (
+          <p className="muted small order-meta-deadline">
+            {zhHant.orderHoldUntil} {deadline}
           </p>
-          <p className="muted small">
-            {zhHant.fpsMemoHint}{" "}
-            <code className="fps-memo" translate="no">
-              {order.orderId}
-            </code>
+        )}
+        {order.status === "expired" && (
+          <p className="muted small order-meta-hint">
+            {zhHant.orderExpiredHint}
           </p>
-          {fpsReceiverId ? (
-            <p className="fps-receiver">
-              <span className="muted small">{zhHant.fpsReceiverLabel}</span>{" "}
-              <code translate="no">{fpsReceiverId}</code>
-            </p>
-          ) : (
-            <p className="muted small">{zhHant.fpsReceiverUnset}</p>
-          )}
-          {fpsQrUrl ? (
-            <div className="fps-qr-wrap">
-              <img src={fpsQrUrl} alt="" className="fps-qr" width={200} height={200} />
+        )}
+        {showFpsBlock && (
+          <section className="fps-in-meta" aria-labelledby="fps-section-title">
+            <div className="fps-section-body fps-section-body--qr-layout">
+              <div className="fps-text-col">
+                <h2
+                  id="fps-section-title"
+                  className="order-section-title fps-section-heading-in-meta"
+                >
+                  {zhHant.fpsTitle}
+                </h2>
+                <div className="fps-section-main">
+                  <p className="muted small">{zhHant.fpsInstructions}</p>
+                  <p className="fps-amount">
+                    {zhHant.fpsPayExact} <strong>{formatPriceUsd(total)}</strong>
+                  </p>
+                  <p className="muted small fps-memo-intro">{zhHant.fpsMemoHint}</p>
+                  <p className="fps-memo-id-row">
+                    <code className="fps-memo" translate="no">
+                      {order.orderId}
+                    </code>
+                  </p>
+                  {fpsReceiverId ? (
+                    <p className="fps-receiver">
+                      <span className="muted small">{zhHant.fpsReceiverLabel}</span>{" "}
+                      <code translate="no">{fpsReceiverId}</code>
+                    </p>
+                  ) : (
+                    <p className="muted small">{zhHant.fpsReceiverUnset}</p>
+                  )}
+
+                  {order.status === "awaiting_payment" && (
+                    <button
+                      type="button"
+                      className="btn checkout-submit fps-section-submit"
+                      disabled={paymentBusy}
+                      onClick={() => void onPaymentSubmitted()}
+                    >
+                      {paymentBusy
+                        ? zhHant.orderPaymentSubmitting
+                        : zhHant.orderMarkTransferred}
+                    </button>
+                  )}
+                  {order.status === "awaiting_confirmation" && (
+                    <p className="muted small fps-section-awaiting">
+                      {zhHant.orderAwaitingConfirmationHint}
+                    </p>
+                  )}
+                </div>
+              </div>
+              <div className="fps-qr-wrap fps-qr-wrap--aside">
+                <img
+                  src={fpsQrSrc}
+                  alt={zhHant.fpsQrAlt}
+                  className="fps-qr"
+                  decoding="async"
+                />
+              </div>
             </div>
-          ) : null}
+          </section>
+        )}
+      </div>
 
-          {order.status === "awaiting_payment" && (
-            <button
-              type="button"
-              className="btn checkout-submit"
-              style={{ marginTop: "1rem" }}
-              disabled={paymentBusy}
-              onClick={() => void onPaymentSubmitted()}
-            >
-              {paymentBusy
-                ? zhHant.orderPaymentSubmitting
-                : zhHant.orderMarkTransferred}
-            </button>
-          )}
-          {order.status === "awaiting_confirmation" && (
-            <p className="muted small" style={{ marginTop: "1rem", marginBottom: 0 }}>
-              {zhHant.orderAwaitingConfirmationHint}
-            </p>
-          )}
-        </section>
-      )}
-
-      <p className="muted small" style={{ marginTop: "1.5rem" }}>
+      <p className="muted small order-page-footer">
         <Link href="/">{zhHant.continueShopping}</Link>
+        <span className="order-page-footer-sep muted small" aria-hidden>
+          {" "}
+          ·{" "}
+        </span>
+        <Link href="/track">{zhHant.orderPageTrackAnother}</Link>
       </p>
     </div>
   );

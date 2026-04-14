@@ -101,10 +101,17 @@ export type CatalogResponse = {
 export async function fetchCatalog(params: {
   limit?: number;
   cursor?: string;
+  /** When set, passed as `productType` (store-worker may filter server-side). */
+  productType?: string;
+  /** `date_asc` | `date_desc` | `price_asc` | `price_desc` */
+  sort?: string;
 }): Promise<CatalogResponse> {
   const u = new URL("/api/catalog", window.location.origin);
   if (params.limit) u.searchParams.set("limit", String(params.limit));
   if (params.cursor) u.searchParams.set("cursor", params.cursor);
+  if (params.productType)
+    u.searchParams.set("productType", params.productType);
+  if (params.sort) u.searchParams.set("sort", params.sort);
   const url = apiPath(u.pathname + u.search);
   logApi("GET", url);
   const res = await fetch(url);

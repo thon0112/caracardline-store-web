@@ -7,6 +7,7 @@ import {
   toastTextForBadRequest,
   zhHant,
 } from "../locale/zh-Hant.js";
+import { PageLoadingSkeleton } from "../components/PageLoadingSkeleton.js";
 import { tryToastBadRequest } from "../notify-bad-request.js";
 import { useToast } from "../toast-context.js";
 
@@ -104,11 +105,7 @@ export function CheckoutPage() {
   }
 
   if (loading || !cartId || lines.length === 0) {
-    return (
-      <div className="checkout-page">
-        <p className="muted">{zhHant.loadingPage}</p>
-      </div>
-    );
+    return <PageLoadingSkeleton variant="checkout" />;
   }
 
   return (
@@ -160,6 +157,8 @@ export function CheckoutPage() {
                 autoComplete="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                onBlur={(e) => setEmail(e.target.value.trim())}
+                aria-required={false}
                 maxLength={320}
               />
             </div>

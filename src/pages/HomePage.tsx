@@ -9,10 +9,12 @@ import {
 import { displayTitle, primaryImage } from "../catalog-helpers.js";
 import { useCart } from "../cart-context.js";
 import {
+  displayProductType,
   formatPriceUsd,
   homeRailAriaLabel,
   zhHant,
 } from "../locale/zh-Hant.js";
+import { PageLoadingSkeleton } from "../components/PageLoadingSkeleton.js";
 import { homeBannerSlides } from "../home-banner-slides.js";
 import { tryToastBadRequest } from "../notify-bad-request.js";
 import { TOAST_DURATION_SHORT_MS, useToast } from "../toast-context.js";
@@ -22,8 +24,8 @@ const CATALOG_HOME_LIMIT = 96;
 /** Max products shown per category on the home page rails */
 const HOME_CATEGORY_SAMPLE_COUNT = 5;
 
-function groupLabel(type: string): string {
-  const t = type.trim();
+function groupLabel(productType: string): string {
+  const t = displayProductType(productType).trim();
   return t.length > 0 ? t : zhHant.homeGroupOther;
 }
 
@@ -136,7 +138,7 @@ export function HomePage() {
     setSlide((i) => (i + delta + bannerCount) % bannerCount);
   }
 
-  if (loading) return <p className="muted">{zhHant.loadingPage}</p>;
+  if (loading) return <PageLoadingSkeleton variant="home" />;
   if (err) return <p className="error">{err}</p>;
 
   return (

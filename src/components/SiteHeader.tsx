@@ -1,7 +1,11 @@
 import { useCallback, useEffect, useId, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { useCart } from "../cart-context.js";
-import { zhHant } from "../locale/zh-Hant.js";
+import {
+  CATALOG_PRODUCT_TYPE_CODES,
+  displayProductType,
+  zhHant,
+} from "../locale/zh-Hant.js";
 
 function IconHamburger() {
   return (
@@ -71,6 +75,42 @@ function IconCatalog({ size = 22 }: { size?: number }) {
       <path
         fill="currentColor"
         d="M4 4h7v7H4V4zm9 0h7v7h-7V4zM4 13h7v7H4v-7zm9 0h7v7h-7v-7z"
+      />
+    </svg>
+  );
+}
+
+function IconOrderLookup({ size = 20 }: { size?: number }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      width={size}
+      height={size}
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path
+        fill="currentColor"
+        d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11zm-8-7h6v2H10v-2zm0-4h6v2H10V9z"
+      />
+    </svg>
+  );
+}
+
+function IconOtherServices({ size = 20 }: { size?: number }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      width={size}
+      height={size}
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path
+        fill="currentColor"
+        d="M20 7h-4V5c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2zM10 5h4v2h-4V5zm10 14H4V9h16v10z"
       />
     </svg>
   );
@@ -217,6 +257,12 @@ export function SiteHeader() {
           <Link href="/catalog" className="header-link">
             {zhHant.navCatalog}
           </Link>
+          <Link href="/services" className="header-link">
+            {zhHant.navOtherServices}
+          </Link>
+          <Link href="/track" className="header-link">
+            {zhHant.navTrackOrder}
+          </Link>
           <Link href="/cart" className="header-link">
             {zhHant.navCart}
             {cartLineCount > 0 ? (
@@ -254,29 +300,47 @@ export function SiteHeader() {
           </button>
         </div>
         <nav className="header-drawer-nav" aria-label={zhHant.navSiteAria}>
-          <a
-            href="https://www.instagram.com/cara.cardline/"
-            className="header-drawer-link"
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={closeMenu}
-          >
-            <span className="header-drawer-link-icon" aria-hidden>
-              <IconInstagram size={20} />
-            </span>
-            <span className="header-drawer-link-text">{zhHant.navInstagram}</span>
-          </a>
           <Link href="/" className="header-drawer-link" onClick={closeMenu}>
             <span className="header-drawer-link-icon" aria-hidden>
               <IconHome size={20} />
             </span>
             <span className="header-drawer-link-text">{zhHant.navHome}</span>
           </Link>
-          <Link href="/catalog" className="header-drawer-link" onClick={closeMenu}>
+          <div className="header-drawer-catalog">
+            <Link href="/catalog" className="header-drawer-link" onClick={closeMenu}>
+              <span className="header-drawer-link-icon" aria-hidden>
+                <IconCatalog size={20} />
+              </span>
+              <span className="header-drawer-link-text">{zhHant.navCatalog}</span>
+            </Link>
+            <ul
+              className="header-drawer-sublinks"
+              aria-label={zhHant.navCatalogSubAria}
+            >
+              {CATALOG_PRODUCT_TYPE_CODES.map((code) => (
+                <li key={code}>
+                  <Link
+                    href={`/catalog?type=${encodeURIComponent(code)}`}
+                    className="header-drawer-sublink-anchor"
+                    onClick={closeMenu}
+                  >
+                    {displayProductType(code)}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <Link href="/services" className="header-drawer-link" onClick={closeMenu}>
             <span className="header-drawer-link-icon" aria-hidden>
-              <IconCatalog size={20} />
+              <IconOtherServices size={20} />
             </span>
-            <span className="header-drawer-link-text">{zhHant.navCatalog}</span>
+            <span className="header-drawer-link-text">{zhHant.navOtherServices}</span>
+          </Link>
+          <Link href="/track" className="header-drawer-link" onClick={closeMenu}>
+            <span className="header-drawer-link-icon" aria-hidden>
+              <IconOrderLookup size={20} />
+            </span>
+            <span className="header-drawer-link-text">{zhHant.navTrackOrder}</span>
           </Link>
           <Link href="/cart" className="header-drawer-link" onClick={closeMenu}>
             <span className="header-drawer-link-icon" aria-hidden>
@@ -287,6 +351,19 @@ export function SiteHeader() {
               <span className="cart-badge header-drawer-badge">{cartLineCount}</span>
             ) : null}
           </Link>
+          <a
+            href="https://www.instagram.com/cara.cardline/"
+            className="header-drawer-instagram-low"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={zhHant.navInstagramAria}
+            title={zhHant.navInstagram}
+            onClick={closeMenu}
+          >
+            <span className="header-drawer-instagram-low-icon" aria-hidden>
+              <IconInstagram size={22} />
+            </span>
+          </a>
         </nav>
       </div>
     </header>

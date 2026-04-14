@@ -10,8 +10,10 @@ import { ProductPage } from "./pages/ProductPage.js";
 import { CartPage } from "./pages/CartPage.js";
 import { CheckoutPage } from "./pages/CheckoutPage.js";
 import { OrderPage } from "./pages/OrderPage.js";
+import { TrackOrderPage } from "./pages/TrackOrderPage.js";
 import { AboutPage } from "./pages/AboutPage.js";
 import { DisclaimerPage } from "./pages/DisclaimerPage.js";
+import { OtherServicesPage } from "./pages/OtherServicesPage.js";
 
 function AppShell() {
   return (
@@ -23,9 +25,11 @@ function AppShell() {
           <Route path="/catalog" component={CatalogPage} />
           <Route path="/cart" component={CartPage} />
           <Route path="/checkout" component={CheckoutPage} />
+          <Route path="/track" component={TrackOrderPage} />
           <Route path="/order/:orderId" component={OrderPage} />
           <Route path="/item/:id" component={ProductPage} />
           <Route path="/about" component={AboutPage} />
+          <Route path="/services" component={OtherServicesPage} />
           <Route path="/disclaimer" component={DisclaimerPage} />
           <Route>
             <p className="muted">{zhHant.notFound}</p>

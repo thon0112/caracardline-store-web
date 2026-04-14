@@ -2,9 +2,13 @@
  * Traditional Chinese (繁體中文) UI copy — single locale, no i18n framework.
  */
 export const zhHant = {
-  brand: "Caracardline",
+  brand: "卡拉卡LINE",
   navSiteAria: "網站導覽",
   navCart: "購物車",
+  /** Header / footer — look up an existing order by id */
+  navTrackOrder: "查詢訂單",
+  /** Header / drawer — `/services` */
+  navOtherServices: "其他服務",
   navHome: "首頁",
   navCatalog: "商品目錄",
   /** Instagram @cara.cardline — opens in a new tab */
@@ -55,7 +59,27 @@ export const zhHant = {
     "若有批發、鑑定合作或其他商務洽詢，歡迎透過網站頁尾「聯絡我們」與我們聯繫（此為範例說明）。",
   aboutBackCatalog: "返回商品目錄",
 
+  otherServicesTitle: "其他服務",
+  otherServicesLede:
+    "除網店購物外，若您需要鑑定送評、批量洽購、寄賣或其他合作，歡迎與我們聯繫；以下為常見服務方向，實際內容與費用以洽談為準。",
+  otherServicesScopeTitle: "服務範圍（範例）",
+  otherServicesScopeP1:
+    "送評／鑑定代辦諮詢、品相與真偽相關問題說明、批量收購或單卡洽購、寄賣與合作上架等。實際能否承接視庫存、時程與雙方約定而定。",
+  otherServicesHowTitle: "如何聯繫",
+  otherServicesHowP1:
+    "請透過網站頁尾「聯絡我們」訊息管道，簡述您的需求（例如卡種、數量、期望時程）。我們會在能力範圍內盡快回覆。",
+  otherServicesBackCatalog: "返回商品目錄",
+
   catalogTitle: "商品目錄",
+  catalogFilterType: "商品類型",
+  catalogFilterTypeAll: "全部",
+  catalogSort: "排序",
+  catalogSortDateAsc: "上架時間（舊→新）",
+  catalogSortDateDesc: "上架時間（新→舊）",
+  catalogSortPriceAsc: "價格（低→高）",
+  catalogSortPriceDesc: "價格（高→低）",
+  /** Drawer: sub-list under 商品目錄 */
+  navCatalogSubAria: "商品分類",
 
   homeGroupOther: "其他",
   homeViewAll: "查看全部",
@@ -65,8 +89,8 @@ export const zhHant = {
   homeBannerDots: "選擇橫幅",
   homeBannerSlide: "橫幅",
   homeRailHint: "可左右滑動瀏覽",
-  /** Full-page / main view while data is loading */
-  loadingPage: "載入中...",
+  /** Announced to screen readers while skeleton placeholders are shown */
+  loadingPage: "載入中…",
   loadMore: "載入更多",
   addToCart: "加入購物車",
   /** Shown briefly after a product is added from listing or detail. */
@@ -116,7 +140,7 @@ export const zhHant = {
   checkoutLede:
     "目前僅送香港。請填寫收件人、電話與香港境內收貨地址；電郵為選填。完成後將為您暫留庫存並顯示轉帳資訊。",
   checkoutOrderPreview: "訂單預覽",
-  checkoutEmail: "電郵",
+  checkoutEmail: "電郵（選填）",
   checkoutNameRequired: "請填寫收件人姓名。",
   checkoutShipName: "收件人姓名（必填）",
   checkoutShipPhone: "電話（必填）",
@@ -134,6 +158,13 @@ export const zhHant = {
   backToCart: "返回購物車",
 
   orderTitle: "訂單",
+  trackOrderTitle: "查詢訂單狀態",
+  trackOrderLede:
+    "請輸入結帳完成後顯示的訂單編號，即可查看狀態與付款指示。",
+  trackOrderIdLabel: "訂單編號",
+  trackOrderSubmit: "查看訂單",
+  trackOrderIdRequired: "請輸入訂單編號。",
+  orderPageTrackAnother: "查詢其他訂單",
   orderInvalidId: "訂單編號無效。",
   orderNotFound: "找不到此訂單。",
   orderLoadFailed: "無法載入訂單",
@@ -148,6 +179,8 @@ export const zhHant = {
   orderItems: "訂單明細",
   orderAmountDue: "應付總額",
   fpsTitle: "FPS 轉帳",
+  /** Alt text for FPS payment QR poster image */
+  fpsQrAlt: "轉數快（FPS）付款二維碼：港幣收款資訊",
   fpsInstructions: "請使用「轉數快」轉入以下帳戶，並在備註填寫訂單編號以便對帳。",
   fpsPayExact: "請轉帳剛好",
   fpsMemoHint: "轉帳備註請填：",
@@ -159,6 +192,62 @@ export const zhHant = {
   orderPaymentSubmitFailed: "無法更新狀態",
   orderAwaitingConfirmationHint: "我們收到通知後會核對銀行入數；通過後會再與您聯絡。",
 } as const;
+
+/** Maps store-worker `productType` codes to Traditional Chinese labels. */
+const PRODUCT_TYPE_LABELS: Record<string, string> = {
+  booster_box: "PTCG 原盒",
+  card: "單卡",
+  accessory: "周邊",
+};
+
+/** Ordered for hamburger nav and catalog `?type=` filter. */
+export const CATALOG_PRODUCT_TYPE_CODES = [
+  "booster_box",
+  "card",
+  "accessory",
+] as const;
+
+export type CatalogProductTypeCode = (typeof CATALOG_PRODUCT_TYPE_CODES)[number];
+
+export function displayProductType(productType: string): string {
+  const raw = productType.trim();
+  if (!raw) return "";
+  const mapped =
+    PRODUCT_TYPE_LABELS[raw] ?? PRODUCT_TYPE_LABELS[raw.toLowerCase()];
+  return mapped ?? productType;
+}
+
+/** Returns the code if it is a known catalog category, else `""`. */
+export function normalizeCatalogTypeFilter(
+  raw: string | null | undefined,
+): CatalogProductTypeCode | "" {
+  const t = raw?.trim() ?? "";
+  if (!t) return "";
+  const lower = t.toLowerCase();
+  for (const code of CATALOG_PRODUCT_TYPE_CODES) {
+    if (code === t || code === lower) return code;
+  }
+  return "";
+}
+
+export const CATALOG_SORT_VALUES = [
+  "date_asc",
+  "date_desc",
+  "price_asc",
+  "price_desc",
+] as const;
+
+export type CatalogSortValue = (typeof CATALOG_SORT_VALUES)[number];
+
+export function normalizeCatalogSort(
+  raw: string | null | undefined,
+): CatalogSortValue {
+  const s = raw?.trim() ?? "";
+  for (const v of CATALOG_SORT_VALUES) {
+    if (v === s) return v;
+  }
+  return "date_asc";
+}
 
 export function homeRailAriaLabel(groupName: string): string {
   return `「${groupName}」，${zhHant.homeRailHint}`;
