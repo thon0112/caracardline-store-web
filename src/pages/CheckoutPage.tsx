@@ -38,9 +38,9 @@ export function CheckoutPage() {
     e.preventDefault();
     if (!cartId || lines.length === 0) return;
     setFormErr(null);
-    const trimmedEmail = email.trim();
-    if (!trimmedEmail) {
-      setFormErr(zhHant.checkoutEmailRequired);
+    const trimmedName = shipRecipientName.trim();
+    if (!trimmedName) {
+      setFormErr(zhHant.checkoutNameRequired);
       return;
     }
     const trimmedPhone = shipPhone.trim();
@@ -48,14 +48,20 @@ export function CheckoutPage() {
       setFormErr(zhHant.checkoutPhoneRequired);
       return;
     }
+    const trimmedEmail = email.trim();
+    const trimmedLine1 = shipAddressLine1.trim();
+    if (!trimmedLine1) {
+      setFormErr(zhHant.checkoutAddressRequired);
+      return;
+    }
     setSubmitting(true);
     try {
       const body: PlaceOrderBody = {
         cartId,
-        email: trimmedEmail,
-        shipRecipientName: shipRecipientName.trim() || undefined,
+        ...(trimmedEmail ? { email: trimmedEmail } : {}),
+        shipRecipientName: trimmedName,
         shipPhone: trimmedPhone,
-        shipAddressLine1: shipAddressLine1.trim() || undefined,
+        shipAddressLine1: trimmedLine1,
         shipAddressLine2: shipAddressLine2.trim() || undefined,
         shipCity: SHIP_LOCALITY_HK,
         shipRegion: SHIP_LOCALITY_HK,
@@ -130,19 +136,6 @@ export function CheckoutPage() {
 
       <form className="form-stack" onSubmit={(e) => void onSubmit(e)}>
         <div className="form-field">
-          <label htmlFor="co-email">{zhHant.checkoutEmail}</label>
-          <input
-            id="co-email"
-            name="email"
-            type="email"
-            autoComplete="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            maxLength={320}
-          />
-        </div>
-        <div className="form-field">
           <label htmlFor="co-name">{zhHant.checkoutShipName}</label>
           <input
             id="co-name"
@@ -151,6 +144,7 @@ export function CheckoutPage() {
             autoComplete="name"
             value={shipRecipientName}
             onChange={(e) => setShipRecipientName(e.target.value)}
+            required
             maxLength={255}
           />
         </div>
@@ -168,12 +162,25 @@ export function CheckoutPage() {
           />
         </div>
         <div className="form-field">
+          <label htmlFor="co-email">{zhHant.checkoutEmail}</label>
+          <input
+            id="co-email"
+            name="email"
+            type="email"
+            autoComplete="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            maxLength={320}
+          />
+        </div>
+        <div className="form-field">
           <label htmlFor="co-country">{zhHant.checkoutShipCountry}</label>
           <input
             id="co-country"
             name="shipCountry"
             type="text"
             readOnly
+            required
             aria-readonly="true"
             value={zhHant.checkoutShipCountryHongKongDisplay}
           />
@@ -184,9 +191,10 @@ export function CheckoutPage() {
             id="co-line1"
             name="shipAddressLine1"
             type="text"
-            autoComplete="address-line1"
+            autoComplete="street-address"
             value={shipAddressLine1}
             onChange={(e) => setShipAddressLine1(e.target.value)}
+            required
             maxLength={255}
           />
         </div>

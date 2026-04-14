@@ -189,7 +189,7 @@ export async function deleteCartLine(
 
 export type PlaceOrderBody = {
   cartId: string;
-  email: string;
+  email?: string;
   shipRecipientName?: string;
   shipPhone: string;
   shipAddressLine1?: string;

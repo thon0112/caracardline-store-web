@@ -118,16 +118,17 @@ export const zhHant = {
 
   checkoutTitle: "結帳",
   checkoutLede:
-    "目前僅送香港。請填寫電子郵件、電話與香港境內收貨地址（其餘欄位可選填或稍後再補）。完成後將為您暫留庫存並顯示轉帳資訊。",
+    "目前僅送香港。請填寫收件人、電話與香港境內收貨地址；電郵為選填。完成後將為您暫留庫存並顯示轉帳資訊。",
   checkoutOrderPreview: "訂單預覽",
-  checkoutEmail: "電子郵件（必填）",
-  checkoutEmailRequired: "請填寫電子郵件。",
-  checkoutShipName: "收件人姓名",
+  checkoutEmail: "電郵",
+  checkoutNameRequired: "請填寫收件人姓名。",
+  checkoutShipName: "收件人姓名（必填）",
   checkoutShipPhone: "電話（必填）",
   checkoutPhoneRequired: "請填寫電話。",
-  checkoutShipLine1: "地址第一行",
+  checkoutAddressRequired: "請填寫地址。",
+  checkoutShipLine1: "地址（必填）",
   checkoutShipLine2: "地址第二行（選填）",
-  checkoutShipCountry: "國家／地區（僅香港）",
+  checkoutShipCountry: "國家／地區（必填）",
   /** Shown in readonly country field; API still uses ISO code HK. */
   checkoutShipCountryHongKongDisplay: "香港（HK）",
   checkoutFpsNote: "送出後訂單即成立，請依訂單頁指示以 FPS 轉帳；款項核對後我們會處理出貨。",
