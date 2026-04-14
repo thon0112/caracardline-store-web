@@ -65,7 +65,6 @@ export const zhHant = {
   homeBannerDots: "選擇橫幅",
   homeBannerSlide: "橫幅",
   homeRailHint: "可左右滑動瀏覽",
-  catalogStockHidden: "庫存數量未公開",
   /** Full-page / main view while data is loading */
   loadingPage: "載入中...",
   loadMore: "載入更多",
@@ -83,7 +82,6 @@ export const zhHant = {
   productNotFound: "找不到商品或暫不提供",
   productBack: "返回",
   productBackCatalog: "返回商品目錄",
-  productInStock: "庫存",
   productPsaId: "PSA 編號",
   errAddFailed: "加入失敗",
 
@@ -95,7 +93,6 @@ export const zhHant = {
   cartItemOne: "1 件商品",
   cartItemsMany: (n: number) => `${n} 件商品`,
   cartEach: "每件",
-  cartAvailable: "可購",
   cartDecreaseAria: "減少數量",
   cartIncreaseAria: "增加數量",
   cartRemove: "移除",
@@ -166,10 +163,6 @@ export const zhHant = {
 
 export function homeRailAriaLabel(groupName: string): string {
   return `「${groupName}」，${zhHant.homeRailHint}`;
-}
-
-export function formatInStock(quantity: number): string {
-  return `${zhHant.productInStock}：${quantity}`;
 }
 
 export function formatPriceUsd(amount: number): string {

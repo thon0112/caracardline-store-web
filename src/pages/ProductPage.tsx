@@ -2,11 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "wouter";
 import { fetchCatalogItem, createCart, addCartItem } from "../api.js";
 import { useCart } from "../cart-context.js";
-import {
-  formatInStock,
-  formatPriceUsd,
-  zhHant,
-} from "../locale/zh-Hant.js";
+import { formatPriceUsd, zhHant } from "../locale/zh-Hant.js";
 import { tryToastBadRequest } from "../notify-bad-request.js";
 import { TOAST_DURATION_SHORT_MS, useToast } from "../toast-context.js";
 
@@ -138,11 +134,6 @@ export function ProductPage() {
             </p>
           )}
           <p className="price big">{formatPriceUsd(data.listPrice)}</p>
-          <p className="muted">
-            {data.hideQuantity
-              ? zhHant.catalogStockHidden
-              : formatInStock(data.availableQuantity ?? 0)}
-          </p>
           <button
             type="button"
             className="btn"

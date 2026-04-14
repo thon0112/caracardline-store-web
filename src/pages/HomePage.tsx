@@ -9,7 +9,6 @@ import {
 import { displayTitle, primaryImage } from "../catalog-helpers.js";
 import { useCart } from "../cart-context.js";
 import {
-  formatInStock,
   formatPriceUsd,
   homeRailAriaLabel,
   zhHant,
@@ -242,11 +241,6 @@ export function HomePage() {
                       <div className="home-rail-body">
                         <h3 className="home-rail-title">{displayTitle(item)}</h3>
                         <p className="home-rail-price">{formatPriceUsd(item.listPrice)}</p>
-                        <p className="muted small home-rail-stock">
-                          {item.hideQuantity
-                            ? zhHant.catalogStockHidden
-                            : formatInStock(item.availableQuantity ?? 0)}
-                        </p>
                       </div>
                     </Link>
                     <button

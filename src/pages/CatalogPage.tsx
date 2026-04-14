@@ -8,11 +8,7 @@ import {
 } from "../api.js";
 import { displayTitle, primaryImage } from "../catalog-helpers.js";
 import { useCart } from "../cart-context.js";
-import {
-  formatInStock,
-  formatPriceUsd,
-  zhHant,
-} from "../locale/zh-Hant.js";
+import { formatPriceUsd, zhHant } from "../locale/zh-Hant.js";
 import { tryToastBadRequest } from "../notify-bad-request.js";
 import { TOAST_DURATION_SHORT_MS, useToast } from "../toast-context.js";
 
@@ -122,11 +118,6 @@ export function CatalogPage() {
                     .join(" · ")}
                 </p>
                 <p className="price">{formatPriceUsd(item.listPrice)}</p>
-                <p className="muted small">
-                  {item.hideQuantity
-                    ? zhHant.catalogStockHidden
-                    : formatInStock(item.availableQuantity ?? 0)}
-                </p>
               </div>
             </Link>
             <button

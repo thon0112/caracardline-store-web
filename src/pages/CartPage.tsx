@@ -147,14 +147,6 @@ export function CartPage() {
                 </Link>
                 <p className="muted small cart-line-meta">
                   {formatPriceUsd(line.catalog.listPrice)} {zhHant.cartEach}
-                  {!line.catalog.hideQuantity &&
-                    line.catalog.availableQuantity != null && (
-                      <>
-                        {" · "}
-                        {zhHant.cartAvailable}{" "}
-                        {line.catalog.availableQuantity}
-                      </>
-                    )}
                 </p>
                 <div className="cart-line-qty">
                   <button
