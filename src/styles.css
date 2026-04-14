@@ -1002,6 +1002,57 @@ code {
   max-width: 28rem;
 }
 
+/* Avoid I-beam / text caret on padding, grid gaps, and other non-field chrome. */
+.checkout-page {
+  caret-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: default;
+}
+
+.checkout-page .error {
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+.checkout-page a,
+.checkout-page button {
+  cursor: pointer;
+}
+
+.checkout-page label {
+  cursor: pointer;
+}
+
+.checkout-page input,
+.checkout-page textarea {
+  cursor: text;
+  user-select: text;
+  -webkit-user-select: text;
+  caret-color: auto;
+}
+
+.checkout-page input:read-only {
+  cursor: default;
+}
+
+.checkout-layout {
+  display: grid;
+  gap: 1.5rem 2rem;
+  align-items: start;
+}
+
+.checkout-layout-main,
+.checkout-layout-aside {
+  min-width: 0;
+}
+
+@media (min-width: 880px) {
+  .checkout-layout {
+    grid-template-columns: minmax(0, 1fr) minmax(16rem, 22rem);
+  }
+}
+
 .form-field label {
   display: block;
   font-size: 0.875rem;
@@ -1074,6 +1125,11 @@ code {
   margin: 0.5rem 0 0;
   width: 100%;
   max-width: 28rem;
+}
+
+.checkout-submit-in-preview {
+  max-width: none;
+  margin-top: 1rem;
 }
 
 .order-section-title {

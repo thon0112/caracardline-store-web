@@ -93,7 +93,7 @@ export function CheckoutPage() {
 
   if (error) {
     return (
-      <div>
+      <div className="checkout-page">
         <h1 className="title">{zhHant.checkoutTitle}</h1>
         <p className="error">{error}</p>
         <Link href="/cart" className="back muted">
@@ -104,124 +104,141 @@ export function CheckoutPage() {
   }
 
   if (loading || !cartId || lines.length === 0) {
-    return <p className="muted">{zhHant.loadingPage}</p>;
+    return (
+      <div className="checkout-page">
+        <p className="muted">{zhHant.loadingPage}</p>
+      </div>
+    );
   }
 
   return (
-    <div>
+    <div className="checkout-page">
       <h1 className="title">{zhHant.checkoutTitle}</h1>
       <p className="lede muted">{zhHant.checkoutLede}</p>
 
-      <div className="checkout-summary card" style={{ padding: "1rem 1.15rem", marginBottom: "1.5rem" }}>
-        <p className="muted small" style={{ margin: "0 0 0.5rem" }}>
-          {zhHant.checkoutOrderPreview}
-        </p>
-        <ul className="checkout-preview-lines">
-          {lines.map((l) => (
-            <li key={l.lineId}>
-              <span>{l.catalog.title || l.catalog.card?.name || zhHant.productFallback}</span>
-              <span className="muted">
-                ×{l.quantity} · {formatPriceUsd(l.quantity * l.catalog.listPrice)}
-              </span>
-            </li>
-          ))}
-        </ul>
-        <p className="checkout-preview-total">
-          <span>{zhHant.cartSubtotal}</span>
-          <strong>{formatPriceUsd(subtotal)}</strong>
-        </p>
+      <div className="checkout-layout">
+        <div className="checkout-layout-main">
+          {formErr && <p className="error">{formErr}</p>}
+
+          <form
+            id="checkout-form"
+            className="form-stack"
+            onSubmit={(e) => void onSubmit(e)}
+          >
+            <div className="form-field">
+              <label htmlFor="co-name">{zhHant.checkoutShipName}</label>
+              <input
+                id="co-name"
+                name="shipRecipientName"
+                type="text"
+                autoComplete="name"
+                value={shipRecipientName}
+                onChange={(e) => setShipRecipientName(e.target.value)}
+                required
+                maxLength={255}
+              />
+            </div>
+            <div className="form-field">
+              <label htmlFor="co-phone">{zhHant.checkoutShipPhone}</label>
+              <input
+                id="co-phone"
+                name="shipPhone"
+                type="tel"
+                autoComplete="tel"
+                value={shipPhone}
+                onChange={(e) => setShipPhone(e.target.value)}
+                required
+                maxLength={32}
+              />
+            </div>
+            <div className="form-field">
+              <label htmlFor="co-email">{zhHant.checkoutEmail}</label>
+              <input
+                id="co-email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                maxLength={320}
+              />
+            </div>
+            <div className="form-field">
+              <label htmlFor="co-country">{zhHant.checkoutShipCountry}</label>
+              <input
+                id="co-country"
+                name="shipCountry"
+                type="text"
+                readOnly
+                required
+                aria-readonly="true"
+                value={zhHant.checkoutShipCountryHongKongDisplay}
+              />
+            </div>
+            <div className="form-field">
+              <label htmlFor="co-line1">{zhHant.checkoutShipLine1}</label>
+              <input
+                id="co-line1"
+                name="shipAddressLine1"
+                type="text"
+                autoComplete="street-address"
+                value={shipAddressLine1}
+                onChange={(e) => setShipAddressLine1(e.target.value)}
+                required
+                maxLength={255}
+              />
+            </div>
+            <div className="form-field">
+              <label htmlFor="co-line2">{zhHant.checkoutShipLine2}</label>
+              <input
+                id="co-line2"
+                name="shipAddressLine2"
+                type="text"
+                autoComplete="address-line2"
+                value={shipAddressLine2}
+                onChange={(e) => setShipAddressLine2(e.target.value)}
+                maxLength={255}
+              />
+            </div>
+
+            <p className="muted small">{zhHant.checkoutFpsNote}</p>
+          </form>
+
+          <Link href="/cart" className="back muted" style={{ marginTop: "1.25rem" }}>
+            ← {zhHant.backToCart}
+          </Link>
+        </div>
+
+        <aside className="checkout-layout-aside" aria-label={zhHant.checkoutOrderPreview}>
+          <div className="checkout-summary card" style={{ padding: "1rem 1.15rem" }}>
+            <p className="muted small" style={{ margin: "0 0 0.5rem" }}>
+              {zhHant.checkoutOrderPreview}
+            </p>
+            <ul className="checkout-preview-lines">
+              {lines.map((l) => (
+                <li key={l.lineId}>
+                  <span>{l.catalog.title || l.catalog.card?.name || zhHant.productFallback}</span>
+                  <span className="muted">
+                    ×{l.quantity} · {formatPriceUsd(l.quantity * l.catalog.listPrice)}
+                  </span>
+                </li>
+              ))}
+            </ul>
+            <p className="checkout-preview-total">
+              <span>{zhHant.cartSubtotal}</span>
+              <strong>{formatPriceUsd(subtotal)}</strong>
+            </p>
+            <button
+              type="submit"
+              form="checkout-form"
+              className="btn checkout-submit checkout-submit-in-preview"
+              disabled={submitting}
+            >
+              {submitting ? zhHant.checkoutSubmitting : zhHant.checkoutSubmit}
+            </button>
+          </div>
+        </aside>
       </div>
-
-      {formErr && <p className="error">{formErr}</p>}
-
-      <form className="form-stack" onSubmit={(e) => void onSubmit(e)}>
-        <div className="form-field">
-          <label htmlFor="co-name">{zhHant.checkoutShipName}</label>
-          <input
-            id="co-name"
-            name="shipRecipientName"
-            type="text"
-            autoComplete="name"
-            value={shipRecipientName}
-            onChange={(e) => setShipRecipientName(e.target.value)}
-            required
-            maxLength={255}
-          />
-        </div>
-        <div className="form-field">
-          <label htmlFor="co-phone">{zhHant.checkoutShipPhone}</label>
-          <input
-            id="co-phone"
-            name="shipPhone"
-            type="tel"
-            autoComplete="tel"
-            value={shipPhone}
-            onChange={(e) => setShipPhone(e.target.value)}
-            required
-            maxLength={32}
-          />
-        </div>
-        <div className="form-field">
-          <label htmlFor="co-email">{zhHant.checkoutEmail}</label>
-          <input
-            id="co-email"
-            name="email"
-            type="email"
-            autoComplete="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            maxLength={320}
-          />
-        </div>
-        <div className="form-field">
-          <label htmlFor="co-country">{zhHant.checkoutShipCountry}</label>
-          <input
-            id="co-country"
-            name="shipCountry"
-            type="text"
-            readOnly
-            required
-            aria-readonly="true"
-            value={zhHant.checkoutShipCountryHongKongDisplay}
-          />
-        </div>
-        <div className="form-field">
-          <label htmlFor="co-line1">{zhHant.checkoutShipLine1}</label>
-          <input
-            id="co-line1"
-            name="shipAddressLine1"
-            type="text"
-            autoComplete="street-address"
-            value={shipAddressLine1}
-            onChange={(e) => setShipAddressLine1(e.target.value)}
-            required
-            maxLength={255}
-          />
-        </div>
-        <div className="form-field">
-          <label htmlFor="co-line2">{zhHant.checkoutShipLine2}</label>
-          <input
-            id="co-line2"
-            name="shipAddressLine2"
-            type="text"
-            autoComplete="address-line2"
-            value={shipAddressLine2}
-            onChange={(e) => setShipAddressLine2(e.target.value)}
-            maxLength={255}
-          />
-        </div>
-
-
-        <p className="muted small">{zhHant.checkoutFpsNote}</p>
-
-        <button type="submit" className="btn checkout-submit" disabled={submitting}>
-          {submitting ? zhHant.checkoutSubmitting : zhHant.checkoutSubmit}
-        </button>
-      </form>
-
-      <Link href="/cart" className="back muted" style={{ marginTop: "1.25rem" }}>
-        ← {zhHant.backToCart}
-      </Link>
     </div>
   );
 }
