@@ -947,12 +947,9 @@ code {
   gap: 0.75rem;
   padding: 1rem 1.15rem;
   border-radius: 12px;
-  background: color-mix(in srgb, var(--card) 82%, var(--accent-fill));
-  border: 1px solid color-mix(in srgb, var(--accent) 42%, var(--border));
-  border-left: 4px solid var(--accent-fill);
-  box-shadow:
-    0 4px 0 color-mix(in srgb, var(--accent) 18%, transparent),
-    0 16px 40px rgba(28, 24, 21, 0.12);
+  background: var(--accent-fill);
+  border: none;
+  box-shadow: 0 10px 32px rgba(28, 24, 21, 0.2);
   animation: toast-in 0.22s ease-out;
 }
 
@@ -962,7 +959,7 @@ code {
   font-size: 1.0625rem;
   font-weight: 600;
   line-height: 1.45;
-  color: var(--fg);
+  color: var(--on-accent-fill);
   letter-spacing: 0.01em;
 }
 
@@ -975,7 +972,7 @@ code {
   border: none;
   border-radius: 8px;
   background: transparent;
-  color: var(--muted);
+  color: color-mix(in srgb, var(--on-accent-fill) 72%, transparent);
   font-size: 1.45rem;
   line-height: 1;
   cursor: pointer;
@@ -983,8 +980,8 @@ code {
 }
 
 .toast-dismiss:hover {
-  color: var(--fg);
-  background: rgba(28, 24, 21, 0.06);
+  color: var(--on-accent-fill);
+  background: rgba(255, 253, 251, 0.18);
 }
 
 @keyframes toast-in {
