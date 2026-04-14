@@ -187,7 +187,6 @@ export function CartPage() {
         <span className="cart-subtotal-label">{zhHant.cartSubtotal}</span>
         <span className="cart-subtotal-value">{formatPriceUsd(subtotal)}</span>
       </div>
-      <p className="muted small cart-checkout-note">{zhHant.cartCheckoutNote}</p>
       <div className="cart-actions">
         <Link href="/" className="btn secondary cart-actions-shop">
           ← {zhHant.continueShopping}

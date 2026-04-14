@@ -716,7 +716,6 @@ code {
 .cart-page .lede,
 .cart-page p.muted,
 .cart-page .error,
-.cart-page .cart-checkout-note,
 .cart-page .cart-page-text-link,
 .cart-page .cart-subtotal-label,
 .cart-page .cart-subtotal-value {
@@ -757,10 +756,6 @@ code {
 .cart-page-text-link:hover {
   color: var(--accent);
   text-decoration: underline;
-}
-
-.cart-checkout-note {
-  margin: 1.25rem 0 0;
 }
 
 .cart-actions {

@@ -97,7 +97,6 @@ export const zhHant = {
   cartIncreaseAria: "增加數量",
   cartRemove: "移除",
   cartSubtotal: "小計",
-  cartCheckoutNote: "確認商品後可前往結帳。",
   cartGoCheckout: "前往結帳",
   errUpdateFailed: "更新失敗",
   errRemoveFailed: "移除失敗",
