@@ -212,7 +212,7 @@ export function SiteHeader() {
           >
             <img
               className="brand-logo"
-              src="https://cdn.caracardline.com/assets/1776240736599-ed09bd2205b4b09f-logo-with-text.webp"
+              src="https://cdn.caracardline.com/assets/logo-with-text.webp"
               alt=""
               width={1200}
               height={360}
