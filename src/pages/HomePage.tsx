@@ -14,12 +14,11 @@ import {
   homeRailAriaLabel,
   zhHant,
 } from "../locale/zh-Hant.js";
+import { HomeBannerCarousel } from "../components/HomeBannerCarousel.js";
 import { PageLoadingSkeleton } from "../components/PageLoadingSkeleton.js";
-import { homeBannerSlides } from "../home-banner-slides.js";
 import { tryToastBadRequest } from "../notify-bad-request.js";
 import { TOAST_DURATION_SHORT_MS, useToast } from "../toast-context.js";
 
-const BANNER_INTERVAL_MS = 6500;
 const CATALOG_HOME_LIMIT = 96;
 /** Max products shown per category on the home page rails */
 const HOME_CATEGORY_SAMPLE_COUNT = 5;
@@ -50,27 +49,6 @@ export function HomePage() {
     localStorage.getItem("sf_cart_id"),
   );
   const [adding, setAdding] = useState<string | null>(null);
-
-  const [slide, setSlide] = useState(0);
-  const [reducedMotion, setReducedMotion] = useState(false);
-
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const apply = () => setReducedMotion(mq.matches);
-    apply();
-    mq.addEventListener("change", apply);
-    return () => mq.removeEventListener("change", apply);
-  }, []);
-
-  const bannerCount = homeBannerSlides.length;
-
-  useEffect(() => {
-    if (reducedMotion || bannerCount <= 1) return;
-    const t = window.setInterval(() => {
-      setSlide((i) => (i + 1) % bannerCount);
-    }, BANNER_INTERVAL_MS);
-    return () => window.clearInterval(t);
-  }, [bannerCount, reducedMotion]);
 
   useEffect(() => {
     let cancelled = false;
@@ -134,76 +112,12 @@ export function HomePage() {
     [cartId, refreshCart, showToast],
   );
 
-  function goBanner(delta: number) {
-    setSlide((i) => (i + delta + bannerCount) % bannerCount);
-  }
-
   if (loading) return <PageLoadingSkeleton variant="home" />;
   if (err) return <p className="error">{err}</p>;
 
   return (
     <div className="home">
-      <section
-        className="home-hero-bleed"
-        aria-roledescription="carousel"
-        aria-label={zhHant.homeBannerAria}
-      >
-        <div className="home-hero">
-          <div
-            className="home-hero-slides"
-            style={{
-              transform: `translateX(-${slide * 100}%)`,
-            }}
-          >
-            {homeBannerSlides.map((b, i) => (
-              <div
-                key={b.id}
-                className="home-hero-slide"
-                aria-hidden={i !== slide}
-              >
-                <Link href={b.href} className="home-hero-slide-link">
-                  <img
-                    className="home-hero-slide-img"
-                    src={b.src}
-                    alt={b.alt}
-                    width={1200}
-                    height={600}
-                    loading={i === 0 ? "eager" : "lazy"}
-                    decoding="async"
-                    fetchPriority={i === 0 ? "high" : "low"}
-                    referrerPolicy="no-referrer-when-downgrade"
-                  />
-                </Link>
-              </div>
-            ))}
-          </div>
-          <button
-            type="button"
-            className="home-hero-nav home-hero-nav--prev"
-            aria-label={zhHant.homeBannerPrev}
-            onClick={() => goBanner(-1)}
-          />
-          <button
-            type="button"
-            className="home-hero-nav home-hero-nav--next"
-            aria-label={zhHant.homeBannerNext}
-            onClick={() => goBanner(1)}
-          />
-          <div className="home-hero-dots" role="tablist" aria-label={zhHant.homeBannerDots}>
-            {homeBannerSlides.map((b, i) => (
-              <button
-                key={b.id}
-                type="button"
-                role="tab"
-                aria-selected={i === slide}
-                className={`home-hero-dot${i === slide ? " is-active" : ""}`}
-                aria-label={`${zhHant.homeBannerSlide} ${i + 1}：${b.alt}`}
-                onClick={() => setSlide(i)}
-              />
-            ))}
-          </div>
-        </div>
-      </section>
+      <HomeBannerCarousel />
 
       {items.length === 0 ? (
         <p className="muted">{zhHant.noProducts}</p>

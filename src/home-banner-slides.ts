@@ -1,24 +1,23 @@
 /**
- * Home hero image slider — Pokémon TCG card artwork (Pokémon TCG API CDN).
- * @see https://pokemontcg.io
+ * Home hero image slider — assets from cdn.caracardline.com.
  */
 export const homeBannerSlides = [
   {
-    id: "slide-charizard",
-    src: "https://images.pokemontcg.io/base1/4_hires.png",
-    alt: "噴火龍 Pokémon 卡牌主視覺",
+    id: "slide-banner-6",
+    src: "https://cdn.caracardline.com/assets/1776263425636-49754c0823dc4d2f-banner-6.webp",
+    alt: "首頁主視覺一",
     href: "/catalog",
   },
   {
-    id: "slide-blastoise",
-    src: "https://images.pokemontcg.io/base1/2_hires.png",
-    alt: "水箭龜 Pokémon 卡牌主視覺",
+    id: "slide-banner-5",
+    src: "https://cdn.caracardline.com/assets/1776263426485-7b88f59fc5f32b19-banner-5.webp",
+    alt: "首頁主視覺二",
     href: "/catalog",
   },
   {
-    id: "slide-venusaur",
-    src: "https://images.pokemontcg.io/base1/15_hires.png",
-    alt: "妙蛙花 Pokémon 卡牌主視覺",
-    href: "/about",
+    id: "slide-banner-4",
+    src: "https://cdn.caracardline.com/assets/1776263427398-eb9a061d08742ce8-banner-4.webp",
+    alt: "首頁主視覺三",
+    href: "https://www.instagram.com/p/DRUPiTOE91z",
   },
 ] as const;

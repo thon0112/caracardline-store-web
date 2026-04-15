@@ -11,6 +11,7 @@
     "deploy": "npm run build && wrangler deploy"
   },
   "dependencies": {
+    "embla-carousel-react": "^8.6.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "wouter": "^3.3.5"

@@ -1952,6 +1952,7 @@ code {
 /* —— Store home (hero + grouped rails) —— */
 .home {
   margin-top: -0.25rem;
+  --home-hero-h: 350px;
 }
 
 .home-hero-bleed {
@@ -1966,25 +1967,22 @@ code {
   position: relative;
   border-radius: 0;
   overflow: hidden;
-  height: clamp(180px, 38vw, 320px);
+  height: var(--home-hero-h);
+  box-sizing: border-box;
   border: 1px solid var(--border);
   background: var(--media-bg);
   user-select: none;
   -webkit-user-select: none;
   cursor: default;
+  display: flex;
+  flex-direction: column;
 }
 
-.home-hero::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    to top,
-    color-mix(in srgb, var(--bg) 58%, transparent) 0%,
-    transparent 52%
-  );
-  pointer-events: none;
-  z-index: 1;
+.home-hero-viewport {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  overflow: hidden;
 }
 
 @media (min-width: 720px) {
@@ -1995,16 +1993,22 @@ code {
 
 .home-hero-slides {
   display: flex;
+  align-items: stretch;
   width: 100%;
   height: 100%;
-  transition: transform 0.5s cubic-bezier(0.33, 1, 0.68, 1);
 }
 
 .home-hero-slide {
-  flex: 0 0 100%;
-  min-width: 0;
+  flex: 0 0 auto;
   height: 100%;
+  width: auto;
+  aspect-ratio: 16 / 9;
+  min-width: 0;
   position: relative;
+  overflow: hidden;
+  /* Margin (not flex `gap`) so spacing exists after the last slide; Embla
+     reads `margin-inline-end` for loop sizing and last→first matches other steps. */
+  margin-inline-end: 0.75rem;
 }
 
 .home-hero-slide-link {
@@ -2247,10 +2251,6 @@ code {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .home-hero-slides {
-    transition: none;
-  }
-
   .home-hero-slide-img {
     transition: none;
   }
@@ -2310,7 +2310,8 @@ code {
 }
 
 .home-skel-hero {
-  height: clamp(180px, 38vw, 320px);
+  height: var(--home-hero-h);
+  box-sizing: border-box;
   border-radius: 0;
   border: 1px solid var(--border);
 }
