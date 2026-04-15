@@ -2,7 +2,6 @@
  * Traditional Chinese (繁體中文) UI copy — single locale, no i18n framework.
  */
 export const zhHant = {
-  brand: "卡拉卡LINE",
   navSiteAria: "網站導覽",
   navCart: "購物車",
   /** Header / footer — look up an existing order by id */
@@ -26,38 +25,86 @@ export const zhHant = {
   footerPrivacy: "隱私權政策",
   footerAbout: "關於我們",
   footerDisclaimer: "免責聲明",
+  /** Floating WhatsApp — opens chat in a new tab */
+  floatWhatsAppAria: "WhatsApp：開啟對話（新視窗）",
+  floatWhatsAppTitle: "WhatsApp 聯絡",
 
   disclaimerTitle: "免責聲明",
-  disclaimerLede:
-    "使用本網站與購買商品前，請詳閱以下說明。若您繼續瀏覽或下單，即表示您已了解並同意相關內容。",
-  disclaimerGeneralTitle: "網站與資訊",
-  disclaimerGeneralP1:
-    "本網站所載之文字、圖片、價格、庫存與商品描述力求正確，但仍可能因系統更新、人為輸入或第三方資料而有誤差或延遲。我們得隨時修正內容，無須事先通知。",
-  disclaimerGeneralP2:
-    "網站可能包含連結至第三方服務或內容；該等網站由其營運者負責，非本網站所能控制，造訪與使用風險請自行評估。",
-  disclaimerProductsTitle: "商品與收藏品相關",
-  disclaimerProductsP1:
-    "收藏卡、鑑定品與二手／開封品之品相、色差與主觀感受因人而異；商品圖片與說明僅供參考，不構成任何投資、保值或增值保證。實際以您收到之商品為準。",
-  disclaimerLimitTitle: "責任限制",
-  disclaimerLimitP1:
-    "在法律允許之最大範圍內，對於因使用或無法使用本網站、或依賴網站資訊所生之任何直接、間接、附帶或衍生損害，本網站營運方不負賠償責任。若您對條款或商品有任何疑問，請透過頁尾聯絡方式與我們聯繫。",
-  disclaimerBackCatalog: "返回商品目錄",
+  disclaimerIntroPre: "感謝您選擇 ",
+  disclaimerIntroBrand: "Cara Cardline",
+  disclaimerIntroPost:
+    "。在使用本網店服務前，請先細閱以下條款。凡購買產品或使用相關服務，即代表您同意並接受以下聲明：",
+  disclaimerS1Title: "1. 產品狀況及真偽",
+  disclaimerS1Lead1: "鑑定卡與原盒：",
+  disclaimerS1Text1:
+    "本店出售之 PSA 鑑定卡及原裝盒均經過嚴格審核，確保為官方正品。由於鑑定卡殼為塑膠材質，在運輸或存放過程中可能產生細微劃痕或霧化，此類情況不屬於產品質量問題。",
+  disclaimerS1Lead2: "圖片參考：",
+  disclaimerS1Text2:
+    "網店圖片可能因光線、螢幕顯示等因素產生色差，一切以實物狀況為準。",
+  disclaimerS2Title: "2. PSA 代鑑服務",
+  disclaimerS2Lead1: "鑑定結果：",
+  disclaimerS2Text1a:
+    "PSA（Professional Sports Authenticator）為獨立第三方鑑定機構，其最終評分結果受其官方標準約束。本店僅提供代辦寄送服務，",
+  disclaimerS2Text1Strong: "無法保證、預測或干預最終鑑定分數",
+  disclaimerS2Text1b: "。",
+  disclaimerS2Lead2: "風險承擔：",
+  disclaimerS2Text2:
+    "在國際運輸途中，如因物流公司失誤、海關檢查或不可抗力因素導致的延誤、遺失或損壞，本店將協助客戶向相關機構申索，但不承擔賠償責任。",
+  disclaimerS3Title: "3. 卡牌維修服務",
+  disclaimerS3Lead1: "修復限制：",
+  disclaimerS3Text1a:
+    "卡牌維修旨在改善視覺觀感或進行基本護理。由於卡牌材質及受損程度不同，",
+  disclaimerS3Text1Strong: "維修後無法保證能達到特定鑑定分數",
+  disclaimerS3Text1b: "。",
+  disclaimerS3Lead2: "不可逆轉性：",
+  disclaimerS3Text2:
+    "客戶須明白維修過程具有不可逆轉性。本店在處理前會進行基本風險評估，但若因卡牌本身隱性結構問題導致修復結果不如預期，本店概不負責。",
+  disclaimerS4Title: "4. 回收及 Trade-in 服務",
+  disclaimerS4Lead1: "報價時效：",
+  disclaimerS4Text1:
+    "所有回收報價均具有時效性。由於卡牌市場價格波動較大，本店保留隨時調整報價或拒絕收購之權利。",
+  disclaimerS4Lead2: "最終決定權：",
+  disclaimerS4Text2:
+    "本店有權根據卡牌實物狀況（如卡殼損壞、真偽疑慮等）決定是否進行回收。",
+  disclaimerS5Title: "5. 物流與運輸",
+  disclaimerS5Text:
+    "產品寄出後，風險將轉移至買方或物流公司。建議客戶選擇有追蹤功能之物流服務。如有需要，建議客戶自行購買額外運輸保險。",
+  disclaimerDisputePre: "如有任何爭議，",
+  disclaimerDisputeBrand: "Cara Cardline",
+  disclaimerDisputePost: "保留最終解釋權與決定權。",
 
-  aboutTitle: "關於我們",
-  aboutLede:
-    "Caracardline 專注於收藏卡與相關商品的策展與販售，希望為同好提供清楚標示、可信來源的購物體驗。",
-  aboutWhoTitle: "我們是誰",
-  aboutWhoP1:
-    "團隊成員本身也是卡牌收藏者，熟悉鑑定、品相與市場常見流程。我們以小而精的選品為起點，逐步擴充目錄，並維持庫存與價格資訊的即時更新。",
-  aboutWhoP2:
-    "以下內容為範例文案，實際公司介紹、地址與客服管道請日後替換為正式版本。",
-  aboutMissionTitle: "我們在意的事",
-  aboutMissionP1:
-    "透明：商品狀態與可購數量盡量清楚呈現。穩妥：訂單與付款流程簡潔，減少來回確認。尊重：您的聯絡與訂單資料僅用於履行訂單與必要客服聯繫。",
-  aboutContactTitle: "聯絡方式",
-  aboutContactP1:
-    "若有批發、鑑定合作或其他商務洽詢，歡迎透過網站頁尾「聯絡我們」與我們聯繫（此為範例說明）。",
-  aboutBackCatalog: "返回商品目錄",
+  aboutTitle: "關於 Cara Cardline",
+  aboutLede: "歡迎嚟到 Cara Cardline。",
+  aboutIntroP2:
+    "我哋同大家一樣，都係對 Pokemon Card 有份執著嘅小粉絲。每一張卡由抽到嗰一刻、到決定寄去鑑定、再到放入防潮箱收藏，背後都係一份對PTCG嘅熱愛同回憶。",
+  aboutIntroP3:
+    "我哋成立呢間小店，係希望用自己累積落嚟嘅經驗，幫大家喺收藏之路上面行得更輕鬆。唔需要擔心繁瑣嘅程序，只需要享受拆盒同收藏嘅快樂。",
+  aboutServicesHeading: "我哋提供嘅服務：",
+  aboutSvc1Title: "【 鑑定卡與原盒販售 】",
+  aboutSvc1Body:
+    "我哋會周圍搜尋一啲質素好、有收藏價值嘅 PSA 卡同埋原盒。每一件上架嘅貨品我哋都會先幫大家把關，確保大家買返去嘅唔單止係一張卡，更係一份可以傳承落去嘅精品。",
+  aboutSvc2Title: "【 PSA 專業代鑑服務 】",
+  aboutSvc2Body:
+    "想幫自己嘅愛卡攞個身份證，但又覺得寄美國 PSA 好複雜、驚寄失？交畀我哋啦。我哋會溫柔處理每一張卡，由填表到寄送一條龍幫你搞掂，等你可以安坐家中等愛卡「載譽歸來」。",
+  aboutSvc3Title: "【 卡牌維修與護理 】",
+  aboutSvc3Body:
+    "有時愛卡唔小心有啲微瑕疵、或者存放耐咗出現問題，真係會好心痛。我哋提供細緻嘅維護服務，運用專業工具盡力幫卡牌還原「最靚狀態」，等佢哋可以重新煥發光彩。",
+  aboutSvc4Title: "【 高價回收與 Trade-in 】",
+  aboutSvc4Body:
+    "收藏嘅喜好隨時會變，或者想騰出空間迎接新寵？我哋好歡迎大家攞 PSA 卡返嚟交流或者 Trade-in。我哋會用最誠懇嘅態度去評估每張卡嘅價值，幫佢哋搵到下一個愛惜佢哋嘅主人。",
+  aboutSvc1Label: "商店",
+  aboutSvc1Chips: ["PSA 鑑定卡‧原盒", "上架前把關", "精選收藏級"],
+  aboutSvc2Label: "代鑑",
+  aboutSvc2Chips: ["PSA 代鑑代辦", "填表到寄送一條龍", "安心跟進流程"],
+  aboutSvc3Label: "修復",
+  aboutSvc3Chips: ["細緻維護護理", "改善微瑕疵", "還原最佳外觀"],
+  aboutSvc4Label: "交流",
+  aboutSvc4Chips: ["高價回收報價", "Trade-in 換藏", "誠懇評估每張卡"],
+  aboutClosing1: "喺 Cara Cardline，我哋想做嘅唔單止係買賣。",
+  aboutClosing2Prefix:
+    "如果你對卡牌有任何問題，或者單純想分享下最近抽到咩好嘢，隨時 DM 我哋 ",
+  aboutInstagramAt: "@cara.cardline",
+  aboutClosing2Suffix: " 傾下偈。",
 
   otherServicesTitle: "其他服務",
   otherServicesLede:

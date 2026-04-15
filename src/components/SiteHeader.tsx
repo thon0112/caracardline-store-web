@@ -205,16 +205,19 @@ export function SiteHeader() {
           <IconHamburger />
         </button>
         <div className="header-brand-wrap">
-          <Link href="/" className="brand brand-lockup">
+          <Link
+            href="/"
+            className="brand brand-lockup"
+            aria-label={zhHant.navHome}
+          >
             <img
               className="brand-logo"
-              src="/brand-logo.png"
+              src="https://cdn.caracardline.com/assets/1776240736599-ed09bd2205b4b09f-logo-with-text.webp"
               alt=""
-              width={48}
-              height={48}
+              width={1200}
+              height={360}
               decoding="async"
             />
-            <span>{zhHant.brand}</span>
           </Link>
         </div>
         <Link

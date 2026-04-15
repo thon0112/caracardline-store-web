@@ -1,6 +1,7 @@
 import { Route, Switch } from "wouter";
 import { SiteFooter } from "./components/SiteFooter.js";
 import { SiteHeader } from "./components/SiteHeader.js";
+import { WhatsAppFloat } from "./components/WhatsAppFloat.js";
 import { CartProvider } from "./cart-context.js";
 import { zhHant } from "./locale/zh-Hant.js";
 import { ToastProvider } from "./toast-context.js";
@@ -37,6 +38,7 @@ function AppShell() {
         </Switch>
       </main>
       <SiteFooter />
+      <WhatsAppFloat />
     </div>
   );
 }
