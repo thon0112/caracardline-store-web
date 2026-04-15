@@ -1,10 +1,29 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  useSyncExternalStore,
+} from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import { Link } from "wouter";
 import { homeBannerSlides } from "../home-banner-slides.js";
 import { zhHant } from "../locale/zh-Hant.js";
 
 const BANNER_INTERVAL_MS = 6500;
+const HERO_DESKTOP_MQ = "(min-width: 768px)";
+/** Extra copies on desktop so total slide width passes Embla’s `canLoop()` check on wide viewports */
+const DESKTOP_LOOP_COPIES = 3;
+
+function subscribeHeroDesktop(onChange: () => void) {
+  const mq = window.matchMedia(HERO_DESKTOP_MQ);
+  mq.addEventListener("change", onChange);
+  return () => mq.removeEventListener("change", onChange);
+}
+
+function getHeroDesktopSnapshot() {
+  return window.matchMedia(HERO_DESKTOP_MQ).matches;
+}
 
 function isExternalHref(href: string): boolean {
   return /^https?:\/\//i.test(href) || href.startsWith("//");
@@ -13,17 +32,31 @@ function isExternalHref(href: string): boolean {
 export function HomeBannerCarousel() {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [reducedMotion, setReducedMotion] = useState(false);
-  const bannerCount = homeBannerSlides.length;
+  const baseSlideCount = homeBannerSlides.length;
+  const heroDesktop = useSyncExternalStore(
+    subscribeHeroDesktop,
+    getHeroDesktopSnapshot,
+    () => false,
+  );
+
+  const emblaSlides = useMemo(() => {
+    if (!heroDesktop || baseSlideCount <= 1) return [...homeBannerSlides];
+    return Array.from({ length: DESKTOP_LOOP_COPIES }, () => [...homeBannerSlides]).flat();
+  }, [heroDesktop, baseSlideCount]);
+
+  const emblaSlideCount = emblaSlides.length;
 
   const emblaOptions = useMemo(
     () => ({
-      loop: bannerCount > 1,
-      align: "center" as const,
+      loop: emblaSlideCount > 1,
+      align: heroDesktop ? ("center" as const) : ("start" as const),
       /** Lets first/last snaps wrap when `loop` is enabled */
       containScroll: false as const,
       duration: reducedMotion ? 0 : 28,
+      startIndex:
+        heroDesktop && baseSlideCount > 1 ? baseSlideCount : 0,
     }),
-    [bannerCount, reducedMotion],
+    [emblaSlideCount, baseSlideCount, reducedMotion, heroDesktop],
   );
 
   const [emblaRef, emblaApi] = useEmblaCarousel(emblaOptions);
@@ -38,20 +71,21 @@ export function HomeBannerCarousel() {
 
   useEffect(() => {
     if (!emblaApi) return;
-    const onSelect = () => setSelectedIndex(emblaApi.selectedScrollSnap());
+    const onSelect = () =>
+      setSelectedIndex(emblaApi.selectedScrollSnap() % baseSlideCount);
     emblaApi.on("select", onSelect);
     onSelect();
     return () => {
       emblaApi.off("select", onSelect);
     };
-  }, [emblaApi]);
+  }, [emblaApi, baseSlideCount]);
 
   useEffect(() => {
     if (!emblaApi) return;
-    if (reducedMotion || bannerCount <= 1) return;
+    if (reducedMotion || baseSlideCount <= 1) return;
     const t = window.setInterval(() => emblaApi.scrollNext(), BANNER_INTERVAL_MS);
     return () => window.clearInterval(t);
-  }, [emblaApi, reducedMotion, bannerCount]);
+  }, [emblaApi, reducedMotion, baseSlideCount]);
 
   const goBanner = useCallback(
     (delta: number) => {
@@ -71,7 +105,10 @@ export function HomeBannerCarousel() {
       <div className="home-hero">
         <div className="home-hero-viewport" ref={emblaRef}>
           <div className="home-hero-slides">
-            {homeBannerSlides.map((b, i) => {
+            {emblaSlides.map((b, i) => {
+              const logical = i % baseSlideCount;
+              const isPrimaryMount =
+                i === (heroDesktop && baseSlideCount > 1 ? baseSlideCount : 0);
               const img = (
                 <img
                   className="home-hero-slide-img"
@@ -79,18 +116,18 @@ export function HomeBannerCarousel() {
                   alt={b.alt}
                   width={1600}
                   height={900}
-                  loading={i === 0 ? "eager" : "lazy"}
+                  loading={isPrimaryMount && logical === 0 ? "eager" : "lazy"}
                   decoding="async"
-                  fetchPriority={i === 0 ? "high" : "low"}
+                  fetchPriority={isPrimaryMount && logical === 0 ? "high" : "low"}
                   referrerPolicy="no-referrer-when-downgrade"
                   draggable={false}
                 />
               );
               return (
                 <div
-                  key={b.id}
+                  key={`${b.id}__${i}`}
                   className="home-hero-slide"
-                  aria-hidden={i !== selectedIndex}
+                  aria-hidden={logical !== selectedIndex}
                 >
                   {isExternalHref(b.href) ? (
                     <a
@@ -111,7 +148,7 @@ export function HomeBannerCarousel() {
             })}
           </div>
         </div>
-        {bannerCount > 1 ? (
+        {baseSlideCount > 1 ? (
           <>
             <button
               type="button"
@@ -134,7 +171,12 @@ export function HomeBannerCarousel() {
                   aria-selected={i === selectedIndex}
                   className={`home-hero-dot${i === selectedIndex ? " is-active" : ""}`}
                   aria-label={`${zhHant.homeBannerSlide} ${i + 1}：${b.alt}`}
-                  onClick={() => emblaApi?.scrollTo(i)}
+                  onClick={() => {
+                    if (!emblaApi) return;
+                    const raw = emblaApi.selectedScrollSnap();
+                    const block = Math.floor(raw / baseSlideCount) * baseSlideCount;
+                    emblaApi.scrollTo(block + i);
+                  }}
                 />
               ))}
             </div>

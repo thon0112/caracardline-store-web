@@ -1952,7 +1952,6 @@ code {
 /* —— Store home (hero + grouped rails) —— */
 .home {
   margin-top: -0.25rem;
-  --home-hero-h: 350px;
 }
 
 .home-hero-bleed {
@@ -1963,11 +1962,14 @@ code {
   box-sizing: border-box;
 }
 
+/* <768px: one slide per view, 16:9 from width (no fixed 350px height) */
 .home-hero {
   position: relative;
   border-radius: 0;
   overflow: hidden;
-  height: var(--home-hero-h);
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  height: auto;
   box-sizing: border-box;
   border: 1px solid var(--border);
   background: var(--media-bg);
@@ -1985,8 +1987,14 @@ code {
   overflow: hidden;
 }
 
-@media (min-width: 720px) {
+@media (min-width: 768px) {
+  .home {
+    --home-hero-h: 350px;
+  }
+
   .home-hero {
+    aspect-ratio: auto;
+    height: var(--home-hero-h);
     border-radius: 14px;
   }
 }
@@ -1999,16 +2007,24 @@ code {
 }
 
 .home-hero-slide {
-  flex: 0 0 auto;
-  height: 100%;
-  width: auto;
-  aspect-ratio: 16 / 9;
+  flex: 0 0 100%;
+  width: 100%;
   min-width: 0;
+  height: 100%;
   position: relative;
   overflow: hidden;
-  /* Margin (not flex `gap`) so spacing exists after the last slide; Embla
-     reads `margin-inline-end` for loop sizing and last→first matches other steps. */
-  margin-inline-end: 0.75rem;
+  margin-inline-end: 0;
+}
+
+@media (min-width: 768px) {
+  .home-hero-slide {
+    flex: 0 0 auto;
+    width: auto;
+    height: 100%;
+    aspect-ratio: 16 / 9;
+    /* Margin (not flex `gap`) so spacing exists after the last slide for Embla loop */
+    margin-inline-end: 0.75rem;
+  }
 }
 
 .home-hero-slide-link {
@@ -2310,14 +2326,18 @@ code {
 }
 
 .home-skel-hero {
-  height: var(--home-hero-h);
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  height: auto;
   box-sizing: border-box;
   border-radius: 0;
   border: 1px solid var(--border);
 }
 
-@media (min-width: 720px) {
+@media (min-width: 768px) {
   .home-skel-hero {
+    aspect-ratio: auto;
+    height: var(--home-hero-h);
     border-radius: 14px;
   }
 }
