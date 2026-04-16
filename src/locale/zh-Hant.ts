@@ -185,7 +185,7 @@ export const zhHant = {
 
   checkoutTitle: "結帳",
   checkoutLede:
-    "目前僅送香港。請填寫收件人、電話與香港境內收貨地址；電郵為選填。完成後將為您暫留庫存並顯示轉帳資訊。",
+    "目前僅送香港。可選擇順豐自提或填寫完整收件地址；請填寫收件人與電話，電郵為選填。完成後將為您暫留庫存並顯示轉帳資訊。",
   checkoutOrderPreview: "訂單預覽",
   checkoutEmail: "電郵（選填）",
   checkoutNameRequired: "請填寫收件人姓名。",
@@ -193,6 +193,23 @@ export const zhHant = {
   checkoutShipPhone: "電話（必填）",
   checkoutPhoneRequired: "請填寫電話。",
   checkoutAddressRequired: "請填寫地址。",
+  checkoutShipMethod: "收貨方式",
+  checkoutShipModeSf: "順豐自提",
+  checkoutShipModeManual: "填寫地址",
+  checkoutShipModeHint:
+    "順豐模式會將您選擇的自提點寫入訂單地址欄位，方便出貨對單；您亦可改為手動輸入完整收件地址。",
+  checkoutSfSearchLabel: "搜尋順豐自提點",
+  checkoutSfSearchPlaceholder: "輸入地區、自提碼或地址關鍵字…",
+  checkoutSfLoading: "載入自提點資料…",
+  checkoutSfLoadFailed: "無法載入順豐自提點資料，請改用「自行填寫地址」或稍後再試。",
+  checkoutSfEmptyQuery:
+    "請輸入至少兩個字元以搜尋順豐自提點（可試地區名、自提碼或地址片段）。",
+  checkoutSfNoResults: "沒有符合的結果，請改用其他關鍵字或順豐自提碼。",
+  checkoutSfSelectedLabel: "已選自提點",
+  checkoutSfClear: "清除",
+  checkoutSfOutletRequired: "請先搜尋並選擇順豐自提點。",
+  checkoutSfHoursWeekday: "平日：",
+  checkoutSfHoursSun: "星期日／公眾假期：",
   checkoutShipLine1: "地址（必填）",
   checkoutShipLine2: "地址第二行（選填）",
   checkoutShipCountry: "國家／地區（必填）",

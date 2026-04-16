@@ -1576,6 +1576,202 @@ code {
   margin-top: 1rem;
 }
 
+.checkout-ship-fieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+
+.checkout-ship-legend {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 0.45rem;
+  padding: 0;
+}
+
+.checkout-ship-mode {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.checkout-ship-mode-btn {
+  flex: 1 1 12rem;
+  margin: 0;
+  padding: 0.55rem 0.65rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--fg);
+  font-family: inherit;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.35;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+.checkout-ship-mode-btn:hover {
+  border-color: color-mix(in srgb, var(--accent) 38%, var(--border));
+  color: var(--accent);
+}
+
+.checkout-ship-mode-btn--on {
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
+  background: rgba(181, 111, 69, 0.1);
+  color: var(--accent);
+}
+
+.checkout-ship-mode-note {
+  margin: 0.55rem 0 0;
+  line-height: 1.5;
+}
+
+.sf-outlet-picker {
+  display: grid;
+  gap: 0.75rem;
+  max-width: 28rem;
+}
+
+.sf-outlet-load-err {
+  margin: 0;
+  line-height: 1.45;
+}
+
+/* Fixed-height slot so loading → hint → results does not jump the page layout. */
+.sf-outlet-slot {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.sf-outlet-slot-msg {
+  margin: 0;
+  line-height: 1.45;
+  max-width: 100%;
+}
+
+.sf-outlet-results {
+  flex: 1 1 auto;
+  min-height: 0;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--card);
+  overflow: auto;
+}
+
+.sf-outlet-result-list {
+  list-style: none;
+  margin: 0;
+  padding: 0.35rem;
+}
+
+.sf-outlet-row {
+  width: 100%;
+  display: grid;
+  gap: 0.15rem;
+  text-align: left;
+  padding: 0.55rem 0.55rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--fg);
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.sf-outlet-row:hover {
+  border-color: color-mix(in srgb, var(--accent) 32%, var(--border));
+  background: var(--media-bg);
+}
+
+.sf-outlet-row--active {
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
+  background: rgba(181, 111, 69, 0.08);
+}
+
+.sf-outlet-row-code {
+  font-weight: 700;
+  font-size: 0.98rem;
+}
+
+.sf-outlet-row-meta {
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+
+.sf-outlet-row-addr {
+  font-size: 0.8125rem;
+  line-height: 1.45;
+}
+
+.sf-outlet-selected {
+  padding: 0.85rem 1rem;
+  margin-top: 0.15rem;
+}
+
+.sf-outlet-selected-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.sf-outlet-selected-title {
+  margin: 0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.linkish-btn {
+  border: none;
+  background: transparent;
+  color: var(--accent);
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.1rem 0;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.linkish-btn:hover {
+  color: var(--accent-fill);
+}
+
+.sf-outlet-selected-code {
+  margin: 0.35rem 0 0;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.sf-outlet-selected-lines {
+  margin: 0.25rem 0 0;
+}
+
+.sf-outlet-selected-addr {
+  margin: 0.45rem 0 0;
+  line-height: 1.5;
+  font-size: 0.9375rem;
+}
+
+.sf-outlet-selected-hours {
+  margin: 0.5rem 0 0;
+  line-height: 1.45;
+}
+
+.checkout-page .sf-outlet-results,
+.checkout-page .sf-outlet-selected {
+  user-select: text;
+  -webkit-user-select: text;
+}
+
 /* —— Order page —— */
 .order-page {
   max-width: 48rem;

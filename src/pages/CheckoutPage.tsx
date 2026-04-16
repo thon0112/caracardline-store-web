@@ -8,12 +8,16 @@ import {
   zhHant,
 } from "../locale/zh-Hant.js";
 import { PageLoadingSkeleton } from "../components/PageLoadingSkeleton.js";
+import { SfOutletPicker } from "../components/SfOutletPicker.js";
 import { tryToastBadRequest } from "../notify-bad-request.js";
+import { sfOutletToShipAddress, type SfOutlet } from "../sf-outlet.js";
 import { useToast } from "../toast-context.js";
 
 /** Checkout only ships to Hong Kong; locality fields fixed until multi-region shipping. */
 const SHIP_COUNTRY_HK = "HK" as const;
 const SHIP_LOCALITY_HK = "香港";
+
+type ShipMode = "sf" | "manual";
 
 export function CheckoutPage() {
   const { showToast } = useToast();
@@ -27,6 +31,8 @@ export function CheckoutPage() {
   const [shipPhone, setShipPhone] = useState("");
   const [shipAddressLine1, setShipAddressLine1] = useState("");
   const [shipAddressLine2, setShipAddressLine2] = useState("");
+  const [shipMode, setShipMode] = useState<ShipMode>("sf");
+  const [sfOutlet, setSfOutlet] = useState<SfOutlet | null>(null);
 
   useEffect(() => {
     if (loading || error) return;
@@ -50,10 +56,24 @@ export function CheckoutPage() {
       return;
     }
     const trimmedEmail = email.trim();
-    const trimmedLine1 = shipAddressLine1.trim();
-    if (!trimmedLine1) {
-      setFormErr(zhHant.checkoutAddressRequired);
-      return;
+    let shipLine1: string;
+    let shipLine2: string | undefined;
+    if (shipMode === "sf") {
+      if (!sfOutlet) {
+        setFormErr(zhHant.checkoutSfOutletRequired);
+        return;
+      }
+      const mapped = sfOutletToShipAddress(sfOutlet);
+      shipLine1 = mapped.shipAddressLine1;
+      shipLine2 = mapped.shipAddressLine2;
+    } else {
+      const trimmedLine1 = shipAddressLine1.trim();
+      if (!trimmedLine1) {
+        setFormErr(zhHant.checkoutAddressRequired);
+        return;
+      }
+      shipLine1 = trimmedLine1;
+      shipLine2 = shipAddressLine2.trim() || undefined;
     }
     setSubmitting(true);
     try {
@@ -62,8 +82,8 @@ export function CheckoutPage() {
         ...(trimmedEmail ? { email: trimmedEmail } : {}),
         shipRecipientName: trimmedName,
         shipPhone: trimmedPhone,
-        shipAddressLine1: trimmedLine1,
-        shipAddressLine2: shipAddressLine2.trim() || undefined,
+        shipAddressLine1: shipLine1,
+        shipAddressLine2: shipLine2,
         shipCity: SHIP_LOCALITY_HK,
         shipRegion: SHIP_LOCALITY_HK,
         shipCountry: SHIP_COUNTRY_HK,
@@ -162,43 +182,83 @@ export function CheckoutPage() {
                 maxLength={320}
               />
             </div>
-            <div className="form-field">
-              <label htmlFor="co-country">{zhHant.checkoutShipCountry}</label>
-              <input
-                id="co-country"
-                name="shipCountry"
-                type="text"
-                readOnly
-                required
-                aria-readonly="true"
-                value={zhHant.checkoutShipCountryHongKongDisplay}
-              />
-            </div>
-            <div className="form-field">
-              <label htmlFor="co-line1">{zhHant.checkoutShipLine1}</label>
-              <input
-                id="co-line1"
-                name="shipAddressLine1"
-                type="text"
-                autoComplete="street-address"
-                value={shipAddressLine1}
-                onChange={(e) => setShipAddressLine1(e.target.value)}
-                required
-                maxLength={255}
-              />
-            </div>
-            <div className="form-field">
-              <label htmlFor="co-line2">{zhHant.checkoutShipLine2}</label>
-              <input
-                id="co-line2"
-                name="shipAddressLine2"
-                type="text"
-                autoComplete="address-line2"
-                value={shipAddressLine2}
-                onChange={(e) => setShipAddressLine2(e.target.value)}
-                maxLength={255}
-              />
-            </div>
+
+            <fieldset className="checkout-ship-fieldset">
+              <legend className="checkout-ship-legend">{zhHant.checkoutShipMethod}</legend>
+              <div className="checkout-ship-mode" role="group" aria-label={zhHant.checkoutShipMethod}>
+                <button
+                  type="button"
+                  className={`checkout-ship-mode-btn${shipMode === "sf" ? " checkout-ship-mode-btn--on" : ""}`}
+                  aria-pressed={shipMode === "sf"}
+                  onClick={() => {
+                    setShipMode("sf");
+                    setShipAddressLine1("");
+                    setShipAddressLine2("");
+                  }}
+                >
+                  {zhHant.checkoutShipModeSf}
+                </button>
+                <button
+                  type="button"
+                  className={`checkout-ship-mode-btn${shipMode === "manual" ? " checkout-ship-mode-btn--on" : ""}`}
+                  aria-pressed={shipMode === "manual"}
+                  onClick={() => {
+                    setShipMode("manual");
+                    setSfOutlet(null);
+                  }}
+                >
+                  {zhHant.checkoutShipModeManual}
+                </button>
+              </div>
+              <p className="muted small checkout-ship-mode-note">{zhHant.checkoutShipModeHint}</p>
+            </fieldset>
+
+            {shipMode === "manual" && (
+              <div className="form-field">
+                <label htmlFor="co-country">{zhHant.checkoutShipCountry}</label>
+                <input
+                  id="co-country"
+                  name="shipCountry"
+                  type="text"
+                  readOnly
+                  required
+                  aria-readonly="true"
+                  value={zhHant.checkoutShipCountryHongKongDisplay}
+                />
+              </div>
+            )}
+
+            {shipMode === "sf" ? (
+              <SfOutletPicker value={sfOutlet} onChange={setSfOutlet} />
+            ) : (
+              <>
+                <div className="form-field">
+                  <label htmlFor="co-line1">{zhHant.checkoutShipLine1}</label>
+                  <input
+                    id="co-line1"
+                    name="shipAddressLine1"
+                    type="text"
+                    autoComplete="street-address"
+                    value={shipAddressLine1}
+                    onChange={(e) => setShipAddressLine1(e.target.value)}
+                    required
+                    maxLength={255}
+                  />
+                </div>
+                <div className="form-field">
+                  <label htmlFor="co-line2">{zhHant.checkoutShipLine2}</label>
+                  <input
+                    id="co-line2"
+                    name="shipAddressLine2"
+                    type="text"
+                    autoComplete="address-line2"
+                    value={shipAddressLine2}
+                    onChange={(e) => setShipAddressLine2(e.target.value)}
+                    maxLength={255}
+                  />
+                </div>
+              </>
+            )}
 
             <p className="muted small">{zhHant.checkoutFpsNote}</p>
           </form>
