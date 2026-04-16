@@ -190,9 +190,17 @@ export function CatalogPage() {
         <>
           <ul className="grid">
             {visibleItems.map((item) => (
-              <li key={item.productId} className="card">
+              <li
+                key={item.productId}
+                className={`card${item.soldOut ? " card--sold-out" : ""}`}
+              >
                 <Link href={`/item/${item.productId}`} className="card-link">
                   <div className="card-media">
+                    {item.soldOut && (
+                      <span className="card-sold-out-badge" aria-hidden>
+                        {zhHant.soldOutBadge}
+                      </span>
+                    )}
                     {primaryImage(item) && (
                       <img
                         src={primaryImage(item) || ""}
@@ -218,7 +226,8 @@ export function CatalogPage() {
                 <button
                   type="button"
                   className="btn"
-                  disabled={adding === item.productId}
+                  disabled={adding === item.productId || item.soldOut}
+                  title={item.soldOut ? zhHant.soldOutAddDisabled : undefined}
                   onClick={() => addToCart(item)}
                 >
                   {adding === item.productId ? zhHant.adding : zhHant.addToCart}
