@@ -75,15 +75,20 @@ export function HomePage() {
     };
   }, [showToast]);
 
+  const availableItems = useMemo(
+    () => items.filter((item) => !item.soldOut),
+    [items],
+  );
+
   const grouped = useMemo(() => {
-    const m = groupItems(items);
+    const m = groupItems(availableItems);
     return [...m.entries()]
       .sort((a, b) => b[1].length - a[1].length)
       .map(([label, row]) => [
         label,
         row.slice(0, HOME_CATEGORY_SAMPLE_COUNT),
       ] as const);
-  }, [items]);
+  }, [availableItems]);
 
   async function ensureCart() {
     if (cartId) return cartId;
@@ -119,7 +124,7 @@ export function HomePage() {
     <div className="home">
       <HomeBannerCarousel />
 
-      {items.length === 0 ? (
+      {availableItems.length === 0 ? (
         <p className="muted">{zhHant.noProducts}</p>
       ) : (
         grouped.map(([label, row], gi) => (

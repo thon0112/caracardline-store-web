@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useId, useState } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { useCart } from "../cart-context.js";
 import {
@@ -157,9 +157,24 @@ export function SiteHeader() {
   const [loc] = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const drawerId = useId();
+  const catalogNavRef = useRef<HTMLDivElement>(null);
+  const [catalogSubmenuDismissed, setCatalogSubmenuDismissed] = useState(false);
 
   const closeMenu = useCallback(() => setMenuOpen(false), []);
   const toggleMenu = useCallback(() => setMenuOpen((o) => !o), []);
+
+  const clearCatalogSubmenuDismissed = useCallback(() => {
+    setCatalogSubmenuDismissed(false);
+  }, []);
+
+  const dismissCatalogSubmenu = useCallback(() => {
+    setCatalogSubmenuDismissed(true);
+    const root = catalogNavRef.current;
+    const ae = document.activeElement;
+    if (root && ae instanceof HTMLElement && root.contains(ae)) {
+      ae.blur();
+    }
+  }, []);
 
   useEffect(() => {
     closeMenu();
@@ -257,9 +272,40 @@ export function SiteHeader() {
           <Link href="/" className="header-link">
             {zhHant.navHome}
           </Link>
-          <Link href="/catalog" className="header-link">
-            {zhHant.navCatalog}
-          </Link>
+          <div
+            className={`header-nav-catalog${catalogSubmenuDismissed ? " is-panel-dismissed" : ""}`}
+            ref={catalogNavRef}
+            onMouseLeave={clearCatalogSubmenuDismissed}
+          >
+            <Link
+              href="/catalog"
+              className="header-link header-link--catalog"
+              aria-haspopup="true"
+              onMouseEnter={clearCatalogSubmenuDismissed}
+              onFocus={clearCatalogSubmenuDismissed}
+            >
+              {zhHant.navCatalog}
+            </Link>
+            <div
+              className="header-nav-catalog-panel"
+              role="group"
+              aria-label={zhHant.navCatalogSubAria}
+            >
+              <ul className="header-nav-catalog-sublinks">
+                {CATALOG_PRODUCT_TYPE_CODES.map((code) => (
+                  <li key={code}>
+                    <Link
+                      href={`/catalog?type=${encodeURIComponent(code)}`}
+                      className="header-nav-catalog-sublink"
+                      onClick={dismissCatalogSubmenu}
+                    >
+                      {displayProductType(code)}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
           <Link href="/services" className="header-link">
             {zhHant.navOtherServices}
           </Link>
