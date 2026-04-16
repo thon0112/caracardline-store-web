@@ -104,6 +104,9 @@ export function SfOutletPicker({ value, onChange }: Props) {
                             <span className="sf-outlet-row-meta">
                               {o.district} · {o.section} · {o.kind}
                             </span>
+                            {o.name ? (
+                              <span className="sf-outlet-row-name small">{o.name}</span>
+                            ) : null}
                             <span className="sf-outlet-row-addr muted small">{o.address}</span>
                           </button>
                         </li>
@@ -128,6 +131,7 @@ export function SfOutletPicker({ value, onChange }: Props) {
           <p className="muted small sf-outlet-selected-lines">
             {value.district} · {value.section} · {value.kind}
           </p>
+          {value.name ? <p className="sf-outlet-selected-name">{value.name}</p> : null}
           <p className="sf-outlet-selected-addr">{value.address}</p>
           <p className="muted small sf-outlet-selected-hours">
             {zhHant.checkoutSfHoursWeekday}

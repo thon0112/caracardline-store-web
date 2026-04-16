@@ -119,7 +119,14 @@ export function ProductPage() {
         ← {zhHant.productBackCatalog}
       </Link>
       <div className="detail-grid">
-        <div className="detail-media">
+        <div
+          className={`detail-media${data.soldOut ? " detail-media--sold-out" : ""}`}
+        >
+          {data.soldOut && (
+            <span className="detail-sold-out-badge" aria-hidden>
+              {zhHant.soldOutBadge}
+            </span>
+          )}
           {img ? <img src={img} alt="" /> : <div className="ph" />}
         </div>
         <div>
@@ -136,13 +143,17 @@ export function ProductPage() {
             </p>
           )}
           <p className="price big">{formatPriceUsd(data.listPrice)}</p>
+          {data.soldOut && (
+            <p className="detail-sold-out-copy muted">{zhHant.productSoldOut}</p>
+          )}
           <button
             type="button"
             className="btn"
-            disabled={adding}
+            disabled={adding || data.soldOut}
+            title={data.soldOut ? zhHant.soldOutAddDisabled : undefined}
             onClick={addToCart}
           >
-            {adding ? zhHant.adding : zhHant.addToCart}
+            {adding ? zhHant.adding : data.soldOut ? zhHant.soldOutBadge : zhHant.addToCart}
           </button>
         </div>
       </div>

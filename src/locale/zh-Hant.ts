@@ -140,6 +140,8 @@ export const zhHant = {
   loadingPage: "載入中…",
   loadMore: "載入更多",
   addToCart: "加入購物車",
+  soldOutBadge: "售罄",
+  soldOutAddDisabled: "此商品已售罄。",
   /** Shown briefly after a product is added from listing or detail. */
   addToCartSuccess: "已成功加入購物車。",
   adding: "加入中…",
@@ -154,6 +156,7 @@ export const zhHant = {
   productBack: "返回",
   productBackCatalog: "返回商品目錄",
   productPsaId: "PSA 編號",
+  productSoldOut: "此商品已售罄，僅供瀏覽。",
   errAddFailed: "加入失敗",
 
   cartTitle: "購物車",
@@ -169,6 +172,12 @@ export const zhHant = {
   cartRemove: "移除",
   cartSubtotal: "小計",
   cartGoCheckout: "前往結帳",
+  /** Banner when any cart line is no longer purchasable */
+  cartSoldOutNotice: "購物車內有已售罄商品，請先移除此類項目再結帳。",
+  /** Shown under a line that is still in the cart but marked sold out in catalog */
+  cartSoldOutLineNote: "此商品已售罄，請移除後再結帳。",
+  /** Checkout guard when cart still contains sold-out lines */
+  checkoutSoldOutBlocked: "含有已售罄商品，無法建立訂單。請返回購物車移除。",
   errUpdateFailed: "更新失敗",
   errRemoveFailed: "移除失敗",
   errCartLoadFailed: "無法載入購物車",

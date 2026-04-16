@@ -44,6 +44,10 @@ export function CheckoutPage() {
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
     if (!cartId || lines.length === 0) return;
+    if (lines.some((l) => l.catalog.soldOut)) {
+      setFormErr(zhHant.checkoutSoldOutBlocked);
+      return;
+    }
     setFormErr(null);
     const trimmedName = shipRecipientName.trim();
     if (!trimmedName) {
@@ -128,6 +132,8 @@ export function CheckoutPage() {
     return <PageLoadingSkeleton variant="checkout" />;
   }
 
+  const hasSoldOut = lines.some((l) => l.catalog.soldOut);
+
   return (
     <div className="checkout-page">
       <h1 className="title">{zhHant.checkoutTitle}</h1>
@@ -135,6 +141,14 @@ export function CheckoutPage() {
 
       <div className="checkout-layout">
         <div className="checkout-layout-main">
+          {hasSoldOut && (
+            <p className="error checkout-sold-out-blocked" role="alert">
+              {zhHant.checkoutSoldOutBlocked}{" "}
+              <Link href="/cart" className="checkout-sold-out-blocked-link">
+                {zhHant.navCart}
+              </Link>
+            </p>
+          )}
           {formErr && <p className="error">{formErr}</p>}
 
           <form
@@ -291,7 +305,8 @@ export function CheckoutPage() {
               type="submit"
               form="checkout-form"
               className="btn checkout-submit checkout-submit-in-preview"
-              disabled={submitting}
+              disabled={submitting || hasSoldOut}
+              title={hasSoldOut ? zhHant.checkoutSoldOutBlocked : undefined}
             >
               {submitting ? zhHant.checkoutSubmitting : zhHant.checkoutSubmit}
             </button>

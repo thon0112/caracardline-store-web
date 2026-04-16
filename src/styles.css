@@ -1008,6 +1008,7 @@ a.footer-link:hover {
 }
 
 .card-media {
+  position: relative;
   aspect-ratio: 3/4;
   background: var(--media-bg);
 }
@@ -1017,6 +1018,25 @@ a.footer-link:hover {
   height: 100%;
   object-fit: cover;
   display: block;
+}
+
+.card--sold-out .card-media img {
+  opacity: 0.72;
+  filter: grayscale(0.25);
+}
+
+.card-sold-out-badge {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  z-index: 1;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.2rem 0.45rem;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--err) 88%, transparent);
+  color: var(--card);
+  line-height: 1.2;
 }
 
 .card-body {
@@ -1096,10 +1116,39 @@ a.btn {
   }
 }
 
+.detail-media {
+  position: relative;
+}
+
 .detail-media img {
   width: 100%;
   border-radius: 12px;
   border: 1px solid var(--border);
+  display: block;
+}
+
+.detail-media--sold-out img,
+.detail-media--sold-out .ph {
+  opacity: 0.72;
+  filter: grayscale(0.25);
+}
+
+.detail-sold-out-badge {
+  position: absolute;
+  top: 0.65rem;
+  right: 0.65rem;
+  z-index: 1;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  padding: 0.25rem 0.5rem;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--err) 88%, transparent);
+  color: var(--card);
+  line-height: 1.2;
+}
+
+.detail-sold-out-copy {
+  margin: 0.5rem 0 0;
 }
 
 .ph {
@@ -1226,6 +1275,45 @@ code {
   height: 100%;
   object-fit: cover;
   display: block;
+}
+
+.cart-line--sold-out .cart-line-thumb img {
+  opacity: 0.72;
+  filter: grayscale(0.25);
+}
+
+.cart-line-sold-out-note {
+  margin: 0.35rem 0 0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--err);
+}
+
+.cart-sold-out-banner {
+  margin: 0.75rem 0 0;
+  padding: 0.65rem 0.85rem;
+  border-radius: 8px;
+  border: 1px solid color-mix(in srgb, var(--err) 35%, var(--border));
+  background: color-mix(in srgb, var(--err) 10%, var(--card));
+  color: var(--fg);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.cart-actions-checkout--blocked {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+  text-align: center;
+}
+
+.checkout-sold-out-blocked {
+  margin: 0 0 0.75rem;
+}
+
+.checkout-sold-out-blocked-link {
+  color: inherit;
+  font-weight: 600;
 }
 
 .cart-line-thumb-ph {
@@ -2417,9 +2505,29 @@ code {
 }
 
 .home-rail-media {
+  position: relative;
   aspect-ratio: 1 / 1;
   background: var(--media-bg);
   flex-shrink: 0;
+}
+
+.home-rail-card--sold-out .home-rail-media img {
+  opacity: 0.72;
+  filter: grayscale(0.25);
+}
+
+.home-rail-sold-out-badge {
+  position: absolute;
+  top: 0.35rem;
+  right: 0.35rem;
+  z-index: 1;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  padding: 0.15rem 0.35rem;
+  border-radius: 5px;
+  background: color-mix(in srgb, var(--err) 88%, transparent);
+  color: var(--card);
+  line-height: 1.2;
 }
 
 .home-rail-media img {

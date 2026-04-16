@@ -39,6 +39,8 @@ export type CatalogListItem = {
   title: string;
   description: string | null;
   listPrice: number;
+  /** Mirrors store-worker: not purchasable (listed after in-stock items). */
+  soldOut: boolean;
   hideQuantity: boolean;
   /** Omitted when `hideQuantity` is true. */
   availableQuantity?: number;

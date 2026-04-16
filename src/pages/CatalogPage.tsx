@@ -230,7 +230,11 @@ export function CatalogPage() {
                   title={item.soldOut ? zhHant.soldOutAddDisabled : undefined}
                   onClick={() => addToCart(item)}
                 >
-                  {adding === item.productId ? zhHant.adding : zhHant.addToCart}
+                  {adding === item.productId
+                    ? zhHant.adding
+                    : item.soldOut
+                      ? zhHant.soldOutBadge
+                      : zhHant.addToCart}
                 </button>
               </li>
             ))}

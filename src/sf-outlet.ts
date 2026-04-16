@@ -3,6 +3,7 @@ export type SfOutlet = {
   section: string;
   district: string;
   code: string;
+  name?: string;
   address: string;
   hoursWeekday: string;
   hoursSunHoliday: string;
@@ -23,6 +24,7 @@ export function sfOutletToShipAddress(outlet: SfOutlet): {
 } {
   const shipAddressLine1 = truncate255(`順豐自提碼：${outlet.code}`);
   const detail = [
+    ...(outlet.name ? [outlet.name] : []),
     outlet.address,
     `類型：${outlet.kind}；${outlet.section}；${outlet.district}`,
     `平日：${outlet.hoursWeekday}；假日：${outlet.hoursSunHoliday}`,
@@ -32,5 +34,7 @@ export function sfOutletToShipAddress(outlet: SfOutlet): {
 }
 
 export function outletSearchHaystack(o: SfOutlet): string {
-  return [o.code, o.kind, o.section, o.district, o.address].join("\n");
+  return [o.code, o.kind, o.section, o.district, o.name, o.address]
+    .filter((s): s is string => Boolean(s && s.trim()))
+    .join("\n");
 }

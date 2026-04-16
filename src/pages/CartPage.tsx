@@ -27,7 +27,8 @@ function displayTitle(item: CartCatalogItem): string {
   return item.title || item.card?.name || zhHant.productFallback;
 }
 
-function maxLineQty(catalog: CartCatalogItem): number {
+function maxLineQty(catalog: CartCatalogItem, lineQuantity: number): number {
+  if (catalog.soldOut) return Math.max(1, lineQuantity);
   const stockCap = catalog.hideQuantity
     ? 99
     : Math.min(99, catalog.availableQuantity ?? 99);
@@ -42,7 +43,7 @@ export function CartPage() {
 
   async function setQuantity(line: CartLine, next: number) {
     if (!cartId) return;
-    const max = maxLineQty(line.catalog);
+    const max = maxLineQty(line.catalog, line.quantity);
     const q = Math.min(max, Math.max(1, next));
     if (q === line.quantity) return;
     setActionErr(null);
@@ -108,6 +109,8 @@ export function CartPage() {
     );
   }
 
+  const hasSoldOut = lines.some((l) => l.catalog.soldOut);
+
   return (
     <div className="cart-page">
       <h1 className="title">{zhHant.cartTitle}</h1>
@@ -116,15 +119,24 @@ export function CartPage() {
           ? zhHant.cartItemOne
           : zhHant.cartItemsMany(lines.length)}
       </p>
+      {hasSoldOut && (
+        <p className="cart-sold-out-banner" role="status">
+          {zhHant.cartSoldOutNotice}
+        </p>
+      )}
       {actionErr && <p className="error">{actionErr}</p>}
       <ul className="cart-lines">
         {lines.map((line) => {
           const img = primaryImage(line.catalog);
-          const max = maxLineQty(line.catalog);
+          const max = maxLineQty(line.catalog, line.quantity);
           const busy = busyLineId === line.lineId;
           const lineTotal = line.quantity * line.catalog.listPrice;
+          const soldOut = line.catalog.soldOut;
           return (
-            <li key={line.lineId} className="cart-line">
+            <li
+              key={line.lineId}
+              className={`cart-line${soldOut ? " cart-line--sold-out" : ""}`}
+            >
               <Link
                 href={`/item/${line.catalog.productId}`}
                 className="cart-line-thumb"
@@ -145,11 +157,14 @@ export function CartPage() {
                 <p className="muted small cart-line-meta">
                   {formatPriceUsd(line.catalog.listPrice)} {zhHant.cartEach}
                 </p>
+                {soldOut && (
+                  <p className="cart-line-sold-out-note">{zhHant.cartSoldOutLineNote}</p>
+                )}
                 <div className="cart-line-qty">
                   <button
                     type="button"
                     className="qty-btn"
-                    disabled={busy || line.quantity <= 1}
+                    disabled={busy || soldOut || line.quantity <= 1}
                     aria-label={zhHant.cartDecreaseAria}
                     onClick={() => void setQuantity(line, line.quantity - 1)}
                   >
@@ -159,7 +174,7 @@ export function CartPage() {
                   <button
                     type="button"
                     className="qty-btn"
-                    disabled={busy || line.quantity >= max}
+                    disabled={busy || soldOut || line.quantity >= max}
                     aria-label={zhHant.cartIncreaseAria}
                     onClick={() => void setQuantity(line, line.quantity + 1)}
                   >
@@ -188,9 +203,21 @@ export function CartPage() {
         <Link href="/" className="btn secondary cart-actions-shop">
           ← {zhHant.continueShopping}
         </Link>
-        <Link href="/checkout" className="btn cart-actions-checkout">
-          {zhHant.cartGoCheckout}
-        </Link>
+        {hasSoldOut ? (
+          <span
+            className="btn cart-actions-checkout cart-actions-checkout--blocked"
+            role="button"
+            aria-disabled="true"
+            aria-label={zhHant.cartSoldOutNotice}
+            title={zhHant.cartSoldOutNotice}
+          >
+            {zhHant.cartGoCheckout}
+          </span>
+        ) : (
+          <Link href="/checkout" className="btn cart-actions-checkout">
+            {zhHant.cartGoCheckout}
+          </Link>
+        )}
       </div>
     </div>
   );

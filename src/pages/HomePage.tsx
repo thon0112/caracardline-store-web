@@ -143,9 +143,17 @@ export function HomePage() {
             >
               <ul className="home-rail-track">
                 {row.map((item) => (
-                  <li key={item.productId} className="home-rail-card">
+                  <li
+                    key={item.productId}
+                    className={`home-rail-card${item.soldOut ? " home-rail-card--sold-out" : ""}`}
+                  >
                     <Link href={`/item/${item.productId}`} className="home-rail-link">
                       <div className="home-rail-media">
+                        {item.soldOut && (
+                          <span className="home-rail-sold-out-badge" aria-hidden>
+                            {zhHant.soldOutBadge}
+                          </span>
+                        )}
                         {primaryImage(item) ? (
                           <img
                             src={primaryImage(item) || ""}
@@ -162,10 +170,15 @@ export function HomePage() {
                     <button
                       type="button"
                       className="btn home-rail-btn"
-                      disabled={adding === item.productId}
+                      disabled={adding === item.productId || item.soldOut}
+                      title={item.soldOut ? zhHant.soldOutAddDisabled : undefined}
                       onClick={() => addToCart(item)}
                     >
-                      {adding === item.productId ? zhHant.adding : zhHant.addToCart}
+                      {adding === item.productId
+                        ? zhHant.adding
+                        : item.soldOut
+                          ? zhHant.soldOutBadge
+                          : zhHant.addToCart}
                     </button>
                   </li>
                 ))}
