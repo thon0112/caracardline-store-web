@@ -53,12 +53,20 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     <ToastContext.Provider value={value}>
       {children}
       {toast ? (
-        <div className="toast-host" aria-live="polite">
-          <div role="alert" className="toast">
-            <p className="toast-message">{toast.message}</p>
+        <div
+          className="pointer-events-none fixed left-1/2 top-[max(1rem,calc(env(safe-area-inset-top,0px)+0.65rem))] z-[9999] max-w-[min(36rem,calc(100vw-1.5rem))] -translate-x-1/2"
+          aria-live="polite"
+        >
+          <div
+            role="alert"
+            className="pointer-events-auto flex animate-[toast-in_0.22s_ease-out] items-start gap-3 rounded-xl border-none bg-[var(--accent-fill)] p-4 pr-[1.15rem] shadow-[0_10px_32px_rgba(28,24,21,0.2)] motion-reduce:animate-none"
+          >
+            <p className="m-0 flex-1 text-[1.0625rem] font-semibold leading-snug tracking-[0.01em] text-[var(--on-accent-fill)]">
+              {toast.message}
+            </p>
             <button
               type="button"
-              className="toast-dismiss"
+              className="-my-[0.15rem] -mr-1 ml-0 h-8 w-8 shrink-0 cursor-pointer rounded-lg border-none bg-transparent p-0 font-inherit text-[1.45rem] leading-none text-[color-mix(in_srgb,var(--on-accent-fill)_72%,transparent)] hover:bg-[rgba(255,253,251,0.18)] hover:text-[var(--on-accent-fill)]"
               onClick={dismiss}
               aria-label={toastDismissAria}
             >

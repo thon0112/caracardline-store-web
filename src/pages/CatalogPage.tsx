@@ -139,18 +139,24 @@ export function CatalogPage() {
   }
 
   return (
-    <div className="catalog-page">
-      <h1 className="title">
+    <div className="box-border w-full min-w-0 max-w-[68rem]">
+      <h1 className="m-0 mb-4 text-[1.75rem] font-bold">
         {typeFilter
           ? `${zhHant.catalogTitle} · ${displayProductType(typeFilter)}`
           : zhHant.catalogTitle}
       </h1>
 
-      <div className="catalog-toolbar">
-        <div className="catalog-toolbar-fields">
-          <div className="form-field">
-            <label htmlFor="catalog-filter-type">{zhHant.catalogFilterType}</label>
+      <div className="mb-5 rounded-xl border border-[var(--border)] bg-[var(--card)] px-[1.15rem] py-4">
+        <div className="grid max-w-[38rem] grid-cols-1 gap-x-5 gap-y-3 min-[521px]:grid-cols-2">
+          <div className="min-w-0">
+            <label
+              className="mb-[0.35rem] block text-sm font-semibold"
+              htmlFor="catalog-filter-type"
+            >
+              {zhHant.catalogFilterType}
+            </label>
             <select
+              className="w-full rounded-lg border border-[var(--border)] bg-[var(--card)] px-[0.65rem] py-2"
               id="catalog-filter-type"
               value={typeFilter}
               onChange={(e) => setTypeQuery(e.target.value)}
@@ -163,9 +169,12 @@ export function CatalogPage() {
               ))}
             </select>
           </div>
-          <div className="form-field">
-            <label htmlFor="catalog-sort">{zhHant.catalogSort}</label>
+          <div className="min-w-0">
+            <label className="mb-[0.35rem] block text-sm font-semibold" htmlFor="catalog-sort">
+              {zhHant.catalogSort}
+            </label>
             <select
+              className="w-full rounded-lg border border-[var(--border)] bg-[var(--card)] px-[0.65rem] py-2"
               id="catalog-sort"
               value={sortFilter}
               onChange={(e) =>
@@ -181,37 +190,50 @@ export function CatalogPage() {
         </div>
       </div>
 
-      {err && <p className="error">{err}</p>}
+      {err && <p className="text-[var(--err)]">{err}</p>}
       {loading && !err && (
-        <PageLoadingSkeleton variant="catalog" className="catalog-loading" />
+        <PageLoadingSkeleton variant="catalog" className="my-[0.35rem] mb-[1.1rem] mt-[0.35rem]" />
       )}
 
       {!loading && !err && (
         <>
-          <ul className="grid">
+          <ul className="m-0 grid list-none grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-5 select-none p-0 [&_a]:select-text">
             {visibleItems.map((item) => (
               <li
                 key={item.productId}
-                className={`card${item.soldOut ? " card--sold-out" : ""}`}
+                className="flex flex-col overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--card)]"
               >
-                <Link href={`/item/${item.productId}`} className="card-link">
-                  <div className="card-media">
+                <Link
+                  href={`/item/${item.productId}`}
+                  className="flex-1 text-inherit no-underline"
+                >
+                  <div className="relative aspect-[3/4] bg-[var(--media-bg)]">
                     {item.soldOut && (
-                      <span className="card-sold-out-badge" aria-hidden>
+                      <span
+                        className="absolute right-2 top-2 z-[1] rounded-md bg-[color-mix(in_srgb,var(--err)_88%,transparent)] px-[0.45rem] py-0.5 text-xs font-bold leading-snug text-[var(--card)]"
+                        aria-hidden
+                      >
                         {zhHant.soldOutBadge}
                       </span>
                     )}
                     {primaryImage(item) && (
                       <img
+                        className={
+                          item.soldOut
+                            ? "block h-full w-full object-cover opacity-72 grayscale-[25%]"
+                            : "block h-full w-full object-cover"
+                        }
                         src={primaryImage(item) || ""}
                         alt=""
                         loading="lazy"
                       />
                     )}
                   </div>
-                  <div className="card-body">
-                    <h2 className="card-title">{displayTitle(item)}</h2>
-                    <p className="muted small">
+                  <div className="px-4 pb-2 pt-[0.85rem]">
+                    <h2 className="m-0 mb-[0.35rem] text-base font-semibold leading-snug">
+                      {displayTitle(item)}
+                    </h2>
+                    <p className="text-sm text-[var(--muted)]">
                       {[
                         item.card?.collection,
                         item.card?.rare,
@@ -220,12 +242,14 @@ export function CatalogPage() {
                         .filter(Boolean)
                         .join(" · ")}
                     </p>
-                    <p className="price">{formatPriceUsd(item.listPrice)}</p>
+                    <p className="m-[0.35rem_0_0] font-bold text-[var(--accent)]">
+                      {formatPriceUsd(item.listPrice)}
+                    </p>
                   </div>
                 </Link>
                 <button
                   type="button"
-                  className="btn"
+                  className="mx-4 mb-4 mt-3 cursor-pointer rounded-lg border border-[var(--accent)] bg-transparent px-[0.85rem] py-2 font-semibold text-[var(--accent)] hover:bg-[color-mix(in_srgb,var(--accent)_16%,transparent)] disabled:cursor-not-allowed disabled:opacity-50"
                   disabled={adding === item.productId || item.soldOut}
                   title={item.soldOut ? zhHant.soldOutAddDisabled : undefined}
                   onClick={() => addToCart(item)}
@@ -240,10 +264,14 @@ export function CatalogPage() {
             ))}
           </ul>
           {visibleItems.length === 0 && (
-            <p className="muted">{zhHant.noProducts}</p>
+            <p className="text-[var(--muted)]">{zhHant.noProducts}</p>
           )}
           {nextCursor && (
-            <button type="button" className="btn secondary" onClick={loadMore}>
+            <button
+              type="button"
+              className="mx-0 mb-0 mt-6 cursor-pointer rounded-lg border border-[var(--border)] bg-transparent px-[0.85rem] py-2 font-semibold text-[var(--fg)] hover:bg-[color-mix(in_srgb,var(--accent)_16%,transparent)] disabled:cursor-not-allowed disabled:opacity-50"
+              onClick={loadMore}
+            >
               {zhHant.loadMore}
             </button>
           )}

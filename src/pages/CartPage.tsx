@@ -7,10 +7,8 @@ import {
   type CartLine,
 } from "../api.js";
 import { useCart } from "../cart-context.js";
-import {
-  formatPriceUsd,
-  zhHant,
-} from "../locale/zh-Hant.js";
+import { cn } from "../cn.js";
+import { formatPriceUsd, zhHant } from "../locale/zh-Hant.js";
 import { PageLoadingSkeleton } from "../components/PageLoadingSkeleton.js";
 import { tryToastBadRequest } from "../notify-bad-request.js";
 import { useToast } from "../toast-context.js";
@@ -34,6 +32,9 @@ function maxLineQty(catalog: CartCatalogItem, lineQuantity: number): number {
     : Math.min(99, catalog.availableQuantity ?? 99);
   return Math.max(1, stockCap);
 }
+
+const cartPageRoot =
+  "cursor-default select-none caret-transparent [-webkit-user-select:none]";
 
 export function CartPage() {
   const { showToast } = useToast();
@@ -78,14 +79,23 @@ export function CartPage() {
 
   if (error) {
     return (
-      <div className="cart-page">
-        <h1 className="title">{zhHant.cartTitle}</h1>
-        <p className="error">{error}</p>
-        <button type="button" className="btn secondary" onClick={() => void refreshCart()}>
+      <div className={cartPageRoot}>
+        <h1 className="m-0 mb-2 select-text text-[1.75rem] font-bold [-webkit-user-select:text]">
+          {zhHant.cartTitle}
+        </h1>
+        <p className="select-text text-[var(--err)] [-webkit-user-select:text]">{error}</p>
+        <button
+          type="button"
+          className="mx-0 mb-0 mt-6 inline-block cursor-pointer rounded-lg border border-[var(--border)] bg-transparent px-[0.85rem] py-2 font-semibold text-[var(--fg)] hover:bg-[color-mix(in_srgb,var(--accent)_16%,transparent)] disabled:cursor-not-allowed disabled:opacity-50"
+          onClick={() => void refreshCart()}
+        >
           {zhHant.cartRetry}
         </button>
-        <p className="muted small cart-page-footnote">
-          <Link href="/" className="cart-page-text-link">
+        <p className="mt-4 select-text text-sm text-[var(--muted)] [-webkit-user-select:text]">
+          <Link
+            href="/"
+            className="cursor-pointer text-inherit no-underline hover:text-[var(--accent)] hover:underline"
+          >
             ← {zhHant.continueShopping}
           </Link>
         </p>
@@ -99,10 +109,17 @@ export function CartPage() {
 
   if (!cartId || lines.length === 0) {
     return (
-      <div className="cart-page">
-        <h1 className="title">{zhHant.cartTitle}</h1>
-        <p className="lede muted">{zhHant.cartEmpty}</p>
-        <Link href="/catalog" className="btn secondary" style={{ display: "inline-block" }}>
+      <div className={cartPageRoot}>
+        <h1 className="m-0 mb-2 select-text text-[1.75rem] font-bold [-webkit-user-select:text]">
+          {zhHant.cartTitle}
+        </h1>
+        <p className="m-0 mb-6 max-w-[42rem] select-text text-[var(--muted)] [-webkit-user-select:text]">
+          {zhHant.cartEmpty}
+        </p>
+        <Link
+          href="/catalog"
+          className="mx-0 mb-0 mt-6 inline-block cursor-pointer rounded-lg border border-[var(--border)] bg-transparent px-[0.85rem] py-2 font-semibold text-[var(--fg)] no-underline hover:bg-[color-mix(in_srgb,var(--accent)_16%,transparent)]"
+        >
           {zhHant.browseCatalog}
         </Link>
       </div>
@@ -112,20 +129,27 @@ export function CartPage() {
   const hasSoldOut = lines.some((l) => l.catalog.soldOut);
 
   return (
-    <div className="cart-page">
-      <h1 className="title">{zhHant.cartTitle}</h1>
-      <p className="lede muted">
+    <div className={cartPageRoot}>
+      <h1 className="m-0 mb-2 select-text text-[1.75rem] font-bold [-webkit-user-select:text]">
+        {zhHant.cartTitle}
+      </h1>
+      <p className="m-0 mb-6 max-w-[42rem] select-text text-[var(--muted)] [-webkit-user-select:text]">
         {lines.length === 1
           ? zhHant.cartItemOne
           : zhHant.cartItemsMany(lines.length)}
       </p>
       {hasSoldOut && (
-        <p className="cart-sold-out-banner" role="status">
+        <p
+          className="my-3 rounded-lg border border-[color-mix(in_srgb,var(--err)_35%,var(--border))] bg-[color-mix(in_srgb,var(--err)_10%,var(--card))] px-[0.85rem] py-[0.65rem] text-[0.9rem] leading-snug text-[var(--fg)]"
+          role="status"
+        >
           {zhHant.cartSoldOutNotice}
         </p>
       )}
-      {actionErr && <p className="error">{actionErr}</p>}
-      <ul className="cart-lines">
+      {actionErr && (
+        <p className="select-text text-[var(--err)] [-webkit-user-select:text]">{actionErr}</p>
+      )}
+      <ul className="m-0 mt-4 list-none p-0">
         {lines.map((line) => {
           const img = primaryImage(line.catalog);
           const max = maxLineQty(line.catalog, line.quantity);
@@ -135,45 +159,52 @@ export function CartPage() {
           return (
             <li
               key={line.lineId}
-              className={`cart-line${soldOut ? " cart-line--sold-out" : ""}`}
+              className={cn(
+                "flex flex-wrap items-start gap-4 border-b border-[var(--border)] py-4",
+                soldOut && "[&_img]:opacity-72 [&_img]:grayscale-[25%]",
+              )}
             >
               <Link
                 href={`/item/${line.catalog.productId}`}
-                className="cart-line-thumb"
+                className="block h-24 w-[4.5rem] shrink-0 overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--media-bg)]"
               >
                 {img ? (
-                  <img src={img} alt="" />
+                  <img className="block h-full w-full object-cover" src={img} alt="" />
                 ) : (
-                  <span className="cart-line-thumb-ph" />
+                  <span className="block h-full w-full bg-[var(--card)]" />
                 )}
               </Link>
-              <div className="cart-line-body">
+              <div className="min-w-[min(100%,12rem)] flex-1">
                 <Link
                   href={`/item/${line.catalog.productId}`}
-                  className="cart-line-title"
+                  className="select-text font-semibold text-[var(--fg)] no-underline leading-snug [-webkit-user-select:text] hover:text-[var(--accent)]"
                 >
                   {displayTitle(line.catalog)}
                 </Link>
-                <p className="muted small cart-line-meta">
+                <p className="mt-[0.35rem] select-text text-sm text-[var(--muted)] [-webkit-user-select:text]">
                   {formatPriceUsd(line.catalog.listPrice)} {zhHant.cartEach}
                 </p>
                 {soldOut && (
-                  <p className="cart-line-sold-out-note">{zhHant.cartSoldOutLineNote}</p>
+                  <p className="mt-[0.35rem] select-text text-[0.8125rem] font-semibold text-[var(--err)] [-webkit-user-select:text]">
+                    {zhHant.cartSoldOutLineNote}
+                  </p>
                 )}
-                <div className="cart-line-qty">
+                <div className="mt-[0.65rem] flex flex-wrap items-center gap-x-3 gap-y-2 select-none [-webkit-user-select:none] caret-transparent">
                   <button
                     type="button"
-                    className="qty-btn"
+                    className="h-8 w-8 cursor-pointer rounded-md border border-[var(--border)] bg-[var(--card)] p-0 text-base font-semibold leading-none text-[var(--fg)] hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-40"
                     disabled={busy || soldOut || line.quantity <= 1}
                     aria-label={zhHant.cartDecreaseAria}
                     onClick={() => void setQuantity(line, line.quantity - 1)}
                   >
                     −
                   </button>
-                  <span className="qty-value">{line.quantity}</span>
+                  <span className="qty-value min-w-[1.5rem] text-center font-semibold">
+                    {line.quantity}
+                  </span>
                   <button
                     type="button"
-                    className="qty-btn"
+                    className="h-8 w-8 cursor-pointer rounded-md border border-[var(--border)] bg-[var(--card)] p-0 text-base font-semibold leading-none text-[var(--fg)] hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-40"
                     disabled={busy || soldOut || line.quantity >= max}
                     aria-label={zhHant.cartIncreaseAria}
                     onClick={() => void setQuantity(line, line.quantity + 1)}
@@ -182,7 +213,7 @@ export function CartPage() {
                   </button>
                   <button
                     type="button"
-                    className="cart-remove"
+                    className="border-none bg-transparent p-0 font-inherit text-sm text-[var(--muted)] underline hover:text-[var(--err)] disabled:cursor-not-allowed disabled:opacity-50"
                     disabled={busy}
                     onClick={() => void removeLine(line.lineId)}
                   >
@@ -190,22 +221,31 @@ export function CartPage() {
                   </button>
                 </div>
               </div>
-              <div className="cart-line-price">{formatPriceUsd(lineTotal)}</div>
+              <div className="select-text self-center text-right text-[1.05rem] font-bold text-[var(--accent)] [-webkit-user-select:text] max-[520px]:ml-0 max-[520px]:w-full">
+                {formatPriceUsd(lineTotal)}
+              </div>
             </li>
           );
         })}
       </ul>
-      <div className="cart-summary">
-        <span className="cart-subtotal-label">{zhHant.cartSubtotal}</span>
-        <span className="cart-subtotal-value">{formatPriceUsd(subtotal)}</span>
+      <div className="mt-6 flex items-baseline justify-end gap-4 border-t border-[var(--border)] pt-5">
+        <span className="select-text font-semibold text-[var(--muted)] [-webkit-user-select:text]">
+          {zhHant.cartSubtotal}
+        </span>
+        <span className="select-text text-[1.35rem] font-bold text-[var(--accent)] [-webkit-user-select:text]">
+          {formatPriceUsd(subtotal)}
+        </span>
       </div>
-      <div className="cart-actions">
-        <Link href="/" className="btn secondary cart-actions-shop">
+      <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-3">
+        <Link
+          href="/"
+          className="mx-0 mb-0 mt-0 inline-block cursor-pointer rounded-lg border border-[var(--border)] bg-transparent px-[0.85rem] py-2 text-center font-semibold text-[var(--fg)] no-underline hover:bg-[color-mix(in_srgb,var(--accent)_16%,transparent)]"
+        >
           ← {zhHant.continueShopping}
         </Link>
         {hasSoldOut ? (
           <span
-            className="btn cart-actions-checkout cart-actions-checkout--blocked"
+            className="mx-4 mb-4 mt-3 inline-block cursor-not-allowed rounded-lg border border-[var(--accent)] bg-transparent px-[0.85rem] py-2 text-center font-semibold text-[var(--accent)] opacity-50 pointer-events-none"
             role="button"
             aria-disabled="true"
             aria-label={zhHant.cartSoldOutNotice}
@@ -214,7 +254,10 @@ export function CartPage() {
             {zhHant.cartGoCheckout}
           </span>
         ) : (
-          <Link href="/checkout" className="btn cart-actions-checkout">
+          <Link
+            href="/checkout"
+            className="mx-4 mb-4 mt-3 inline-block cursor-pointer rounded-lg border border-[var(--accent)] bg-transparent px-[0.85rem] py-2 text-center font-semibold text-[var(--accent)] no-underline hover:bg-[color-mix(in_srgb,var(--accent)_16%,transparent)]"
+          >
             {zhHant.cartGoCheckout}
           </Link>
         )}

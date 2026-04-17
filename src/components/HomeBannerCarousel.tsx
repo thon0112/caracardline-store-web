@@ -7,6 +7,7 @@ import {
 } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import { Link } from "wouter";
+import { cn } from "../cn.js";
 import { homeBannerSlides } from "../home-banner-slides.js";
 import { zhHant } from "../locale/zh-Hant.js";
 
@@ -98,20 +99,20 @@ export function HomeBannerCarousel() {
 
   return (
     <section
-      className="home-hero-bleed"
+      className="mb-6 box-border w-screen max-w-[100vw] [margin-left:calc(50%-50vw)]"
       aria-roledescription="carousel"
       aria-label={zhHant.homeBannerAria}
     >
-      <div className="home-hero">
-        <div className="home-hero-viewport" ref={emblaRef}>
-          <div className="home-hero-slides">
+      <div className="relative flex aspect-video h-auto w-full cursor-default select-none flex-col overflow-hidden rounded-none border border-[var(--border)] bg-[var(--media-bg)] box-border md:aspect-auto md:h-[350px] md:rounded-[14px] [-webkit-user-select:none]">
+        <div className="min-h-0 w-full flex-1 overflow-hidden" ref={emblaRef}>
+          <div className="flex h-full w-full items-stretch">
             {emblaSlides.map((b, i) => {
               const logical = i % baseSlideCount;
               const isPrimaryMount =
                 i === (heroDesktop && baseSlideCount > 1 ? baseSlideCount : 0);
               const img = (
                 <img
-                  className="home-hero-slide-img"
+                  className="block h-full w-full object-cover object-center transition-transform duration-[350ms] ease-out motion-reduce:transition-none group-hover/slide:md:scale-[1.02] motion-reduce:group-hover/slide:md:scale-100"
                   src={b.src}
                   alt={b.alt}
                   width={1600}
@@ -126,20 +127,20 @@ export function HomeBannerCarousel() {
               return (
                 <div
                   key={`${b.id}__${i}`}
-                  className="home-hero-slide"
+                  className="relative m-0 h-full min-w-0 w-full shrink-0 grow-0 basis-full overflow-hidden md:me-3 md:h-full md:w-auto md:flex-none md:basis-auto md:aspect-video"
                   aria-hidden={logical !== selectedIndex}
                 >
                   {isExternalHref(b.href) ? (
                     <a
                       href={b.href}
-                      className="home-hero-slide-link"
+                      className="group/slide block h-full w-full leading-none text-inherit no-underline"
                       target="_blank"
                       rel="noopener noreferrer"
                     >
                       {img}
                     </a>
                   ) : (
-                    <Link href={b.href} className="home-hero-slide-link">
+                    <Link href={b.href} className="group/slide block h-full w-full leading-none text-inherit no-underline">
                       {img}
                     </Link>
                   )}
@@ -152,24 +153,31 @@ export function HomeBannerCarousel() {
           <>
             <button
               type="button"
-              className="home-hero-nav home-hero-nav--prev"
+              className="absolute left-[0.65rem] top-1/2 z-[3] h-9 w-9 -translate-y-1/2 cursor-pointer rounded-full border border-[rgba(28,24,21,0.12)] bg-[rgba(255,255,255,0.82)] p-0 text-[length:0] text-[var(--fg)] backdrop-blur-sm before:block before:text-[1.1rem] before:font-bold before:leading-none before:content-['‹'] hover:border-[color-mix(in_srgb,var(--accent)_55%,transparent)] hover:text-[var(--accent)] motion-reduce:transition-none"
               aria-label={zhHant.homeBannerPrev}
               onClick={() => goBanner(-1)}
             />
             <button
               type="button"
-              className="home-hero-nav home-hero-nav--next"
+              className="absolute right-[0.65rem] top-1/2 z-[3] h-9 w-9 -translate-y-1/2 cursor-pointer rounded-full border border-[rgba(28,24,21,0.12)] bg-[rgba(255,255,255,0.82)] p-0 text-[length:0] text-[var(--fg)] backdrop-blur-sm before:block before:text-[1.1rem] before:font-bold before:leading-none before:content-['›'] hover:border-[color-mix(in_srgb,var(--accent)_55%,transparent)] hover:text-[var(--accent)] motion-reduce:transition-none"
               aria-label={zhHant.homeBannerNext}
               onClick={() => goBanner(1)}
             />
-            <div className="home-hero-dots" role="tablist" aria-label={zhHant.homeBannerDots}>
+            <div
+              className="absolute bottom-[0.85rem] left-0 right-0 z-[3] flex justify-center gap-[0.45rem]"
+              role="tablist"
+              aria-label={zhHant.homeBannerDots}
+            >
               {homeBannerSlides.map((b, i) => (
                 <button
                   key={b.id}
                   type="button"
                   role="tab"
                   aria-selected={i === selectedIndex}
-                  className={`home-hero-dot${i === selectedIndex ? " is-active" : ""}`}
+                  className={cn(
+                    "h-[0.45rem] w-[0.45rem] cursor-pointer rounded-full border-none bg-[rgba(28,24,21,0.22)] p-0 transition-[width,background-color] duration-150",
+                    i === selectedIndex && "w-[1.35rem] bg-[var(--accent)]",
+                  )}
                   aria-label={`${zhHant.homeBannerSlide} ${i + 1}：${b.alt}`}
                   onClick={() => {
                     if (!emblaApi) return;

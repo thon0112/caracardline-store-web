@@ -24,13 +24,13 @@ export function WhatsAppFloat() {
   return (
     <a
       href={WHATSAPP_URL}
-      className="float-wa"
+      className="fixed bottom-[max(1rem,env(safe-area-inset-bottom,0px))] right-[max(1rem,env(safe-area-inset-right,0px))] z-40 flex h-[calc(3.35rem*1.5*0.8)] w-[calc(3.35rem*1.5*0.8)] items-center justify-center rounded-full bg-[#25d366] text-white no-underline shadow-[0_4px_14px_rgba(28,24,21,0.2)] transition-[transform,box-shadow] duration-150 ease-out hover:scale-[1.06] hover:shadow-[0_6px_18px_rgba(28,24,21,0.24)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--accent)] motion-reduce:transform-none motion-reduce:transition-none"
       target="_blank"
       rel="noopener noreferrer"
       aria-label={zhHant.floatWhatsAppAria}
       title={zhHant.floatWhatsAppTitle}
     >
-      <span className="float-wa-inner" aria-hidden>
+      <span className="flex items-center justify-center leading-none" aria-hidden>
         <IconWhatsApp />
       </span>
     </a>

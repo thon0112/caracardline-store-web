@@ -18,9 +18,9 @@ import { OtherServicesPage } from "./pages/OtherServicesPage.js";
 
 function AppShell() {
   return (
-    <div className="shell">
+    <div className="mx-auto box-border flex min-h-screen w-full max-w-[1100px] flex-col px-6 pb-6">
       <SiteHeader />
-      <main className="main">
+      <main className="min-h-0 min-w-0 w-full flex-1 overflow-x-clip">
         <Switch>
           <Route path="/" component={HomePage} />
           <Route path="/catalog" component={CatalogPage} />
@@ -33,7 +33,7 @@ function AppShell() {
           <Route path="/services" component={OtherServicesPage} />
           <Route path="/disclaimer" component={DisclaimerPage} />
           <Route>
-            <p className="muted">{zhHant.notFound}</p>
+            <p className="text-[var(--muted)]">{zhHant.notFound}</p>
           </Route>
         </Switch>
       </main>

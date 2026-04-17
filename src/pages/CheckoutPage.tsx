@@ -1,5 +1,6 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { Link, useLocation } from "wouter";
+import { cn } from "../cn.js";
 import { isApiError, placeOrder, type PlaceOrderBody } from "../api.js";
 import { useCart } from "../cart-context.js";
 import {
@@ -118,10 +119,15 @@ export function CheckoutPage() {
 
   if (error) {
     return (
-      <div className="checkout-page">
-        <h1 className="title">{zhHant.checkoutTitle}</h1>
-        <p className="error">{error}</p>
-        <Link href="/cart" className="back muted">
+      <div className="cursor-default select-none caret-transparent [-webkit-user-select:none] [&_.error]:select-text [&_a]:cursor-pointer [&_button]:cursor-pointer">
+        <h1 className="m-0 mb-2 select-text text-[1.75rem] font-bold [-webkit-user-select:text]">
+          {zhHant.checkoutTitle}
+        </h1>
+        <p className="error select-text text-[var(--err)] [-webkit-user-select:text]">{error}</p>
+        <Link
+          href="/cart"
+          className="mb-4 mt-0 inline-block cursor-pointer select-text text-[var(--muted)] no-underline [-webkit-user-select:text]"
+        >
           ← {zhHant.navCart}
         </Link>
       </div>
@@ -134,31 +140,44 @@ export function CheckoutPage() {
 
   const hasSoldOut = lines.some((l) => l.catalog.soldOut);
 
-  return (
-    <div className="checkout-page">
-      <h1 className="title">{zhHant.checkoutTitle}</h1>
-      <p className="lede muted">{zhHant.checkoutLede}</p>
+  const fieldLabel = "mb-[0.35rem] block cursor-pointer text-sm font-semibold";
+  const fieldInput =
+    "w-full rounded-lg border border-[var(--border)] bg-[var(--card)] px-[0.65rem] py-2 font-inherit text-base text-[var(--fg)] placeholder:text-[var(--muted)] read-only:cursor-default read-only:text-[var(--muted)]";
 
-      <div className="checkout-layout">
-        <div className="checkout-layout-main">
+  return (
+    <div className="cursor-default select-none caret-transparent [-webkit-user-select:none] [&_.error]:select-text [&_a]:cursor-pointer [&_button]:cursor-pointer [&_input]:cursor-text [&_input]:select-text [&_input]:caret-auto [&_label]:cursor-pointer [&_textarea]:cursor-text [&_textarea]:select-text [&_textarea]:caret-auto">
+      <h1 className="m-0 mb-2 select-text text-[1.75rem] font-bold [-webkit-user-select:text]">
+        {zhHant.checkoutTitle}
+      </h1>
+      <p className="m-0 mb-6 max-w-[42rem] select-text text-[var(--muted)] [-webkit-user-select:text]">
+        {zhHant.checkoutLede}
+      </p>
+
+      <div className="grid items-start gap-x-8 gap-y-6 min-[880px]:grid-cols-[minmax(0,1fr)_minmax(16rem,22rem)]">
+        <div className="min-w-0">
           {hasSoldOut && (
-            <p className="error checkout-sold-out-blocked" role="alert">
+            <p className="mb-3 select-text text-[var(--err)] [-webkit-user-select:text]" role="alert">
               {zhHant.checkoutSoldOutBlocked}{" "}
-              <Link href="/cart" className="checkout-sold-out-blocked-link">
+              <Link href="/cart" className="font-semibold text-inherit underline">
                 {zhHant.navCart}
               </Link>
             </p>
           )}
-          {formErr && <p className="error">{formErr}</p>}
+          {formErr && (
+            <p className="select-text text-[var(--err)] [-webkit-user-select:text]">{formErr}</p>
+          )}
 
           <form
             id="checkout-form"
-            className="form-stack"
+            className="grid max-w-[28rem] gap-4"
             onSubmit={(e) => void onSubmit(e)}
           >
-            <div className="form-field">
-              <label htmlFor="co-name">{zhHant.checkoutShipName}</label>
+            <div className="min-w-0">
+              <label className={fieldLabel} htmlFor="co-name">
+                {zhHant.checkoutShipName}
+              </label>
               <input
+                className={fieldInput}
                 id="co-name"
                 name="shipRecipientName"
                 type="text"
@@ -169,9 +188,12 @@ export function CheckoutPage() {
                 maxLength={255}
               />
             </div>
-            <div className="form-field">
-              <label htmlFor="co-phone">{zhHant.checkoutShipPhone}</label>
+            <div className="min-w-0">
+              <label className={fieldLabel} htmlFor="co-phone">
+                {zhHant.checkoutShipPhone}
+              </label>
               <input
+                className={fieldInput}
                 id="co-phone"
                 name="shipPhone"
                 type="tel"
@@ -182,9 +204,12 @@ export function CheckoutPage() {
                 maxLength={32}
               />
             </div>
-            <div className="form-field">
-              <label htmlFor="co-email">{zhHant.checkoutEmail}</label>
+            <div className="min-w-0">
+              <label className={fieldLabel} htmlFor="co-email">
+                {zhHant.checkoutEmail}
+              </label>
               <input
+                className={fieldInput}
                 id="co-email"
                 name="email"
                 type="email"
@@ -197,12 +222,18 @@ export function CheckoutPage() {
               />
             </div>
 
-            <fieldset className="checkout-ship-fieldset">
-              <legend className="checkout-ship-legend">{zhHant.checkoutShipMethod}</legend>
-              <div className="checkout-ship-mode" role="group" aria-label={zhHant.checkoutShipMethod}>
+            <fieldset className="m-0 min-w-0 border-none p-0">
+              <legend className="mb-[0.45rem] block p-0 text-sm font-semibold">
+                {zhHant.checkoutShipMethod}
+              </legend>
+              <div className="flex flex-wrap gap-2" role="group" aria-label={zhHant.checkoutShipMethod}>
                 <button
                   type="button"
-                  className={`checkout-ship-mode-btn${shipMode === "sf" ? " checkout-ship-mode-btn--on" : ""}`}
+                  className={cn(
+                    "min-w-[12rem] flex-1 cursor-pointer rounded-[10px] border border-[var(--border)] bg-[var(--card)] px-[0.65rem] py-[0.55rem] font-inherit text-[0.9375rem] font-semibold leading-snug text-[var(--fg)] transition-colors duration-150 hover:border-[color-mix(in_srgb,var(--accent)_38%,var(--border))] hover:text-[var(--accent)]",
+                    shipMode === "sf" &&
+                      "border-[color-mix(in_srgb,var(--accent)_55%,var(--border))] bg-[rgba(181,111,69,0.1)] text-[var(--accent)]",
+                  )}
                   aria-pressed={shipMode === "sf"}
                   onClick={() => {
                     setShipMode("sf");
@@ -214,7 +245,11 @@ export function CheckoutPage() {
                 </button>
                 <button
                   type="button"
-                  className={`checkout-ship-mode-btn${shipMode === "manual" ? " checkout-ship-mode-btn--on" : ""}`}
+                  className={cn(
+                    "min-w-[12rem] flex-1 cursor-pointer rounded-[10px] border border-[var(--border)] bg-[var(--card)] px-[0.65rem] py-[0.55rem] font-inherit text-[0.9375rem] font-semibold leading-snug text-[var(--fg)] transition-colors duration-150 hover:border-[color-mix(in_srgb,var(--accent)_38%,var(--border))] hover:text-[var(--accent)]",
+                    shipMode === "manual" &&
+                      "border-[color-mix(in_srgb,var(--accent)_55%,var(--border))] bg-[rgba(181,111,69,0.1)] text-[var(--accent)]",
+                  )}
                   aria-pressed={shipMode === "manual"}
                   onClick={() => {
                     setShipMode("manual");
@@ -224,13 +259,18 @@ export function CheckoutPage() {
                   {zhHant.checkoutShipModeManual}
                 </button>
               </div>
-              <p className="muted small checkout-ship-mode-note">{zhHant.checkoutShipModeHint}</p>
+              <p className="mt-[0.55rem] select-text text-sm leading-normal text-[var(--muted)] [-webkit-user-select:text]">
+                {zhHant.checkoutShipModeHint}
+              </p>
             </fieldset>
 
             {shipMode === "manual" && (
-              <div className="form-field">
-                <label htmlFor="co-country">{zhHant.checkoutShipCountry}</label>
+              <div className="min-w-0">
+                <label className={fieldLabel} htmlFor="co-country">
+                  {zhHant.checkoutShipCountry}
+                </label>
                 <input
+                  className={fieldInput}
                   id="co-country"
                   name="shipCountry"
                   type="text"
@@ -246,9 +286,12 @@ export function CheckoutPage() {
               <SfOutletPicker value={sfOutlet} onChange={setSfOutlet} />
             ) : (
               <>
-                <div className="form-field">
-                  <label htmlFor="co-line1">{zhHant.checkoutShipLine1}</label>
+                <div className="min-w-0">
+                  <label className={fieldLabel} htmlFor="co-line1">
+                    {zhHant.checkoutShipLine1}
+                  </label>
                   <input
+                    className={fieldInput}
                     id="co-line1"
                     name="shipAddressLine1"
                     type="text"
@@ -259,9 +302,12 @@ export function CheckoutPage() {
                     maxLength={255}
                   />
                 </div>
-                <div className="form-field">
-                  <label htmlFor="co-line2">{zhHant.checkoutShipLine2}</label>
+                <div className="min-w-0">
+                  <label className={fieldLabel} htmlFor="co-line2">
+                    {zhHant.checkoutShipLine2}
+                  </label>
                   <input
+                    className={fieldInput}
                     id="co-line2"
                     name="shipAddressLine2"
                     type="text"
@@ -274,37 +320,47 @@ export function CheckoutPage() {
               </>
             )}
 
-            <p className="muted small">{zhHant.checkoutFpsNote}</p>
+            <p className="select-text text-sm text-[var(--muted)] [-webkit-user-select:text]">
+              {zhHant.checkoutFpsNote}
+            </p>
           </form>
 
-          <Link href="/cart" className="back muted" style={{ marginTop: "1.25rem" }}>
+          <Link
+            href="/cart"
+            className="mb-4 mt-5 inline-block cursor-pointer select-text text-[var(--muted)] no-underline [-webkit-user-select:text]"
+          >
             ← {zhHant.backToCart}
           </Link>
         </div>
 
-        <aside className="checkout-layout-aside" aria-label={zhHant.checkoutOrderPreview}>
-          <div className="checkout-summary card" style={{ padding: "1rem 1.15rem" }}>
-            <p className="muted small" style={{ margin: "0 0 0.5rem" }}>
+        <aside className="min-w-0" aria-label={zhHant.checkoutOrderPreview}>
+          <div className="overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--card)] px-[1.15rem] py-4">
+            <p className="m-0 mb-2 select-text text-sm text-[var(--muted)] [-webkit-user-select:text]">
               {zhHant.checkoutOrderPreview}
             </p>
-            <ul className="checkout-preview-lines">
+            <ul className="m-0 mt-2 list-none p-0 text-[0.9375rem]">
               {lines.map((l) => (
-                <li key={l.lineId}>
-                  <span>{l.catalog.title || l.catalog.card?.name || zhHant.productFallback}</span>
-                  <span className="muted">
+                <li
+                  key={l.lineId}
+                  className="flex justify-between gap-3 border-b border-[var(--border)] py-[0.35rem] last:border-b-0"
+                >
+                  <span className="select-text [-webkit-user-select:text]">
+                    {l.catalog.title || l.catalog.card?.name || zhHant.productFallback}
+                  </span>
+                  <span className="select-text text-[var(--muted)] [-webkit-user-select:text]">
                     ×{l.quantity} · {formatPriceUsd(l.quantity * l.catalog.listPrice)}
                   </span>
                 </li>
               ))}
             </ul>
-            <p className="checkout-preview-total">
-              <span>{zhHant.cartSubtotal}</span>
-              <strong>{formatPriceUsd(subtotal)}</strong>
+            <p className="mb-0 mt-[0.85rem] flex items-baseline justify-between border-t border-[var(--border)] pt-3 font-semibold">
+              <span className="select-text [-webkit-user-select:text]">{zhHant.cartSubtotal}</span>
+              <strong className="select-text [-webkit-user-select:text]">{formatPriceUsd(subtotal)}</strong>
             </p>
             <button
               type="submit"
               form="checkout-form"
-              className="btn checkout-submit checkout-submit-in-preview"
+              className="mx-4 mb-4 mt-4 w-full cursor-pointer rounded-lg border border-[var(--accent)] bg-transparent px-[0.85rem] py-2 font-semibold text-[var(--accent)] hover:bg-[color-mix(in_srgb,var(--accent)_16%,transparent)] disabled:cursor-not-allowed disabled:opacity-50"
               disabled={submitting || hasSoldOut}
               title={hasSoldOut ? zhHant.checkoutSoldOutBlocked : undefined}
             >

@@ -1,4 +1,3 @@
-import type { CSSProperties } from "react";
 import { zhHant } from "../locale/zh-Hant.js";
 
 const ABOUT_SERVICES = [
@@ -132,61 +131,83 @@ function AboutServiceIcon({ id }: { id: AboutServiceIconId }) {
 
 export function AboutPage() {
   return (
-    <div className="about-page">
-      <h1 className="title">{zhHant.aboutTitle}</h1>
-      <p className="lede muted">{zhHant.aboutLede}</p>
-      <p className="about-p muted">{zhHant.aboutIntroP2}</p>
-      <p className="about-p muted">{zhHant.aboutIntroP3}</p>
+    <div className="max-w-[46rem]">
+      <h1 className="m-0 mb-2 text-[1.75rem] font-bold">{zhHant.aboutTitle}</h1>
+      <p className="m-0 mb-6 max-w-[42rem] text-[var(--muted)]">{zhHant.aboutLede}</p>
+      <p className="m-0 mb-[0.85rem] max-w-[42rem] leading-[1.55] text-[var(--muted)]">
+        {zhHant.aboutIntroP2}
+      </p>
+      <p className="m-0 mb-[0.85rem] max-w-[42rem] leading-[1.55] text-[var(--muted)]">
+        {zhHant.aboutIntroP3}
+      </p>
 
-      <section className="about-services" aria-labelledby="about-services-heading">
-        <h2 id="about-services-heading" className="about-services-heading">
+      <section
+        className="mb-7 rounded-2xl border border-[color-mix(in_srgb,var(--border)_78%,var(--accent)_22%)] bg-gradient-to-br from-[color-mix(in_srgb,var(--card)_92%,var(--accent))] via-[var(--card)] to-[var(--card)] px-[1.15rem] pb-[1.35rem] pt-5 shadow-[0_10px_36px_rgba(28,24,21,0.06)]"
+        aria-labelledby="about-services-heading"
+      >
+        <h2
+          id="about-services-heading"
+          className="m-0 mb-[1.05rem] flex flex-wrap items-center gap-[0.65rem] text-[1.15rem] font-bold tracking-[0.02em] text-[var(--fg)] before:block before:h-[1.15em] before:w-1 before:rounded-full before:bg-gradient-to-b before:from-[var(--accent-fill)] before:to-[color-mix(in_srgb,var(--accent-fill)_35%,var(--border))] before:content-['']"
+        >
           {zhHant.aboutServicesHeading}
         </h2>
-        <ul className="about-service-grid" role="list">
+        <ul className="m-0 flex list-none flex-col gap-4 p-0" role="list">
           {ABOUT_SERVICES.map(({ titleKey, bodyKey, labelKey, chipsKey, icon }, i) => (
             <li
               key={titleKey}
-              className="about-service-card"
+              className="relative m-0 overflow-hidden rounded-[14px] border border-[var(--border)] bg-[var(--card)] shadow-[0_2px_0_rgba(28,24,21,0.03)] transition-[border-color,box-shadow,transform] duration-200 motion-reduce:transition-none hover:-translate-y-0.5 hover:border-[color-mix(in_srgb,var(--border)_55%,var(--accent)_45%)] hover:shadow-[0_12px_32px_rgba(28,24,21,0.08)] motion-reduce:hover:translate-y-0"
               role="listitem"
-              style={{ "--about-svc-i": i } as CSSProperties}
             >
-              <div className="about-service-card-glow" aria-hidden />
-              <div className="about-service-card-inner">
-                <div className="about-service-card-top">
-                  <span className="about-service-icon-wrap">
+              <div
+                className="pointer-events-none absolute inset-0 opacity-55 [background:radial-gradient(120%_85%_at_0%_0%,color-mix(in_srgb,var(--accent-fill)_22%,transparent)_0%,transparent_58%)]"
+                aria-hidden
+              />
+              <div className="relative z-[1] px-[1.2rem] pb-5 pt-[1.15rem]">
+                <div className="mb-3 flex items-start gap-[0.9rem]">
+                  <span className="inline-flex h-[2.85rem] w-[2.85rem] shrink-0 items-center justify-center rounded-xl border border-[color-mix(in_srgb,var(--border)_70%,var(--accent)_30%)] bg-gradient-to-br from-[color-mix(in_srgb,var(--accent-fill)_14%,var(--card))] to-[var(--card)] text-[var(--accent-fill)] shadow-[inset_0_1px_0_rgba(255,253,251,0.65)]">
                     <AboutServiceIcon id={icon} />
                   </span>
-                  <div className="about-service-card-top-text">
-                    <span className="about-service-label">
-                      <span className="about-service-label-index" aria-hidden>
+                  <div className="min-w-0 flex-1">
+                    <span className="mb-[0.35rem] inline-flex items-center gap-[0.45rem] text-[0.72rem] font-bold uppercase tracking-[0.14em] text-[var(--muted)]">
+                      <span
+                        className="inline-flex min-w-[1.35rem] items-center justify-center rounded-md bg-gradient-to-br from-[var(--accent-fill)] to-[color-mix(in_srgb,var(--accent-fill)_72%,var(--fg))] px-[0.28rem] py-[0.12rem] text-[0.65rem] font-bold tracking-[0.06em] text-[var(--on-accent-fill)]"
+                        aria-hidden
+                      >
                         {String(i + 1).padStart(2, "0")}
                       </span>
                       {zhHant[labelKey]}
                     </span>
-                    <h3 className="about-service-card-title">{zhHant[titleKey]}</h3>
+                    <h3 className="m-0 text-base font-bold leading-snug tracking-[0.02em] text-[var(--accent)]">
+                      {zhHant[titleKey]}
+                    </h3>
                   </div>
                 </div>
-                <ul className="about-service-chips" aria-label={`${zhHant[labelKey]}重點`}>
+                <ul className="m-0 mb-[0.85rem] flex list-none flex-wrap gap-x-[0.45rem] gap-y-1 p-0" aria-label={`${zhHant[labelKey]}重點`}>
                   {zhHant[chipsKey].map((chip) => (
-                    <li key={chip} className="about-service-chip">
+                    <li
+                      key={chip}
+                      className="m-0 rounded-full border border-[var(--border)] bg-[color-mix(in_srgb,var(--media-bg)_55%,var(--card))] px-[0.55rem] py-[0.28rem] text-[0.75rem] font-semibold leading-snug tracking-[0.02em] text-[var(--fg)]"
+                    >
                       {chip}
                     </li>
                   ))}
                 </ul>
-                <p className="about-p muted about-service-card-text">{zhHant[bodyKey]}</p>
+                <p className="m-0 border-t border-dashed border-[color-mix(in_srgb,var(--border)_65%,transparent)] pt-[0.65rem] leading-[1.55] text-[var(--muted)]">
+                  {zhHant[bodyKey]}
+                </p>
               </div>
             </li>
           ))}
         </ul>
       </section>
 
-      <section className="about-section about-outro">
-        <p className="about-p muted">{zhHant.aboutClosing1}</p>
-        <p className="about-p muted">
+      <section className="mb-7 max-w-[42rem]">
+        <p className="m-0 mb-[0.85rem] leading-[1.55] text-[var(--muted)]">{zhHant.aboutClosing1}</p>
+        <p className="m-0 leading-[1.55] text-[var(--muted)]">
           {zhHant.aboutClosing2Prefix}
           <a
             href="https://www.instagram.com/cara.cardline/"
-            className="about-inline-link"
+            className="font-semibold text-[var(--accent)] no-underline hover:underline"
             target="_blank"
             rel="noopener noreferrer"
           >

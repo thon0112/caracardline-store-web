@@ -1,9 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { zhHant } from "../locale/zh-Hant.js";
-import {
-  type SfOutlet,
-  outletSearchHaystack,
-} from "../sf-outlet.js";
+import { type SfOutlet, outletSearchHaystack } from "../sf-outlet.js";
 
 const RESULT_CAP = 45;
 const MIN_QUERY_CHARS = 2;
@@ -12,6 +9,10 @@ type Props = {
   value: SfOutlet | null;
   onChange: (outlet: SfOutlet | null) => void;
 };
+
+const fieldLabel = "mb-[0.35rem] block text-sm font-semibold";
+const fieldInput =
+  "w-full rounded-lg border border-[var(--border)] bg-[var(--card)] px-[0.65rem] py-2 font-inherit text-base text-[var(--fg)]";
 
 export function SfOutletPicker({ value, onChange }: Props) {
   const [query, setQuery] = useState("");
@@ -58,12 +59,15 @@ export function SfOutletPicker({ value, onChange }: Props) {
   }, [catalog, trimmedQuery]);
 
   return (
-    <div className="sf-outlet-picker">
+    <div className="grid max-w-[28rem] gap-3">
       {!value && (
         <>
-          <div className="form-field">
-            <label htmlFor="sf-outlet-search">{zhHant.checkoutSfSearchLabel}</label>
+          <div className="min-w-0">
+            <label className={fieldLabel} htmlFor="sf-outlet-search">
+              {zhHant.checkoutSfSearchLabel}
+            </label>
             <input
+              className={fieldInput}
               id="sf-outlet-search"
               name="sfOutletSearch"
               type="search"
@@ -79,37 +83,47 @@ export function SfOutletPicker({ value, onChange }: Props) {
           </div>
 
           {loadErr ? (
-            <p className="error small sf-outlet-load-err">{loadErr}</p>
+            <p className="m-0 text-sm leading-snug text-[var(--err)]">{loadErr}</p>
           ) : (
-            <div className="sf-outlet-slot">
+            <div className="box-border flex min-h-[12rem] flex-col">
               {loading ? (
-                <p className="muted small sf-outlet-slot-msg">{zhHant.checkoutSfLoading}</p>
+                <p className="m-0 text-sm leading-snug text-[var(--muted)]">{zhHant.checkoutSfLoading}</p>
               ) : !queryReady ? (
-                <p className="muted small sf-outlet-slot-msg">{zhHant.checkoutSfEmptyQuery}</p>
+                <p className="m-0 max-w-full text-sm leading-snug text-[var(--muted)]">
+                  {zhHant.checkoutSfEmptyQuery}
+                </p>
               ) : matches.length === 0 ? (
-                <p className="muted small sf-outlet-slot-msg">{zhHant.checkoutSfNoResults}</p>
+                <p className="m-0 max-w-full text-sm leading-snug text-[var(--muted)]">
+                  {zhHant.checkoutSfNoResults}
+                </p>
               ) : (
-                <div className="sf-outlet-results" role="listbox" aria-label={zhHant.checkoutSfSearchLabel}>
-                  <ul className="sf-outlet-result-list">
+                <div
+                  className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[10px] border border-[var(--border)]"
+                  role="listbox"
+                  aria-label={zhHant.checkoutSfSearchLabel}
+                >
+                  <ul className="m-0 max-h-[min(42vh,22rem)] list-none overflow-y-auto overscroll-contain p-0">
                     {matches.map((o) => (
-                        <li key={o.code}>
-                          <button
-                            type="button"
-                            role="option"
-                            aria-selected={false}
-                            className="sf-outlet-row"
-                            onClick={() => onChange(o)}
-                          >
-                            <span className="sf-outlet-row-code">{o.code}</span>
-                            <span className="sf-outlet-row-meta">
-                              {o.district} · {o.section} · {o.kind}
-                            </span>
-                            {o.name ? (
-                              <span className="sf-outlet-row-name small">{o.name}</span>
-                            ) : null}
-                            <span className="sf-outlet-row-addr muted small">{o.address}</span>
-                          </button>
-                        </li>
+                      <li key={o.code} className="m-0 border-b border-[var(--border)] p-0 last:border-b-0">
+                        <button
+                          type="button"
+                          role="option"
+                          aria-selected={false}
+                          className="w-full cursor-pointer border-none bg-transparent px-3 py-2.5 text-left font-inherit hover:bg-[rgba(28,24,21,0.04)]"
+                          onClick={() => onChange(o)}
+                        >
+                          <span className="block text-[0.8125rem] font-semibold text-[var(--accent)]">
+                            {o.code}
+                          </span>
+                          <span className="mt-0.5 block text-[0.8125rem] text-[var(--muted)]">
+                            {o.district} · {o.section} · {o.kind}
+                          </span>
+                          {o.name ? (
+                            <span className="mt-1 block text-sm font-semibold text-[var(--fg)]">{o.name}</span>
+                          ) : null}
+                          <span className="mt-1 block text-sm text-[var(--muted)]">{o.address}</span>
+                        </button>
+                      </li>
                     ))}
                   </ul>
                 </div>
@@ -120,20 +134,24 @@ export function SfOutletPicker({ value, onChange }: Props) {
       )}
 
       {value && (
-        <div className="sf-outlet-selected card">
-          <div className="sf-outlet-selected-head">
-            <p className="sf-outlet-selected-title">{zhHant.checkoutSfSelectedLabel}</p>
-            <button type="button" className="linkish-btn" onClick={() => onChange(null)}>
+        <div className="overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--card)] p-4">
+          <div className="mb-2 flex items-baseline justify-between gap-3">
+            <p className="m-0 text-sm font-semibold text-[var(--muted)]">{zhHant.checkoutSfSelectedLabel}</p>
+            <button
+              type="button"
+              className="cursor-pointer border-none bg-transparent p-0 font-inherit text-sm font-semibold text-[var(--accent)] underline"
+              onClick={() => onChange(null)}
+            >
               {zhHant.checkoutSfClear}
             </button>
           </div>
-          <p className="sf-outlet-selected-code">{value.code}</p>
-          <p className="muted small sf-outlet-selected-lines">
+          <p className="m-0 text-lg font-bold text-[var(--accent)]">{value.code}</p>
+          <p className="m-0 mt-1 text-sm text-[var(--muted)]">
             {value.district} · {value.section} · {value.kind}
           </p>
-          {value.name ? <p className="sf-outlet-selected-name">{value.name}</p> : null}
-          <p className="sf-outlet-selected-addr">{value.address}</p>
-          <p className="muted small sf-outlet-selected-hours">
+          {value.name ? <p className="m-0 mt-2 font-semibold text-[var(--fg)]">{value.name}</p> : null}
+          <p className="m-0 mt-1 text-[0.9375rem] leading-snug text-[var(--fg)]">{value.address}</p>
+          <p className="m-0 mt-2 text-sm leading-snug text-[var(--muted)]">
             {zhHant.checkoutSfHoursWeekday}
             {value.hoursWeekday}
             <br />

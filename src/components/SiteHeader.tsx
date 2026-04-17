@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { Link, useLocation } from "wouter";
+import { cn } from "../cn.js";
 import { useCart } from "../cart-context.js";
 import {
   CATALOG_PRODUCT_TYPE_CODES,
@@ -10,7 +11,6 @@ import {
 function IconHamburger() {
   return (
     <svg
-      className="header-menu-icon"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
       width={22}
@@ -152,6 +152,9 @@ function IconClose({ size = 22 }: { size?: number }) {
   );
 }
 
+const borderHover =
+  "hover:border-[color-mix(in_srgb,var(--accent)_45%,var(--border))]";
+
 export function SiteHeader() {
   const { cartLineCount } = useCart();
   const [loc] = useLocation();
@@ -207,11 +210,19 @@ export function SiteHeader() {
   }, []);
 
   return (
-    <header className="header">
-      <div className="header-row">
+    <header
+      className={cn(
+        "sticky top-0 z-50 mb-8 select-none border-b border-[var(--border)] bg-[var(--bg)] pb-4 pt-[calc(1.25rem+env(safe-area-inset-top,0px))]",
+      )}
+    >
+      <div className="relative z-[2] flex min-h-10 cursor-default items-center justify-between gap-4 max-[767px]:justify-start">
         <button
           type="button"
-          className="header-menu-btn"
+          className={cn(
+            "hidden h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-[10px] border border-[var(--border)] bg-[var(--card)] p-0 font-inherit text-[var(--fg)] max-[767px]:inline-flex",
+            borderHover,
+            "hover:text-[var(--accent)]",
+          )}
           aria-expanded={menuOpen}
           aria-controls={drawerId}
           aria-label={menuOpen ? zhHant.navMenuClose : zhHant.navMenuOpen}
@@ -219,14 +230,16 @@ export function SiteHeader() {
         >
           <IconHamburger />
         </button>
-        <div className="header-brand-wrap">
+        <div className="flex min-w-0 cursor-default items-center max-[767px]:flex-1 max-[767px]:justify-center">
           <Link
             href="/"
-            className="brand brand-lockup"
+            className={cn(
+              "inline-flex min-w-0 cursor-pointer items-center gap-[0.65rem] select-none font-bold tracking-[0.04em] text-[var(--fg)] no-underline caret-transparent",
+            )}
             aria-label={zhHant.navHome}
           >
             <img
-              className="brand-logo"
+              className="block h-[3.75rem] w-auto max-w-[min(16.5rem,69vw)] shrink object-contain"
               src="https://cdn.caracardline.com/assets/logo-with-text.webp"
               alt=""
               width={1200}
@@ -237,7 +250,11 @@ export function SiteHeader() {
         </div>
         <Link
           href="/cart"
-          className="header-cart-mobile"
+          className={cn(
+            "relative ml-auto hidden h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-[10px] border border-[var(--border)] bg-[var(--card)] p-0 leading-none text-[var(--fg)] no-underline select-none caret-transparent max-[767px]:inline-flex",
+            borderHover,
+            "hover:text-[var(--accent)]",
+          )}
           aria-label={
             cartLineCount > 0
               ? `${zhHant.navCart}，${
@@ -249,37 +266,48 @@ export function SiteHeader() {
           }
           title={zhHant.navCart}
         >
-          <span className="header-cart-mobile-icon" aria-hidden>
+          <span className="inline-flex items-center justify-center" aria-hidden>
             <IconCart size={22} />
           </span>
           {cartLineCount > 0 ? (
-            <span className="cart-badge header-cart-mobile-badge">{cartLineCount}</span>
+            <span className="absolute right-[0.1rem] top-[0.1rem] min-w-[1.05rem] translate-x-[35%] translate-y-[-35%] rounded-full bg-[var(--accent-fill)] px-[0.28rem] text-center text-[0.65rem] font-bold leading-[1.05rem] text-[var(--on-accent-fill)] shadow-[0_0_0_2px_var(--card)]">
+              {cartLineCount}
+            </span>
           ) : null}
         </Link>
-        <nav className="header-nav header-nav--desktop" aria-label={zhHant.navSiteAria}>
+        <nav
+          className="hidden min-h-10 items-center gap-3 md:flex"
+          aria-label={zhHant.navSiteAria}
+        >
           <a
             href="https://www.instagram.com/cara.cardline/"
-            className="header-link header-link--icon"
+            className={cn(
+              "inline-flex select-none items-center gap-1 rounded-[10px] p-[0.35rem] font-semibold leading-none text-[var(--fg)] no-underline caret-transparent hover:bg-[rgba(28,24,21,0.05)] hover:text-[var(--accent)]",
+            )}
             target="_blank"
             rel="noopener noreferrer"
             aria-label={zhHant.navInstagramAria}
             title={zhHant.navInstagram}
           >
-            <span className="header-link-icon" aria-hidden>
+            <span className="inline-flex items-center justify-center" aria-hidden>
               <IconInstagram size={22} />
             </span>
           </a>
-          <Link href="/" className="header-link">
+          <Link
+            href="/"
+            className="inline-flex select-none items-center gap-1 whitespace-nowrap font-semibold leading-tight text-[var(--fg)] no-underline caret-transparent hover:text-[var(--accent)]"
+          >
             {zhHant.navHome}
           </Link>
           <div
-            className={`header-nav-catalog${catalogSubmenuDismissed ? " is-panel-dismissed" : ""}`}
             ref={catalogNavRef}
+            data-dismissed={catalogSubmenuDismissed ? "true" : undefined}
+            className="group/catalog relative inline-flex items-stretch self-stretch"
             onMouseLeave={clearCatalogSubmenuDismissed}
           >
             <Link
               href="/catalog"
-              className="header-link header-link--catalog"
+              className="inline-flex h-full select-none items-center self-center gap-1 whitespace-nowrap font-semibold leading-tight text-[var(--fg)] no-underline caret-transparent hover:text-[var(--accent)]"
               aria-haspopup="true"
               onMouseEnter={clearCatalogSubmenuDismissed}
               onFocus={clearCatalogSubmenuDismissed}
@@ -287,16 +315,22 @@ export function SiteHeader() {
               {zhHant.navCatalog}
             </Link>
             <div
-              className="header-nav-catalog-panel"
+              className={cn(
+                "pointer-events-none invisible absolute left-1/2 top-[calc(100%+0.2rem)] z-[60] min-w-[11.5rem] -translate-x-1/2 rounded-xl border border-[var(--border)] bg-[var(--card)] py-[0.35rem] opacity-0 shadow-[0_10px_28px_rgba(28,24,21,0.12)] transition-[opacity,visibility] duration-150 ease-out before:pointer-events-none before:absolute before:bottom-full before:left-0 before:right-0 before:h-[0.45rem] before:content-['']",
+                "group-hover/catalog:pointer-events-auto group-hover/catalog:visible group-hover/catalog:opacity-100",
+                "group-focus-within/catalog:pointer-events-auto group-focus-within/catalog:visible group-focus-within/catalog:opacity-100",
+                "group-data-[dismissed=true]/catalog:pointer-events-none group-data-[dismissed=true]/catalog:invisible group-data-[dismissed=true]/catalog:opacity-0",
+                "motion-reduce:transition-none",
+              )}
               role="group"
               aria-label={zhHant.navCatalogSubAria}
             >
-              <ul className="header-nav-catalog-sublinks">
+              <ul className="m-0 list-none p-0">
                 {CATALOG_PRODUCT_TYPE_CODES.map((code) => (
-                  <li key={code}>
+                  <li key={code} className="m-0 p-0">
                     <Link
                       href={`/catalog?type=${encodeURIComponent(code)}`}
-                      className="header-nav-catalog-sublink"
+                      className="flex whitespace-nowrap px-4 py-[0.55rem] text-[0.9375rem] font-semibold leading-snug text-[var(--muted)] no-underline hover:bg-[rgba(28,24,21,0.05)] hover:text-[var(--accent)]"
                       onClick={dismissCatalogSubmenu}
                     >
                       {displayProductType(code)}
@@ -306,16 +340,27 @@ export function SiteHeader() {
               </ul>
             </div>
           </div>
-          <Link href="/services" className="header-link">
+          <Link
+            href="/services"
+            className="inline-flex select-none items-center gap-1 whitespace-nowrap font-semibold leading-tight text-[var(--fg)] no-underline caret-transparent hover:text-[var(--accent)]"
+          >
             {zhHant.navOtherServices}
           </Link>
-          <Link href="/track" className="header-link">
+          <Link
+            href="/track"
+            className="inline-flex select-none items-center gap-1 whitespace-nowrap font-semibold leading-tight text-[var(--fg)] no-underline caret-transparent hover:text-[var(--accent)]"
+          >
             {zhHant.navTrackOrder}
           </Link>
-          <Link href="/cart" className="header-link">
+          <Link
+            href="/cart"
+            className="inline-flex select-none items-center gap-1 whitespace-nowrap font-semibold leading-tight text-[var(--fg)] no-underline caret-transparent hover:text-[var(--accent)]"
+          >
             {zhHant.navCart}
             {cartLineCount > 0 ? (
-              <span className="cart-badge">{cartLineCount}</span>
+              <span className="ml-1 min-h-5 min-w-5 rounded-full bg-[var(--accent-fill)] px-[0.35rem] text-center text-xs font-bold leading-5 text-[var(--on-accent-fill)]">
+                {cartLineCount}
+              </span>
             ) : null}
           </Link>
         </nav>
@@ -323,7 +368,12 @@ export function SiteHeader() {
 
       <button
         type="button"
-        className={`header-scrim${menuOpen ? " is-visible" : ""}`}
+        className={cn(
+          "fixed inset-0 z-[1] m-0 cursor-pointer appearance-none border-none bg-[rgba(28,24,21,0.35)] p-0 text-[length:0] text-transparent opacity-0 transition-opacity duration-[220ms] ease-out motion-reduce:transition-none md:hidden",
+          menuOpen
+            ? "pointer-events-auto z-[100] opacity-100"
+            : "pointer-events-none",
+        )}
         aria-label={zhHant.navDrawerClose}
         tabIndex={menuOpen ? 0 : -1}
         onClick={closeMenu}
@@ -331,46 +381,65 @@ export function SiteHeader() {
 
       <div
         id={drawerId}
-        className={`header-drawer${menuOpen ? " is-open" : ""}`}
+        className={cn(
+          "fixed bottom-0 left-0 top-0 z-[1] flex w-[min(17.5rem,86vw)] max-w-full -translate-x-[102%] flex-col border-r border-[var(--border)] bg-[var(--card)] py-[0.85rem] pl-[max(0.85rem,env(safe-area-inset-left,0px))] pr-0 pt-[max(0.85rem,env(safe-area-inset-top,0px))] shadow-[8px_0_32px_rgba(28,24,21,0.12)] transition-transform duration-[260ms] motion-reduce:transition-none md:hidden",
+          menuOpen ? "z-[101] translate-x-0" : "",
+        )}
         role="dialog"
         aria-modal="true"
         aria-label={zhHant.navDrawerAria}
         aria-hidden={!menuOpen}
       >
-        <div className="header-drawer-head">
-          <span className="header-drawer-title">{zhHant.navDrawerAria}</span>
+        <div className="mb-1 flex w-full items-center gap-3 border-b border-[var(--border)] px-[0.65rem] pb-[0.85rem]">
+          <span className="min-w-0 flex-1 text-[0.8125rem] font-bold uppercase tracking-[0.06em] text-[var(--muted)]">
+            {zhHant.navDrawerAria}
+          </span>
           <button
             type="button"
-            className="header-drawer-close"
+            className="ml-auto inline-flex h-[2.35rem] w-[2.35rem] shrink-0 cursor-pointer items-center justify-center rounded-lg border-none bg-transparent p-0 font-inherit leading-none text-[var(--muted)] hover:bg-[rgba(28,24,21,0.06)] hover:text-[var(--fg)]"
             aria-label={zhHant.navDrawerClose}
             onClick={closeMenu}
           >
             <IconClose size={22} />
           </button>
         </div>
-        <nav className="header-drawer-nav" aria-label={zhHant.navSiteAria}>
-          <Link href="/" className="header-drawer-link" onClick={closeMenu}>
-            <span className="header-drawer-link-icon" aria-hidden>
+        <nav
+          className="flex min-h-0 flex-1 flex-col gap-[0.15rem] px-[0.35rem] py-[0.35rem] pb-2 [&>a:last-child]:mt-auto"
+          aria-label={zhHant.navSiteAria}
+        >
+          <Link
+            href="/"
+            className="group/drawer flex cursor-pointer items-center gap-[0.65rem] rounded-[10px] px-[0.85rem] py-3 text-base font-semibold text-[var(--fg)] no-underline hover:bg-[rgba(28,24,21,0.05)] hover:text-[var(--accent)]"
+            onClick={closeMenu}
+          >
+            <span
+              className="inline-flex shrink-0 text-[var(--muted)] group-hover/drawer:text-[var(--accent)]"
+              aria-hidden
+            >
               <IconHome size={20} />
             </span>
-            <span className="header-drawer-link-text">{zhHant.navHome}</span>
+            <span className="min-w-0 flex-1">{zhHant.navHome}</span>
           </Link>
-          <div className="header-drawer-catalog">
-            <Link href="/catalog" className="header-drawer-link" onClick={closeMenu}>
-              <span className="header-drawer-link-icon" aria-hidden>
+          <div className="flex flex-col gap-[0.05rem]">
+            <Link
+              href="/catalog"
+              className="group/drawer flex cursor-pointer items-center gap-[0.65rem] rounded-[10px] px-[0.85rem] py-3 text-base font-semibold text-[var(--fg)] no-underline hover:bg-[rgba(28,24,21,0.05)] hover:text-[var(--accent)]"
+              onClick={closeMenu}
+            >
+              <span
+                className="inline-flex shrink-0 text-[var(--muted)] group-hover/drawer:text-[var(--accent)]"
+                aria-hidden
+              >
                 <IconCatalog size={20} />
               </span>
-              <span className="header-drawer-link-text">{zhHant.navCatalog}</span>
+              <span className="min-w-0 flex-1">{zhHant.navCatalog}</span>
             </Link>
-            <ul
-              className="header-drawer-sublinks"
-              aria-label={zhHant.navCatalogSubAria}
-            >
+            <ul className="m-0 mb-[0.1rem] list-none p-0" aria-label={zhHant.navCatalogSubAria}>
               {CATALOG_PRODUCT_TYPE_CODES.map((code) => (
-                <li key={code}>
+                <li key={code} className="m-0 p-0">
                   <Link
                     href={`/catalog?type=${encodeURIComponent(code)}`}
-                    className="header-drawer-sublink-anchor"
+                    className="flex cursor-pointer items-center rounded-[10px] py-[0.55rem] pl-[2.55rem] pr-[0.85rem] text-[0.9375rem] font-semibold leading-snug text-[var(--muted)] no-underline hover:bg-[rgba(28,24,21,0.05)] hover:text-[var(--accent)]"
                     onClick={closeMenu}
                   >
                     {displayProductType(code)}
@@ -379,37 +448,60 @@ export function SiteHeader() {
               ))}
             </ul>
           </div>
-          <Link href="/services" className="header-drawer-link" onClick={closeMenu}>
-            <span className="header-drawer-link-icon" aria-hidden>
+          <Link
+            href="/services"
+            className="group/drawer flex cursor-pointer items-center gap-[0.65rem] rounded-[10px] px-[0.85rem] py-3 text-base font-semibold text-[var(--fg)] no-underline hover:bg-[rgba(28,24,21,0.05)] hover:text-[var(--accent)]"
+            onClick={closeMenu}
+          >
+            <span
+              className="inline-flex shrink-0 text-[var(--muted)] group-hover/drawer:text-[var(--accent)]"
+              aria-hidden
+            >
               <IconOtherServices size={20} />
             </span>
-            <span className="header-drawer-link-text">{zhHant.navOtherServices}</span>
+            <span className="min-w-0 flex-1">{zhHant.navOtherServices}</span>
           </Link>
-          <Link href="/track" className="header-drawer-link" onClick={closeMenu}>
-            <span className="header-drawer-link-icon" aria-hidden>
+          <Link
+            href="/track"
+            className="group/drawer flex cursor-pointer items-center gap-[0.65rem] rounded-[10px] px-[0.85rem] py-3 text-base font-semibold text-[var(--fg)] no-underline hover:bg-[rgba(28,24,21,0.05)] hover:text-[var(--accent)]"
+            onClick={closeMenu}
+          >
+            <span
+              className="inline-flex shrink-0 text-[var(--muted)] group-hover/drawer:text-[var(--accent)]"
+              aria-hidden
+            >
               <IconOrderLookup size={20} />
             </span>
-            <span className="header-drawer-link-text">{zhHant.navTrackOrder}</span>
+            <span className="min-w-0 flex-1">{zhHant.navTrackOrder}</span>
           </Link>
-          <Link href="/cart" className="header-drawer-link" onClick={closeMenu}>
-            <span className="header-drawer-link-icon" aria-hidden>
+          <Link
+            href="/cart"
+            className="group/drawer flex cursor-pointer items-center gap-[0.65rem] rounded-[10px] px-[0.85rem] py-3 text-base font-semibold text-[var(--fg)] no-underline hover:bg-[rgba(28,24,21,0.05)] hover:text-[var(--accent)]"
+            onClick={closeMenu}
+          >
+            <span
+              className="inline-flex shrink-0 text-[var(--muted)] group-hover/drawer:text-[var(--accent)]"
+              aria-hidden
+            >
               <IconCart size={20} />
             </span>
-            <span className="header-drawer-link-text">{zhHant.navCart}</span>
+            <span className="min-w-0 flex-1">{zhHant.navCart}</span>
             {cartLineCount > 0 ? (
-              <span className="cart-badge header-drawer-badge">{cartLineCount}</span>
+              <span className="ml-auto shrink-0 rounded-full bg-[var(--accent-fill)] px-[0.35rem] text-center text-xs font-bold leading-5 text-[var(--on-accent-fill)]">
+                {cartLineCount}
+              </span>
             ) : null}
           </Link>
           <a
             href="https://www.instagram.com/cara.cardline/"
-            className="header-drawer-instagram-low"
+            className="mt-auto inline-flex cursor-pointer items-center justify-center self-start rounded-[10px] p-[0.75rem] leading-none text-[var(--muted)] no-underline select-none caret-transparent hover:bg-[rgba(28,24,21,0.05)] hover:text-[var(--accent)]"
             target="_blank"
             rel="noopener noreferrer"
             aria-label={zhHant.navInstagramAria}
             title={zhHant.navInstagram}
             onClick={closeMenu}
           >
-            <span className="header-drawer-instagram-low-icon" aria-hidden>
+            <span className="inline-flex items-center justify-center" aria-hidden>
               <IconInstagram size={22} />
             </span>
           </a>

@@ -8,6 +8,7 @@ import {
 } from "../api.js";
 import { displayTitle, primaryImage } from "../catalog-helpers.js";
 import { useCart } from "../cart-context.js";
+import { cn } from "../cn.js";
 import {
   displayProductType,
   formatPriceUsd,
@@ -118,63 +119,83 @@ export function HomePage() {
   );
 
   if (loading) return <PageLoadingSkeleton variant="home" />;
-  if (err) return <p className="error">{err}</p>;
+  if (err) return <p className="text-[var(--err)]">{err}</p>;
 
   return (
-    <div className="home">
+    <div className="-mt-1">
       <HomeBannerCarousel />
 
       {availableItems.length === 0 ? (
-        <p className="muted">{zhHant.noProducts}</p>
+        <p className="text-[var(--muted)]">{zhHant.noProducts}</p>
       ) : (
         grouped.map(([label, row], gi) => (
           <section
             key={`${gi}-${label}`}
-            className="home-group"
+            className="mb-8 select-none [-webkit-user-select:none]"
             aria-labelledby={`home-grp-${gi}`}
           >
-            <div className="home-group-head">
-              <h2 className="home-group-title" id={`home-grp-${gi}`}>
+            <div className="mb-3 flex cursor-default items-baseline justify-between gap-4 caret-transparent">
+              <h2
+                className="m-0 select-text text-[1.15rem] font-bold [-webkit-user-select:text]"
+                id={`home-grp-${gi}`}
+              >
                 {label}
               </h2>
-              <Link href="/catalog" className="home-group-all">
+              <Link
+                href="/catalog"
+                className="shrink-0 cursor-pointer select-none text-sm font-semibold text-[var(--accent)] no-underline caret-transparent hover:underline"
+              >
                 {zhHant.homeViewAll}
               </Link>
             </div>
             <div
-              className="home-rail"
+              className="-mx-6 cursor-default select-none overflow-x-auto overflow-y-hidden px-6 pb-1 caret-transparent outline-none [-webkit-overflow-scrolling:touch] [-webkit-user-select:none] [scrollbar-width:thin] [scroll-snap-type:x_mandatory] focus-visible:rounded-[10px] focus-visible:shadow-[inset_0_0_0_2px_color-mix(in_srgb,var(--accent)_42%,transparent)]"
               tabIndex={0}
               aria-label={homeRailAriaLabel(label)}
             >
-              <ul className="home-rail-track">
+              <ul className="m-0 flex w-max list-none select-none gap-[0.85rem] p-0 pb-[0.35rem] caret-transparent [-webkit-user-select:none]">
                 {row.map((item) => (
                   <li
                     key={item.productId}
-                    className={`home-rail-card${item.soldOut ? " home-rail-card--sold-out" : ""}`}
+                    className="flex max-w-[11rem] min-w-0 shrink-0 basis-[min(42vw,11rem)] select-none flex-col overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--card)] caret-transparent [scroll-snap-align:start] [-webkit-user-select:none]"
                   >
-                    <Link href={`/item/${item.productId}`} className="home-rail-link">
-                      <div className="home-rail-media">
+                    <Link
+                      href={`/item/${item.productId}`}
+                      className="flex min-h-0 flex-1 cursor-pointer select-none flex-col text-inherit no-underline caret-transparent [-webkit-user-select:none]"
+                    >
+                      <div className="relative aspect-square shrink-0 bg-[var(--media-bg)]">
                         {item.soldOut && (
-                          <span className="home-rail-sold-out-badge" aria-hidden>
+                          <span
+                            className="absolute right-[0.35rem] top-[0.35rem] z-[1] rounded-[5px] bg-[color-mix(in_srgb,var(--err)_88%,transparent)] px-[0.35rem] py-[0.15rem] text-[0.6875rem] font-bold leading-snug text-[var(--card)]"
+                            aria-hidden
+                          >
                             {zhHant.soldOutBadge}
                           </span>
                         )}
                         {primaryImage(item) ? (
                           <img
+                            className={cn(
+                              "block h-full w-full object-cover",
+                              item.soldOut && "opacity-72 grayscale-[25%]",
+                            )}
                             src={primaryImage(item) || ""}
                             alt=""
                             loading="lazy"
                           />
                         ) : null}
                       </div>
-                      <div className="home-rail-body">
-                        <h3 className="home-rail-title">{displayTitle(item)}</h3>
-                        <p className="home-rail-price">{formatPriceUsd(item.listPrice)}</p>
+                      <div className="flex-1 px-3 pb-[0.35rem] pt-[0.65rem]">
+                        <h3 className="mb-1 line-clamp-2 select-text text-[0.8125rem] font-semibold leading-snug [-webkit-user-select:text]">
+                          {displayTitle(item)}
+                        </h3>
+                        <p className="m-0 select-text text-[0.9rem] font-bold text-[var(--accent)] [-webkit-user-select:text]">
+                          {formatPriceUsd(item.listPrice)}
+                        </p>
                       </div>
                     </Link>
                     <button
                       type="button"
-                      className="btn home-rail-btn"
+                      className="mx-[0.65rem] mb-[0.65rem] mt-0 cursor-pointer rounded-lg border border-[var(--accent)] bg-transparent px-[0.55rem] py-[0.4rem] text-[0.8125rem] font-semibold text-[var(--accent)] hover:bg-[color-mix(in_srgb,var(--accent)_16%,transparent)] disabled:cursor-not-allowed disabled:opacity-50"
                       disabled={adding === item.productId || item.soldOut}
                       title={item.soldOut ? zhHant.soldOutAddDisabled : undefined}
                       onClick={() => addToCart(item)}

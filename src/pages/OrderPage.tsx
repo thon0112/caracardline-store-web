@@ -30,6 +30,9 @@ function formatDeadline(iso: string | null): string | null {
   });
 }
 
+const orderRoot =
+  "box-border w-full min-w-0 max-w-[48rem] cursor-default select-none caret-transparent [-webkit-user-select:none] [&_.error]:select-text [&_a]:cursor-pointer [&_button]:cursor-pointer [&_code]:select-text [&_code]:[-webkit-user-select:text] [&_strong]:select-text";
+
 export function OrderPage() {
   const { showToast } = useToast();
   const params = useParams<{ orderId: string }>();
@@ -102,10 +105,17 @@ export function OrderPage() {
 
   if (loadErr || !order) {
     return (
-      <div className="order-page">
-        <h1 className="title">{zhHant.orderTitle}</h1>
-        <p className="error">{loadErr ?? zhHant.orderNotFound}</p>
-        <Link href="/" className="back muted">
+      <div className={orderRoot}>
+        <h1 className="m-0 mb-2 select-text text-[1.75rem] font-bold [-webkit-user-select:text]">
+          {zhHant.orderTitle}
+        </h1>
+        <p className="error select-text text-[var(--err)] [-webkit-user-select:text]">
+          {loadErr ?? zhHant.orderNotFound}
+        </p>
+        <Link
+          href="/"
+          className="mb-4 inline-block cursor-pointer select-text text-[var(--muted)] no-underline [-webkit-user-select:text]"
+        >
           ← {zhHant.navHome}
         </Link>
       </div>
@@ -127,85 +137,113 @@ export function OrderPage() {
             : order.status;
 
   return (
-    <div className="order-page">
-      <h1 className="title">{zhHant.orderTitle}</h1>
-      <p className="lede muted order-page-ref">
+    <div className={orderRoot}>
+      <h1 className="m-0 mb-[0.4rem] select-text text-[1.75rem] font-bold [-webkit-user-select:text]">
+        {zhHant.orderTitle}
+      </h1>
+      <p className="m-0 mb-[1.2rem] max-w-[42rem] select-text leading-[1.55] text-[var(--muted)] [-webkit-user-select:text]">
         {zhHant.orderRef}{" "}
-        <code className="order-page-id" translate="no">
+        <code
+          className="text-[0.92em] leading-snug [word-break:break-all]"
+          translate="no"
+        >
           {order.orderId}
         </code>
       </p>
 
-      <h2 className="order-section-title order-items-heading">{zhHant.orderItems}</h2>
-      <ul className="order-lines">
+      <h2 className="mb-[0.45rem] mt-[0.1rem] select-text text-[1.1rem] font-semibold [-webkit-user-select:text]">
+        {zhHant.orderItems}
+      </h2>
+      <ul className="m-0 list-none border-t border-[var(--border)] p-0">
         {order.items.map((item, idx) => (
-          <li key={`${item.productId}-${idx}`} className="order-line">
-            <div>
-              <span className="order-line-title">{item.title}</span>
-              <span className="muted small">
+          <li
+            key={`${item.productId}-${idx}`}
+            className="flex items-start justify-between gap-x-5 gap-y-4 border-b border-[var(--border)] py-[0.8rem] last:border-b-0 last:pb-[0.2rem]"
+          >
+            <div className="min-w-0">
+              <span className="block select-text font-semibold leading-snug [-webkit-user-select:text]">
+                {item.title}
+              </span>
+              <span className="inline select-text text-sm leading-normal text-[var(--muted)] [-webkit-user-select:text]">
                 {" "}
                 ×{item.quantity} · {formatPriceUsd(item.unitPrice)} {zhHant.cartEach}
               </span>
             </div>
-            <div className="order-line-total">
+            <div className="shrink-0 select-text text-right text-[1.05rem] font-bold tabular-nums leading-snug text-[var(--accent)] [-webkit-user-select:text]">
               {formatPriceUsd(item.quantity * item.unitPrice)}
             </div>
           </li>
         ))}
       </ul>
-      <div className="order-total-row">
-        <span className="order-total-label">{zhHant.orderAmountDue}</span>
-        <strong className="order-total-value">{formatPriceUsd(total)}</strong>
+      <div className="mb-5 mt-[0.35rem] flex items-baseline justify-between gap-4 border-t-2 border-[color-mix(in_srgb,var(--border)_70%,var(--fg))] pt-4 text-[1.05rem]">
+        <span className="select-text font-semibold text-[var(--muted)] [-webkit-user-select:text]">
+          {zhHant.orderAmountDue}
+        </span>
+        <strong className="select-text text-[1.3rem] font-bold tabular-nums tracking-[0.01em] text-[var(--accent)] [-webkit-user-select:text]">
+          {formatPriceUsd(total)}
+        </strong>
       </div>
 
-      <div className="order-meta card order-meta-card">
-        <p className="order-meta-status">
+      <div className="mb-[1.35rem] block overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--card)] px-[1.05rem] py-[1.05rem] md:px-[1.45rem] md:py-5">
+        <p className="m-0 mb-[0.4rem] select-text leading-snug [-webkit-user-select:text]">
           <strong>{zhHant.orderStatus}</strong> {statusLabel}
         </p>
         {deadline && showFpsBlock && (
-          <p className="muted small order-meta-deadline">
+          <p className="m-0 select-text text-sm leading-normal text-[var(--muted)] [-webkit-user-select:text]">
             {zhHant.orderHoldUntil} {deadline}
           </p>
         )}
         {order.status === "expired" && (
-          <p className="muted small order-meta-hint">
+          <p className="mb-0 mt-[0.55rem] select-text text-sm leading-normal text-[var(--muted)] [-webkit-user-select:text]">
             {zhHant.orderExpiredHint}
           </p>
         )}
         {showFpsBlock && (
-          <section className="fps-in-meta" aria-labelledby="fps-section-title">
-            <div className="fps-section-body fps-section-body--qr-layout">
-              <div className="fps-text-col">
+          <section className="m-0 min-w-0" aria-labelledby="fps-section-title">
+            <div className="mt-[0.85rem] flex flex-col flex-wrap items-start justify-between gap-x-5 gap-y-4 border-t border-[var(--border)] pt-[0.9rem] md:table md:w-full md:table-fixed md:border-separate md:[border-spacing:min(1.25rem,3vw)_0]">
+              <div className="box-border min-w-0 max-w-full flex-[1_1_14rem] md:table-cell md:w-auto md:align-top md:vertical-align-top">
                 <h2
                   id="fps-section-title"
-                  className="order-section-title fps-section-heading-in-meta"
+                  className="m-0 mb-[0.55rem] border-none p-0 select-text text-[1.1rem] font-semibold leading-snug [-webkit-user-select:text]"
                 >
                   {zhHant.fpsTitle}
                 </h2>
-                <div className="fps-section-main">
-                  <p className="muted small">{zhHant.fpsInstructions}</p>
-                  <p className="fps-amount">
-                    {zhHant.fpsPayExact} <strong>{formatPriceUsd(total)}</strong>
+                <div className="box-border w-full min-w-0 max-w-full flex-[0_1_auto] [overflow-wrap:normal] [word-break:normal]">
+                  <p className="mb-0 mt-0 block w-full max-w-full select-text text-sm leading-[1.55] [-webkit-user-select:text]">
+                    {zhHant.fpsInstructions}
                   </p>
-                  <p className="muted small fps-memo-intro">{zhHant.fpsMemoHint}</p>
-                  <p className="fps-memo-id-row">
-                    <code className="fps-memo" translate="no">
+                  <p className="mb-0 mt-[0.65rem] box-border max-w-full rounded-lg border border-[var(--border)] bg-[color-mix(in_srgb,var(--media-bg)_88%,var(--card))] px-[0.9rem] py-[0.65rem] text-[1.06rem] leading-snug [overflow-wrap:normal] [word-break:normal]">
+                    {zhHant.fpsPayExact}{" "}
+                    <strong className="tabular-nums">{formatPriceUsd(total)}</strong>
+                  </p>
+                  <p className="mb-0 mt-[0.65rem] block w-full max-w-full select-text text-sm leading-[1.55] [-webkit-user-select:text]">
+                    {zhHant.fpsMemoHint}
+                  </p>
+                  <p className="mb-0 mt-[0.35rem] block w-full max-w-full">
+                    <code
+                      className="box-border block w-full [overflow-wrap:normal] [word-break:break-all]"
+                      translate="no"
+                    >
                       {order.orderId}
                     </code>
                   </p>
                   {fpsReceiverId ? (
-                    <p className="fps-receiver">
-                      <span className="muted small">{zhHant.fpsReceiverLabel}</span>{" "}
-                      <code translate="no">{fpsReceiverId}</code>
+                    <p className="mb-0 mt-[0.65rem] block w-full max-w-full select-text [-webkit-user-select:text]">
+                      <span className="text-sm text-[var(--muted)]">{zhHant.fpsReceiverLabel}</span>{" "}
+                      <code className="text-[0.95rem] [word-break:break-all]" translate="no">
+                        {fpsReceiverId}
+                      </code>
                     </p>
                   ) : (
-                    <p className="muted small">{zhHant.fpsReceiverUnset}</p>
+                    <p className="mb-0 mt-[0.65rem] select-text text-sm text-[var(--muted)] [-webkit-user-select:text]">
+                      {zhHant.fpsReceiverUnset}
+                    </p>
                   )}
 
                   {order.status === "awaiting_payment" && (
                     <button
                       type="button"
-                      className="btn checkout-submit fps-section-submit"
+                      className="mx-0 mb-0 mt-[0.85rem] w-full max-w-none cursor-pointer rounded-lg border border-[var(--accent)] bg-transparent px-[0.85rem] py-2 font-semibold text-[var(--accent)] hover:bg-[color-mix(in_srgb,var(--accent)_16%,transparent)] disabled:cursor-not-allowed disabled:opacity-50"
                       disabled={paymentBusy}
                       onClick={() => void onPaymentSubmitted()}
                     >
@@ -215,17 +253,17 @@ export function OrderPage() {
                     </button>
                   )}
                   {order.status === "awaiting_confirmation" && (
-                    <p className="muted small fps-section-awaiting">
+                    <p className="mb-0 mt-[0.65rem] select-text text-sm text-[var(--muted)] [-webkit-user-select:text]">
                       {zhHant.orderAwaitingConfirmationHint}
                     </p>
                   )}
                 </div>
               </div>
-              <div className="fps-qr-wrap fps-qr-wrap--aside">
+              <div className="box-border flex w-full max-w-full flex-[0_0_auto] shrink-0 items-center justify-center self-center px-0 py-[0.35rem] md:table-cell md:w-[248px] md:max-w-[248px] md:justify-end md:self-start md:px-0 md:pb-0 md:pl-[0.35rem] md:pt-0 md:text-right md:align-top md:vertical-align-top">
                 <img
                   src={fpsQrSrc}
                   alt={zhHant.fpsQrAlt}
-                  className="fps-qr"
+                  className="block h-auto max-w-[min(100%,232px)] rounded-[10px] border border-[var(--border)] md:inline-block md:align-top"
                   decoding="async"
                 />
               </div>
@@ -234,13 +272,17 @@ export function OrderPage() {
         )}
       </div>
 
-      <p className="muted small order-page-footer">
-        <Link href="/">{zhHant.continueShopping}</Link>
-        <span className="order-page-footer-sep muted small" aria-hidden>
+      <p className="mt-7 select-text text-sm text-[var(--muted)] [-webkit-user-select:text]">
+        <Link href="/" className="text-[var(--muted)] no-underline hover:underline">
+          {zhHant.continueShopping}
+        </Link>
+        <span className="text-sm text-[var(--muted)]" aria-hidden>
           {" "}
           ·{" "}
         </span>
-        <Link href="/track">{zhHant.orderPageTrackAnother}</Link>
+        <Link href="/track" className="text-[var(--muted)] no-underline hover:underline">
+          {zhHant.orderPageTrackAnother}
+        </Link>
       </p>
     </div>
   );

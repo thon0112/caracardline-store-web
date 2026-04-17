@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "wouter";
 import { fetchCatalogItem, createCart, addCartItem } from "../api.js";
 import { useCart } from "../cart-context.js";
+import { cn } from "../cn.js";
 import { displayProductType, formatPriceUsd, zhHant } from "../locale/zh-Hant.js";
 import { PageLoadingSkeleton } from "../components/PageLoadingSkeleton.js";
 import { tryToastBadRequest } from "../notify-bad-request.js";
@@ -95,8 +96,11 @@ export function ProductPage() {
   if (err || !data) {
     return (
       <div>
-        <p className="error">{err ?? zhHant.productNotFound}</p>
-        <Link href="/" className="back muted">
+        <p className="text-[var(--err)]">{err ?? zhHant.productNotFound}</p>
+        <Link
+          href="/"
+          className="mb-4 inline-block cursor-pointer select-none text-[var(--muted)] no-underline caret-transparent"
+        >
           ← {zhHant.productBack}
         </Link>
       </div>
@@ -114,41 +118,60 @@ export function ProductPage() {
     .join(" · ");
 
   return (
-    <article className="detail">
-      <Link href="/catalog" className="back muted">
+    <article className="select-none [-webkit-user-select:none]">
+      <Link
+        href="/catalog"
+        className="mb-4 inline-block cursor-pointer select-none text-[var(--muted)] no-underline caret-transparent"
+      >
         ← {zhHant.productBackCatalog}
       </Link>
-      <div className="detail-grid">
+      <div className="grid select-none gap-8 caret-transparent [-webkit-user-select:none] max-[720px]:grid-cols-1 md:grid-cols-2 [&_code]:select-text [&_h1]:select-text [&_p]:select-text">
         <div
-          className={`detail-media${data.soldOut ? " detail-media--sold-out" : ""}`}
+          className={cn(
+            "relative",
+            data.soldOut && "[&_img]:opacity-72 [&_img]:grayscale-[25%] [&_.ph]:opacity-72 [&_.ph]:grayscale-[25%]",
+          )}
         >
           {data.soldOut && (
-            <span className="detail-sold-out-badge" aria-hidden>
+            <span
+              className="absolute right-[0.65rem] top-[0.65rem] z-[1] rounded-lg bg-[color-mix(in_srgb,var(--err)_88%,transparent)] px-2 py-1 text-[0.8125rem] font-bold leading-snug text-[var(--card)]"
+              aria-hidden
+            >
               {zhHant.soldOutBadge}
             </span>
           )}
-          {img ? <img src={img} alt="" /> : <div className="ph" />}
+          {img ? (
+            <img
+              className="block w-full rounded-xl border border-[var(--border)]"
+              src={img}
+              alt=""
+            />
+          ) : (
+            <div className="aspect-[3/4] rounded-xl border border-dashed border-[var(--border)] bg-[var(--card)]" />
+          )}
         </div>
         <div>
-          <h1 className="title">{data.title}</h1>
-          {subtitle && <p className="muted">{subtitle}</p>}
+          <h1 className="m-0 mb-2 text-[1.75rem] font-bold">{data.title}</h1>
+          {subtitle && <p className="text-[var(--muted)]">{subtitle}</p>}
           {data.description && (
-            <p className="lede" style={{ marginTop: "0.75rem" }}>
-              {data.description}
-            </p>
+            <p className="m-0 mb-6 mt-3 max-w-[42rem]">{data.description}</p>
           )}
           {data.psaId && (
-            <p className="muted small">
-              {zhHant.productPsaId}：<code>{data.psaId}</code>
+            <p className="text-sm text-[var(--muted)]">
+              {zhHant.productPsaId}：<code className="rounded bg-[var(--media-bg)] px-[0.35em] py-[0.1em] text-[0.9em]">
+                {data.psaId}
+              </code>
             </p>
           )}
-          <p className="price big">{formatPriceUsd(data.listPrice)}</p>
+          <p className="my-4 text-2xl font-bold text-[var(--accent)]">
+            {formatPriceUsd(data.listPrice)}
+          </p>
           {data.soldOut && (
-            <p className="detail-sold-out-copy muted">{zhHant.productSoldOut}</p>
+            <p className="mt-2 text-[var(--muted)]">{zhHant.productSoldOut}</p>
           )}
           <button
             type="button"
-            className="btn"
+            className="mx-4 mb-4 mt-3 cursor-pointer rounded-lg border border-[var(--accent)] bg-transparent px-[0.85rem] py-2 font-semibold text-[var(--accent)] hover:bg-[color-mix(in_srgb,var(--accent)_16%,transparent)] disabled:cursor-not-allowed disabled:opacity-50"
             disabled={adding || data.soldOut}
             title={data.soldOut ? zhHant.soldOutAddDisabled : undefined}
             onClick={addToCart}
