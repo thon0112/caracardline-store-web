@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams } from "wouter";
 import {
   fetchCatalog,
+  fetchCatalogSearch,
   createCart,
   addCartItem,
   type CatalogListItem,
@@ -12,8 +13,10 @@ import {
   CATALOG_PRODUCT_TYPE_CODES,
   displayProductType,
   formatPriceUsd,
+  normalizeCatalogAvailability,
   normalizeCatalogSort,
   normalizeCatalogTypeFilter,
+  type CatalogAvailabilityValue,
   type CatalogSortValue,
   zhHant,
 } from "../locale/zh-Hant.js";
@@ -32,6 +35,17 @@ export function CatalogPage() {
     () => normalizeCatalogSort(searchParams.get("sort")),
     [searchParams],
   );
+  const qFromUrl = useMemo(() => {
+    const raw = searchParams.get("q");
+    if (typeof raw !== "string") return "";
+    return raw.trim().slice(0, 200);
+  }, [searchParams]);
+  const availabilityFilter = useMemo(
+    () => normalizeCatalogAvailability(searchParams.get("availability")),
+    [searchParams],
+  );
+
+  const [searchDraft, setSearchDraft] = useState(qFromUrl);
 
   const [items, setItems] = useState<CatalogListItem[]>([]);
   const [nextCursor, setNextCursor] = useState<string | null>(null);
@@ -64,17 +78,53 @@ export function CatalogPage() {
     setSearchParams(p, { replace: true });
   }
 
+  function setAvailabilityQuery(value: CatalogAvailabilityValue) {
+    const p = new URLSearchParams(searchParams.toString());
+    if (value === "all") p.delete("availability");
+    else p.set("availability", value);
+    setSearchParams(p, { replace: true });
+  }
+
+  useEffect(() => {
+    setSearchDraft(qFromUrl);
+  }, [qFromUrl]);
+
+  function applySearchFromDraft() {
+    const p = new URLSearchParams(searchParams.toString());
+    const t = searchDraft.trim().slice(0, 200);
+    if (t === "") p.delete("q");
+    else p.set("q", t);
+    setSearchParams(p, { replace: true });
+  }
+
+  function clearSearch() {
+    setSearchDraft("");
+    const p = new URLSearchParams(searchParams.toString());
+    p.delete("q");
+    setSearchParams(p, { replace: true });
+  }
+
   useEffect(() => {
     let cancelled = false;
     (async () => {
       try {
         setLoading(true);
         setErr(null);
-        const data = await fetchCatalog({
-          limit: 24,
-          productType: typeFilter || undefined,
-          sort: sortFilter,
-        });
+        const avail =
+          availabilityFilter === "in_stock" ? "in_stock" : undefined;
+        const data =
+          qFromUrl.length > 0
+            ? await fetchCatalogSearch({
+                q: qFromUrl,
+                limit: 24,
+                availability: avail,
+              })
+            : await fetchCatalog({
+                limit: 24,
+                productType: typeFilter || undefined,
+                sort: sortFilter,
+                availability: avail,
+              });
         if (!cancelled) {
           setItems(data.items);
           setNextCursor(data.nextCursor);
@@ -94,17 +144,28 @@ export function CatalogPage() {
     return () => {
       cancelled = true;
     };
-  }, [showToast, typeFilter, sortFilter]);
+  }, [showToast, typeFilter, sortFilter, qFromUrl, availabilityFilter]);
 
   async function loadMore() {
     if (!nextCursor) return;
     try {
-      const data = await fetchCatalog({
-        limit: 24,
-        cursor: nextCursor,
-        productType: typeFilter || undefined,
-        sort: sortFilter,
-      });
+      const avail =
+        availabilityFilter === "in_stock" ? "in_stock" : undefined;
+      const data =
+        qFromUrl.length > 0
+          ? await fetchCatalogSearch({
+              q: qFromUrl,
+              limit: 24,
+              cursor: nextCursor,
+              availability: avail,
+            })
+          : await fetchCatalog({
+              limit: 24,
+              cursor: nextCursor,
+              productType: typeFilter || undefined,
+              sort: sortFilter,
+              availability: avail,
+            });
       setItems((prev) => [...prev, ...data.items]);
       setNextCursor(data.nextCursor);
     } catch (e) {
@@ -141,14 +202,62 @@ export function CatalogPage() {
   return (
     <div className="box-border w-full min-w-0 max-w-[68rem]">
       <h1 className="m-0 mb-4 text-[1.75rem] font-bold">
-        {typeFilter
-          ? `${zhHant.catalogTitle} · ${displayProductType(typeFilter)}`
-          : zhHant.catalogTitle}
+        {qFromUrl
+          ? zhHant.catalogSearchResultsTitle
+          : typeFilter
+            ? `${zhHant.catalogTitle} · ${displayProductType(typeFilter)}`
+            : zhHant.catalogTitle}
       </h1>
 
       <div className="mb-5 rounded-xl border border-[var(--border)] bg-[var(--card)] px-[1.15rem] py-4">
-        <div className="grid max-w-[38rem] grid-cols-1 gap-x-5 gap-y-3 min-[521px]:grid-cols-2">
-          <div className="min-w-0">
+        <div className="flex max-w-[38rem] flex-row gap-x-5 gap-y-3 flex-wrap min-[800px]:flex-nowrap">
+   
+          <form
+            className="min-w-[350px]"
+            role="search"
+            onSubmit={(e) => {
+              e.preventDefault();
+              applySearchFromDraft();
+            }}
+          >
+            <label
+              className="mb-[0.35rem] block text-sm font-semibold"
+              htmlFor="catalog-search-q"
+            >
+              {zhHant.catalogSearchLabel}
+            </label>
+            <div className="flex flex-col gap-2 min-[420px]:flex-row min-[420px]:items-stretch">
+              <input
+                id="catalog-search-q"
+                type="search"
+                enterKeyHint="search"
+                autoComplete="off"
+                maxLength={200}
+                placeholder={zhHant.catalogSearchPlaceholder}
+                className="min-h-[2.5rem] min-w-0 flex-1 rounded-lg border border-[var(--border)] bg-[var(--card)] px-[0.65rem] py-2"
+                value={searchDraft}
+                onChange={(e) => setSearchDraft(e.target.value)}
+              />
+              <div className="flex shrink-0 gap-2">
+                <button
+                  type="submit"
+                  className="min-h-[2.5rem] cursor-pointer rounded-lg border border-[var(--accent)] bg-[var(--accent-fill)] px-[0.85rem] py-2 font-semibold text-[var(--on-accent-fill)] hover:opacity-90"
+                >
+                  {zhHant.catalogSearchSubmit}
+                </button>
+                {(qFromUrl.length > 0 || searchDraft.trim().length > 0) && (
+                  <button
+                    type="button"
+                    className="min-h-[2.5rem] cursor-pointer rounded-lg border border-[var(--border)] bg-transparent px-[0.85rem] py-2 font-semibold text-[var(--fg)] hover:bg-[color-mix(in_srgb,var(--accent)_16%,transparent)]"
+                    onClick={clearSearch}
+                  >
+                    {zhHant.catalogSearchClear}
+                  </button>
+                )}
+              </div>
+            </div>
+          </form>
+          <div className="min-w-[200px]">
             <label
               className="mb-[0.35rem] block text-sm font-semibold"
               htmlFor="catalog-filter-type"
@@ -169,7 +278,7 @@ export function CatalogPage() {
               ))}
             </select>
           </div>
-          <div className="min-w-0">
+          <div className="min-w-[200px]">
             <label className="mb-[0.35rem] block text-sm font-semibold" htmlFor="catalog-sort">
               {zhHant.catalogSort}
             </label>
@@ -185,6 +294,27 @@ export function CatalogPage() {
               <option value="date_desc">{zhHant.catalogSortDateDesc}</option>
               <option value="price_asc">{zhHant.catalogSortPriceAsc}</option>
               <option value="price_desc">{zhHant.catalogSortPriceDesc}</option>
+            </select>
+          </div>
+          <div className="min-w-[200px]">
+            <label
+              className="mb-[0.35rem] block text-sm font-semibold"
+              htmlFor="catalog-filter-availability"
+            >
+              {zhHant.catalogFilterAvailability}
+            </label>
+            <select
+              className="w-full rounded-lg border border-[var(--border)] bg-[var(--card)] px-[0.65rem] py-2"
+              id="catalog-filter-availability"
+              value={availabilityFilter}
+              onChange={(e) =>
+                setAvailabilityQuery(e.target.value as CatalogAvailabilityValue)
+              }
+            >
+              <option value="all">{zhHant.catalogFilterAvailabilityAll}</option>
+              <option value="in_stock">
+                {zhHant.catalogFilterAvailabilityInStock}
+              </option>
             </select>
           </div>
         </div>
@@ -264,7 +394,13 @@ export function CatalogPage() {
             ))}
           </ul>
           {visibleItems.length === 0 && (
-            <p className="text-[var(--muted)]">{zhHant.noProducts}</p>
+            <p className="text-[var(--muted)]">
+              {qFromUrl && items.length === 0
+                ? zhHant.catalogNoSearchResults(qFromUrl)
+                : availabilityFilter === "in_stock" && items.length === 0
+                  ? zhHant.catalogEmptyInStockFilter
+                  : zhHant.noProducts}
+            </p>
           )}
           {nextCursor && (
             <button

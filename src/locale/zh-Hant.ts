@@ -118,8 +118,22 @@ export const zhHant = {
   otherServicesBackCatalog: "返回商品目錄",
 
   catalogTitle: "商品目錄",
+  /** Catalog — keyword search (title, SKU, card name, etc.) */
+  catalogSearchLabel: "關鍵字搜尋",
+  catalogSearchPlaceholder: "輸入商品名稱、系列",
+  catalogSearchSubmit: "搜尋",
+  catalogSearchClear: "清除",
+  /** Catalog page `<h1>` when `?q=` is set */
+  catalogSearchResultsTitle: "搜尋結果",
+  catalogNoSearchResults: (q: string) => `沒有符合「${q}」的商品。`,
   catalogFilterType: "商品類型",
   catalogFilterTypeAll: "全部",
+  /** In-stock = purchasable (excludes sold-out listing). */
+  catalogFilterAvailability: "顯示",
+  catalogFilterAvailabilityAll: "全部商品",
+  catalogFilterAvailabilityInStock: "僅現貨可購",
+  /** Empty list when `availability=in_stock` and nothing matches. */
+  catalogEmptyInStockFilter: "目前沒有符合條件的可購買商品。",
   catalogSort: "排序",
   catalogSortDateAsc: "上架時間（舊→新）",
   catalogSortDateDesc: "上架時間（新→舊）",
@@ -320,6 +334,19 @@ export function normalizeCatalogSort(
     if (v === s) return v;
   }
   return "date_asc";
+}
+
+export const CATALOG_AVAILABILITY_VALUES = ["all", "in_stock"] as const;
+
+export type CatalogAvailabilityValue =
+  (typeof CATALOG_AVAILABILITY_VALUES)[number];
+
+export function normalizeCatalogAvailability(
+  raw: string | null | undefined,
+): CatalogAvailabilityValue {
+  const s = raw?.trim().toLowerCase() ?? "";
+  if (s === "in_stock") return "in_stock";
+  return "all";
 }
 
 export function homeRailAriaLabel(groupName: string): string {

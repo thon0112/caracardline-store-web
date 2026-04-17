@@ -107,6 +107,8 @@ export async function fetchCatalog(params: {
   productType?: string;
   /** `date_asc` | `date_desc` | `price_asc` | `price_desc` */
   sort?: string;
+  /** `in_stock` → store-worker `availability=in_stock` (purchasable only). */
+  availability?: "all" | "in_stock";
 }): Promise<CatalogResponse> {
   const u = new URL("/api/catalog", window.location.origin);
   if (params.limit) u.searchParams.set("limit", String(params.limit));
@@ -114,6 +116,28 @@ export async function fetchCatalog(params: {
   if (params.productType)
     u.searchParams.set("productType", params.productType);
   if (params.sort) u.searchParams.set("sort", params.sort);
+  if (params.availability === "in_stock")
+    u.searchParams.set("availability", "in_stock");
+  const url = apiPath(u.pathname + u.search);
+  logApi("GET", url);
+  const res = await fetch(url);
+  await throwIfNotOk(res);
+  return res.json() as Promise<CatalogResponse>;
+}
+
+/** Keyword search; mirrors `GET /api/catalog/search` (store-worker). */
+export async function fetchCatalogSearch(params: {
+  q: string;
+  limit?: number;
+  cursor?: string;
+  availability?: "all" | "in_stock";
+}): Promise<CatalogResponse> {
+  const u = new URL("/api/catalog/search", window.location.origin);
+  u.searchParams.set("q", params.q);
+  if (params.limit) u.searchParams.set("limit", String(params.limit));
+  if (params.cursor) u.searchParams.set("cursor", params.cursor);
+  if (params.availability === "in_stock")
+    u.searchParams.set("availability", "in_stock");
   const url = apiPath(u.pathname + u.search);
   logApi("GET", url);
   const res = await fetch(url);
