@@ -212,7 +212,7 @@ export function SiteHeader() {
   return (
     <header
       className={cn(
-        "sticky top-0 z-50 mb-8 select-none border-b border-[var(--border)] bg-[var(--bg)] pb-4 pt-[calc(1.25rem+env(safe-area-inset-top,0px))]",
+        "sticky top-0 z-50 mb-8 select-none border-b border-[var(--border)] bg-[var(--bg)] pb-2 pt-[calc(0.5rem+env(safe-area-inset-top,0px))]",
       )}
     >
       <div className="relative z-[2] flex min-h-10 cursor-default items-center justify-between gap-4 max-[767px]:justify-start">
@@ -239,7 +239,7 @@ export function SiteHeader() {
             aria-label={zhHant.navHome}
           >
             <img
-              className="block h-[3.75rem] w-auto max-w-[min(16.5rem,69vw)] shrink object-contain"
+              className="block h-[3.2rem] w-auto max-w-[min(16.5rem,69vw)] shrink object-contain"
               src="https://cdn.caracardline.com/assets/logo-with-text.webp"
               alt=""
               width={1200}
@@ -329,7 +329,7 @@ export function SiteHeader() {
                 {CATALOG_PRODUCT_TYPE_CODES.map((code) => (
                   <li key={code} className="m-0 p-0">
                     <Link
-                      href={`/catalog?type=${encodeURIComponent(code)}`}
+                      href={`/catalog/${encodeURIComponent(code)}`}
                       className="flex whitespace-nowrap px-4 py-[0.55rem] text-[0.9375rem] font-semibold leading-snug text-[var(--muted)] no-underline hover:bg-[rgba(28,24,21,0.05)] hover:text-[var(--accent)]"
                       onClick={dismissCatalogSubmenu}
                     >
@@ -438,7 +438,7 @@ export function SiteHeader() {
               {CATALOG_PRODUCT_TYPE_CODES.map((code) => (
                 <li key={code} className="m-0 p-0">
                   <Link
-                    href={`/catalog?type=${encodeURIComponent(code)}`}
+                    href={`/catalog/${encodeURIComponent(code)}`}
                     className="flex cursor-pointer items-center rounded-[10px] py-[0.55rem] pl-[2.55rem] pr-[0.85rem] text-[0.9375rem] font-semibold leading-snug text-[var(--muted)] no-underline hover:bg-[rgba(28,24,21,0.05)] hover:text-[var(--accent)]"
                     onClick={closeMenu}
                   >

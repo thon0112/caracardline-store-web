@@ -1,9 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "wouter";
 import { fetchCatalogItem, createCart, addCartItem } from "../api.js";
 import { useCart } from "../cart-context.js";
 import { cn } from "../cn.js";
-import { displayProductType, formatPriceUsd, zhHant } from "../locale/zh-Hant.js";
+import {
+  displayProductType,
+  formatPriceUsd,
+  normalizeCatalogTypeFilter,
+  zhHant,
+} from "../locale/zh-Hant.js";
 import { PageLoadingSkeleton } from "../components/PageLoadingSkeleton.js";
 import { tryToastBadRequest } from "../notify-bad-request.js";
 import { TOAST_DURATION_SHORT_MS, useToast } from "../toast-context.js";
@@ -92,6 +97,12 @@ export function ProductPage() {
     }
   }
 
+  const catalogListHref = useMemo(() => {
+    if (!data) return "/catalog";
+    const code = normalizeCatalogTypeFilter(data.productType);
+    return code ? `/catalog/${code}` : "/catalog";
+  }, [data]);
+
   if (loading) return <PageLoadingSkeleton variant="product" />;
   if (err || !data) {
     return (
@@ -111,7 +122,7 @@ export function ProductPage() {
   const subtitle = [
     data.card?.collection,
     data.card?.rare,
-    data.condition && `NM ${data.condition}`,
+    data.condition && `${data.condition}`,
     displayProductType(data.productType),
   ]
     .filter(Boolean)
@@ -120,15 +131,15 @@ export function ProductPage() {
   return (
     <article className="select-none [-webkit-user-select:none]">
       <Link
-        href="/catalog"
+        href={catalogListHref}
         className="mb-4 inline-block cursor-pointer select-none text-[var(--muted)] no-underline caret-transparent"
       >
         ← {zhHant.productBackCatalog}
       </Link>
-      <div className="grid select-none gap-8 caret-transparent [-webkit-user-select:none] max-[720px]:grid-cols-1 md:grid-cols-2 [&_code]:select-text [&_h1]:select-text [&_p]:select-text">
+      <div className="grid select-none gap-8 caret-transparent [-webkit-user-select:none] max-[720px]:grid-cols-1 md:grid-cols-3 [&_code]:select-text [&_h1]:select-text [&_p]:select-text">
         <div
           className={cn(
-            "relative",
+            "relative md:col-span-1",
             data.soldOut && "[&_img]:opacity-72 [&_img]:grayscale-[25%] [&_.ph]:opacity-72 [&_.ph]:grayscale-[25%]",
           )}
         >
@@ -142,15 +153,15 @@ export function ProductPage() {
           )}
           {img ? (
             <img
-              className="block w-full rounded-xl border border-[var(--border)]"
+              className="block max-h-[400px] w-full object-contain rounded-xl border border-[var(--border)]"
               src={img}
               alt=""
             />
           ) : (
-            <div className="aspect-[3/4] rounded-xl border border-dashed border-[var(--border)] bg-[var(--card)]" />
+            <div className="aspect-[3/4] max-h-[400px] w-full rounded-xl border border-dashed border-[var(--border)] bg-[var(--card)]" />
           )}
         </div>
-        <div>
+        <div className="md:col-span-2">
           <h1 className="m-0 mb-2 text-[1.75rem] font-bold">{data.title}</h1>
           {subtitle && <p className="text-[var(--muted)]">{subtitle}</p>}
           {data.description && (

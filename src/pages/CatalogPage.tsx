@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
-import { Link, useSearchParams } from "wouter";
+import { useEffect, useLayoutEffect, useMemo, useState } from "react";
+import { Link, useLocation, useRoute, useSearchParams } from "wouter";
 import {
   fetchCatalog,
   fetchCatalogSearch,
@@ -10,7 +10,6 @@ import {
 import { displayTitle, primaryImage } from "../catalog-helpers.js";
 import { useCart } from "../cart-context.js";
 import {
-  CATALOG_PRODUCT_TYPE_CODES,
   displayProductType,
   formatPriceUsd,
   normalizeCatalogAvailability,
@@ -26,11 +25,33 @@ import { TOAST_DURATION_SHORT_MS, useToast } from "../toast-context.js";
 
 export function CatalogPage() {
   const { showToast } = useToast();
+  const [, setLocation] = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
-  const typeFilter = useMemo(
-    () => normalizeCatalogTypeFilter(searchParams.get("type")),
-    [searchParams],
+  const [matchTyped, typedParams] = useRoute<{ type: string }>("/catalog/:type");
+  const [matchBase] = useRoute("/catalog");
+  const pathSegmentType = typedParams?.type;
+  const pathTypeCode = useMemo(
+    () => (matchTyped ? normalizeCatalogTypeFilter(pathSegmentType) : ""),
+    [matchTyped, pathSegmentType],
   );
+  const legacyQueryTypeCode = useMemo(
+    () =>
+      matchBase ? normalizeCatalogTypeFilter(searchParams.get("type")) : "",
+    [matchBase, searchParams],
+  );
+  const invalidTypedCatalog =
+    Boolean(matchTyped && pathSegmentType) && pathTypeCode === "";
+  const activeCatalogTypeCode = pathTypeCode || legacyQueryTypeCode;
+
+  useLayoutEffect(() => {
+    if (!matchBase) return;
+    const qType = normalizeCatalogTypeFilter(searchParams.get("type"));
+    if (!qType) return;
+    const p = new URLSearchParams(searchParams.toString());
+    p.delete("type");
+    const qs = p.toString();
+    setLocation(`/catalog/${qType}${qs ? `?${qs}` : ""}`, { replace: true });
+  }, [matchBase, searchParams, setLocation]);
   const sortFilter = useMemo(
     () => normalizeCatalogSort(searchParams.get("sort")),
     [searchParams],
@@ -56,20 +77,6 @@ export function CatalogPage() {
     localStorage.getItem("sf_cart_id"),
   );
   const [adding, setAdding] = useState<string | null>(null);
-
-  const visibleItems = useMemo(() => {
-    if (!typeFilter) return items;
-    return items.filter(
-      (i) => i.productType.toLowerCase() === typeFilter.toLowerCase(),
-    );
-  }, [items, typeFilter]);
-
-  function setTypeQuery(value: string) {
-    const p = new URLSearchParams(searchParams.toString());
-    if (value === "") p.delete("type");
-    else p.set("type", value);
-    setSearchParams(p, { replace: true });
-  }
 
   function setSortQuery(value: CatalogSortValue) {
     const p = new URLSearchParams(searchParams.toString());
@@ -105,6 +112,10 @@ export function CatalogPage() {
   }
 
   useEffect(() => {
+    if (invalidTypedCatalog) {
+      setLoading(false);
+      return;
+    }
     let cancelled = false;
     (async () => {
       try {
@@ -121,7 +132,7 @@ export function CatalogPage() {
               })
             : await fetchCatalog({
                 limit: 24,
-                productType: typeFilter || undefined,
+                productType: activeCatalogTypeCode || undefined,
                 sort: sortFilter,
                 availability: avail,
               });
@@ -144,10 +155,17 @@ export function CatalogPage() {
     return () => {
       cancelled = true;
     };
-  }, [showToast, typeFilter, sortFilter, qFromUrl, availabilityFilter]);
+  }, [
+    showToast,
+    invalidTypedCatalog,
+    activeCatalogTypeCode,
+    sortFilter,
+    qFromUrl,
+    availabilityFilter,
+  ]);
 
   async function loadMore() {
-    if (!nextCursor) return;
+    if (!nextCursor || invalidTypedCatalog) return;
     try {
       const avail =
         availabilityFilter === "in_stock" ? "in_stock" : undefined;
@@ -162,7 +180,7 @@ export function CatalogPage() {
           : await fetchCatalog({
               limit: 24,
               cursor: nextCursor,
-              productType: typeFilter || undefined,
+              productType: activeCatalogTypeCode || undefined,
               sort: sortFilter,
               availability: avail,
             });
@@ -199,21 +217,29 @@ export function CatalogPage() {
     }
   }
 
+  if (invalidTypedCatalog) {
+    return (
+      <div className="box-border w-full min-w-0 max-w-[68rem]">
+        <p className="text-[var(--muted)]">{zhHant.notFound}</p>
+      </div>
+    );
+  }
+
   return (
     <div className="box-border w-full min-w-0 max-w-[68rem]">
       <h1 className="m-0 mb-4 text-[1.75rem] font-bold">
         {qFromUrl
           ? zhHant.catalogSearchResultsTitle
-          : typeFilter
-            ? `${zhHant.catalogTitle} · ${displayProductType(typeFilter)}`
+          : activeCatalogTypeCode
+            ? `${zhHant.catalogTitle} · ${displayProductType(activeCatalogTypeCode)}`
             : zhHant.catalogTitle}
       </h1>
 
       <div className="mb-5 rounded-xl border border-[var(--border)] bg-[var(--card)] px-[1.15rem] py-4">
-        <div className="flex max-w-[38rem] flex-row gap-x-5 gap-y-3 flex-wrap min-[800px]:flex-nowrap">
+        <div className="flex max-w-[38rem] flex-row gap-x-3 gap-y-3 flex-wrap min-[800px]:flex-nowrap">
    
           <form
-            className="min-w-[350px]"
+            className="min-w-full sm:min-w-[350px]"
             role="search"
             onSubmit={(e) => {
               e.preventDefault();
@@ -226,7 +252,7 @@ export function CatalogPage() {
             >
               {zhHant.catalogSearchLabel}
             </label>
-            <div className="flex flex-col gap-2 min-[420px]:flex-row min-[420px]:items-stretch">
+            <div className="flex flex-col gap-1 min-[420px]:flex-row min-[420px]:items-stretch">
               <input
                 id="catalog-search-q"
                 type="search"
@@ -257,28 +283,7 @@ export function CatalogPage() {
               </div>
             </div>
           </form>
-          <div className="min-w-[200px]">
-            <label
-              className="mb-[0.35rem] block text-sm font-semibold"
-              htmlFor="catalog-filter-type"
-            >
-              {zhHant.catalogFilterType}
-            </label>
-            <select
-              className="w-full rounded-lg border border-[var(--border)] bg-[var(--card)] px-[0.65rem] py-2"
-              id="catalog-filter-type"
-              value={typeFilter}
-              onChange={(e) => setTypeQuery(e.target.value)}
-            >
-              <option value="">{zhHant.catalogFilterTypeAll}</option>
-              {CATALOG_PRODUCT_TYPE_CODES.map((code) => (
-                <option key={code} value={code}>
-                  {displayProductType(code)}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="min-w-[200px]">
+          <div className="sm:min-w-[200px] min-w-[calc(50%-6px)]">
             <label className="mb-[0.35rem] block text-sm font-semibold" htmlFor="catalog-sort">
               {zhHant.catalogSort}
             </label>
@@ -296,7 +301,7 @@ export function CatalogPage() {
               <option value="price_desc">{zhHant.catalogSortPriceDesc}</option>
             </select>
           </div>
-          <div className="min-w-[200px]">
+          <div className="sm:min-w-[200px] min-w-[calc(50%-6px)]">
             <label
               className="mb-[0.35rem] block text-sm font-semibold"
               htmlFor="catalog-filter-availability"
@@ -327,8 +332,8 @@ export function CatalogPage() {
 
       {!loading && !err && (
         <>
-          <ul className="m-0 grid list-none grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-5 select-none p-0 [&_a]:select-text">
-            {visibleItems.map((item) => (
+          <ul className="m-0 grid list-none grid-cols-2 gap-5 select-none p-0 md:grid-cols-[repeat(auto-fill,minmax(240px,1fr))] [&_a]:select-text">
+            {items.map((item) => (
               <li
                 key={item.productId}
                 className="flex flex-col overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--card)]"
@@ -393,7 +398,7 @@ export function CatalogPage() {
               </li>
             ))}
           </ul>
-          {visibleItems.length === 0 && (
+          {items.length === 0 && (
             <p className="text-[var(--muted)]">
               {qFromUrl && items.length === 0
                 ? zhHant.catalogNoSearchResults(qFromUrl)

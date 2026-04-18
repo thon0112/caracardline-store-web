@@ -287,7 +287,7 @@ const PRODUCT_TYPE_LABELS: Record<string, string> = {
   accessory: "周邊",
 };
 
-/** Ordered for hamburger nav and catalog `?type=` filter. */
+/** Ordered for hamburger nav and `/catalog/:type` paths. */
 export const CATALOG_PRODUCT_TYPE_CODES = [
   "booster_box",
   "card",

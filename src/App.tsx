@@ -23,6 +23,7 @@ function AppShell() {
       <main className="min-h-0 min-w-0 w-full flex-1 overflow-x-clip">
         <Switch>
           <Route path="/" component={HomePage} />
+          <Route path="/catalog/:type" component={CatalogPage} />
           <Route path="/catalog" component={CatalogPage} />
           <Route path="/cart" component={CartPage} />
           <Route path="/checkout" component={CheckoutPage} />
