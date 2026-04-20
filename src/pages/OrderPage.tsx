@@ -160,23 +160,6 @@ export function OrderPage() {
         </code>
       </p>
 
-      {deadline && showFpsBlock && order.reservationExpiresAt && (
-        <div
-          role="status"
-          className="mb-[1.2rem] max-w-[42rem] select-text overflow-hidden rounded-xl border border-[#b6effb] bg-[#cff4fc] px-[1.15rem] py-[1.05rem] text-[#055160] shadow-[0_0.125rem_0.25rem_rgba(5,81,96,0.075)] [-webkit-user-select:text] md:px-[1.35rem] md:py-[1.2rem]"
-        >
-          <p className="m-0 text-center text-[1.15rem] font-bold leading-snug tracking-[0.01em] text-[#055160] min-[520px]:text-left min-[520px]:text-[1.3rem] md:text-[1.4rem]">
-            {zhHant.orderHoldUntil}{" "}
-            <time
-              dateTime={order.reservationExpiresAt}
-              className="font-bold tabular-nums text-[#055160] [overflow-wrap:anywhere]"
-            >
-              {deadline}
-            </time>
-          </p>
-        </div>
-      )}
-
       <h2 className="mb-[0.45rem] mt-[0.1rem] select-text text-[1.1rem] font-semibold [-webkit-user-select:text]">
         {zhHant.orderItems}
       </h2>
@@ -214,6 +197,22 @@ export function OrderPage() {
         <p className="m-0 mb-[0.4rem] select-text leading-snug [-webkit-user-select:text]">
           <strong>{zhHant.orderStatus}</strong> {statusLabel}
         </p>
+        {deadline && showFpsBlock && order.reservationExpiresAt && (
+          <div
+            role="status"
+            className="mb-[0.75rem] max-w-full select-text overflow-hidden rounded-lg border border-[#b6effb] bg-[#cff4fc] px-[1rem] py-[0.85rem] text-[#055160] shadow-[0_0.125rem_0.25rem_rgba(5,81,96,0.075)] [-webkit-user-select:text] md:px-[1.15rem] md:py-[0.95rem]"
+          >
+            <p className="m-0 text-center text-[1.05rem] font-bold leading-snug tracking-[0.01em] text-[#055160] min-[520px]:text-left min-[520px]:text-[1.15rem] md:text-[1.2rem]">
+              {zhHant.orderPaymentDeadlineLabel}
+              <time
+                dateTime={order.reservationExpiresAt}
+                className="font-bold tabular-nums text-[#055160] [overflow-wrap:anywhere]"
+              >
+                {deadline}
+              </time>
+            </p>
+          </div>
+        )}
         {order.status === "expired" && (
           <p className="mb-0 mt-[0.55rem] select-text text-sm leading-normal text-[var(--muted)] [-webkit-user-select:text]">
             {zhHant.orderExpiredHint}

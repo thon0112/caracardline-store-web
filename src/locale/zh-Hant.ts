@@ -279,7 +279,8 @@ export const zhHant = {
   orderStatusAwaitingConfirmation: "已通知轉帳，待核對入數",
   orderStatusExpired: "已過期（庫存已釋放）",
   orderStatusPaid: "已付款",
-  orderHoldUntil: "庫存暫留至",
+  /** Order page — deadline line above FPS (reservation / payment window). */
+  orderPaymentDeadlineLabel: "付款截止時間: ",
   orderExpiredHint: "若您已轉帳，請聯絡客服並提供訂單編號與入數證明。",
   orderItems: "訂單明細",
   orderAmountDue: "應付總額",
