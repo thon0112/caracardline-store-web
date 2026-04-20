@@ -1,5 +1,6 @@
 import { Link } from "wouter";
 import { zhHant } from "../locale/zh-Hant.js";
+import { WHATSAPP_CHAT_URL } from "./WhatsAppFloat.js";
 
 export function SiteFooter() {
   const year = new Date().getFullYear();
@@ -32,9 +33,15 @@ export function SiteFooter() {
           <span className="select-none text-sm text-[var(--muted)]" aria-hidden>
             ·
           </span>
-          <span className="text-sm text-[var(--muted)] select-none caret-transparent">
+          <a
+            href={WHATSAPP_CHAT_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="cursor-pointer text-sm text-[var(--muted)] no-underline select-none caret-transparent hover:text-[var(--accent)]"
+            aria-label={zhHant.floatWhatsAppAria}
+          >
             {zhHant.footerContact}
-          </span>
+          </a>
           <span className="select-none text-sm text-[var(--muted)]" aria-hidden>
             ·
           </span>

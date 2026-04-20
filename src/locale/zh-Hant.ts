@@ -14,6 +14,9 @@ export const zhHant = {
   navInstagramAria:
     "Instagram：開啟 Caracardline 官方帳號（新視窗）",
   navInstagram: "Instagram",
+  /** Threads @cara.cardline — opens in a new tab */
+  navThreadsAria: "Threads：開啟 Caracardline 官方帳號（新視窗）",
+  navThreads: "Threads",
   navMenuOpen: "開啟選單",
   navMenuClose: "關閉選單",
   navDrawerAria: "網站選單",
@@ -134,6 +137,8 @@ export const zhHant = {
   catalogFilterAvailabilityInStock: "僅現貨可購",
   /** Empty list when `availability=in_stock` and nothing matches. */
   catalogEmptyInStockFilter: "目前沒有符合條件的可購買商品。",
+  /** Typed `/catalog/:type` or legacy `?type=` after client-side category filter. */
+  catalogEmptyCategoryFilter: "此分類目前沒有顯示中的商品。",
   catalogSort: "排序",
   catalogSortDateAsc: "上架時間（舊→新）",
   catalogSortDateDesc: "上架時間（新→舊）",
@@ -188,6 +193,8 @@ export const zhHant = {
   cartEach: "每件",
   cartDecreaseAria: "減少數量",
   cartIncreaseAria: "增加數量",
+  /** Cart line qty text field — digits only */
+  cartQtyAria: "數量（請輸入數字）",
   cartRemove: "移除",
   cartSubtotal: "小計",
   cartGoCheckout: "前往結帳",
@@ -213,13 +220,14 @@ export const zhHant = {
 
   checkoutTitle: "結帳",
   checkoutLede:
-    "目前僅送香港。可選擇順豐自提或填寫完整收件地址；請填寫收件人與電話，電郵為選填。完成後將為您暫留庫存並顯示轉帳資訊。",
+    "目前僅送香港。可選擇順豐自提或填寫完整收件地址；請填寫收件人資訊。送出訂單後即可於訂單頁查看轉帳與付款指示。",
   checkoutOrderPreview: "訂單預覽",
-  checkoutEmail: "電郵（選填）",
+  checkoutEmail: "電郵（必填）",
   checkoutNameRequired: "請填寫收件人姓名。",
   checkoutShipName: "收件人姓名（必填）",
   checkoutShipPhone: "電話（必填）",
   checkoutPhoneRequired: "請填寫電話。",
+  checkoutEmailRequired: "請填寫電郵。",
   checkoutAddressRequired: "請填寫地址。",
   checkoutShipMethod: "收貨方式",
   checkoutShipModeSf: "順豐自提",
@@ -252,7 +260,7 @@ export const zhHant = {
   orderTitle: "訂單",
   trackOrderTitle: "查詢訂單狀態",
   trackOrderLede:
-    "請輸入結帳完成後顯示的訂單編號，即可查看狀態與付款指示。",
+    "請輸入訂單編號，即可查看狀態與付款指示。",
   trackOrderIdLabel: "訂單編號",
   trackOrderSubmit: "查看訂單",
   trackOrderIdRequired: "請輸入訂單編號。",
@@ -261,6 +269,11 @@ export const zhHant = {
   orderNotFound: "找不到此訂單。",
   orderLoadFailed: "無法載入訂單",
   orderRef: "訂單編號",
+  /** Order page — copy full id for FPS memo / support (UI shows last four only). */
+  orderRefCopy: "複製",
+  orderRefCopyAria: "複製完整訂單編號",
+  orderRefCopiedToast: "已複製完整訂單編號。",
+  orderRefCopyFailedToast: "無法複製，請手動選取或長按複製。",
   orderStatus: "狀態：",
   orderStatusAwaitingPayment: "待付款（請轉帳）",
   orderStatusAwaitingConfirmation: "已通知轉帳，待核對入數",

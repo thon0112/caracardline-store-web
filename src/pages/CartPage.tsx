@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "wouter";
 import {
   deleteCartLine,
@@ -36,26 +36,105 @@ function maxLineQty(catalog: CartCatalogItem, lineQuantity: number): number {
 const cartPageRoot =
   "cursor-default select-none caret-transparent [-webkit-user-select:none]";
 
+function digitsOnly(raw: string): string {
+  return raw.replace(/\D/g, "");
+}
+
+function CartLineQtyField({
+  line,
+  max,
+  disabled,
+  onCommit,
+}: {
+  line: CartLine;
+  max: number;
+  disabled: boolean;
+  onCommit: (line: CartLine, next: number) => Promise<boolean>;
+}) {
+  const [draft, setDraft] = useState(() => String(line.quantity));
+  const [focused, setFocused] = useState(false);
+  const commitInFlightRef = useRef(false);
+
+  useEffect(() => {
+    if (!focused && !commitInFlightRef.current) {
+      setDraft(String(line.quantity));
+    }
+  }, [line.quantity, focused]);
+
+  async function commitDraft(raw: string) {
+    try {
+      const digits = digitsOnly(raw);
+      if (digits === "") {
+        setDraft(String(line.quantity));
+        return;
+      }
+      const parsed = Number.parseInt(digits, 10);
+      if (!Number.isFinite(parsed)) {
+        setDraft(String(line.quantity));
+        return;
+      }
+      const q = Math.min(max, Math.max(1, parsed));
+      if (q === line.quantity) {
+        setDraft(String(line.quantity));
+        return;
+      }
+      const ok = await onCommit(line, q);
+      if (!ok) setDraft(String(line.quantity));
+      else setDraft(String(q));
+    } finally {
+      commitInFlightRef.current = false;
+    }
+  }
+
+  return (
+    <input
+      type="text"
+      inputMode="numeric"
+      autoComplete="off"
+      aria-label={zhHant.cartQtyAria}
+      disabled={disabled}
+      value={draft}
+      onFocus={() => setFocused(true)}
+      onBlur={(e) => {
+        commitInFlightRef.current = true;
+        setFocused(false);
+        void commitDraft(e.currentTarget.value);
+      }}
+      onChange={(e) => {
+        let next = digitsOnly(e.target.value);
+        if (next.length > 2) next = next.slice(0, 2);
+        setDraft(next);
+      }}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") (e.currentTarget as HTMLInputElement).blur();
+      }}
+      className="qty-input h-8 w-10 rounded-md border border-[var(--border)] bg-[var(--card)] px-0.5 text-center text-base font-semibold tabular-nums text-[var(--fg)] outline-none select-text [-webkit-user-select:text] caret-auto focus:border-[var(--accent)] focus:ring-1 focus:ring-[color-mix(in_srgb,var(--accent)_45%,transparent)] disabled:cursor-not-allowed disabled:opacity-40"
+    />
+  );
+}
+
 export function CartPage() {
   const { showToast } = useToast();
   const { cartId, lines, subtotal, loading, error, refreshCart } = useCart();
   const [busyLineId, setBusyLineId] = useState<string | null>(null);
   const [actionErr, setActionErr] = useState<string | null>(null);
 
-  async function setQuantity(line: CartLine, next: number) {
-    if (!cartId) return;
+  async function setQuantity(line: CartLine, next: number): Promise<boolean> {
+    if (!cartId) return false;
     const max = maxLineQty(line.catalog, line.quantity);
     const q = Math.min(max, Math.max(1, next));
-    if (q === line.quantity) return;
+    if (q === line.quantity) return true;
     setActionErr(null);
     setBusyLineId(line.lineId);
     try {
       await patchCartLineQuantity(cartId, line.lineId, q);
-      await refreshCart();
+      await refreshCart({ silent: true });
+      return true;
     } catch (e) {
       if (!tryToastBadRequest(e, showToast)) {
         setActionErr(e instanceof Error ? e.message : zhHant.errUpdateFailed);
       }
+      return false;
     } finally {
       setBusyLineId(null);
     }
@@ -67,7 +146,7 @@ export function CartPage() {
     setBusyLineId(lineId);
     try {
       await deleteCartLine(cartId, lineId);
-      await refreshCart();
+      await refreshCart({ silent: true });
     } catch (e) {
       if (!tryToastBadRequest(e, showToast)) {
         setActionErr(e instanceof Error ? e.message : zhHant.errRemoveFailed);
@@ -199,9 +278,12 @@ export function CartPage() {
                   >
                     −
                   </button>
-                  <span className="qty-value min-w-[1.5rem] text-center font-semibold">
-                    {line.quantity}
-                  </span>
+                  <CartLineQtyField
+                    line={line}
+                    max={max}
+                    disabled={busy || soldOut}
+                    onCommit={setQuantity}
+                  />
                   <button
                     type="button"
                     className="h-8 w-8 cursor-pointer rounded-md border border-[var(--border)] bg-[var(--card)] p-0 text-base font-semibold leading-none text-[var(--fg)] hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-40"

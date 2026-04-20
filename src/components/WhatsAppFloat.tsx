@@ -1,6 +1,6 @@
 import { zhHant } from "../locale/zh-Hant.js";
 
-const WHATSAPP_URL = "https://wa.me/85255053984";
+export const WHATSAPP_CHAT_URL = "https://wa.me/85255053984";
 
 function IconWhatsApp({ size = 33.6 }: { size?: number }) {
   return (
@@ -23,7 +23,7 @@ function IconWhatsApp({ size = 33.6 }: { size?: number }) {
 export function WhatsAppFloat() {
   return (
     <a
-      href={WHATSAPP_URL}
+      href={WHATSAPP_CHAT_URL}
       className="fixed bottom-[max(1rem,env(safe-area-inset-bottom,0px))] right-[max(1rem,env(safe-area-inset-right,0px))] z-40 flex h-[calc(3.35rem*1.5*0.8)] w-[calc(3.35rem*1.5*0.8)] items-center justify-center rounded-full bg-[#25d366] text-white no-underline shadow-[0_4px_14px_rgba(28,24,21,0.2)] transition-[transform,box-shadow] duration-150 ease-out hover:scale-[1.06] hover:shadow-[0_6px_18px_rgba(28,24,21,0.24)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--accent)] motion-reduce:transform-none motion-reduce:transition-none"
       target="_blank"
       rel="noopener noreferrer"

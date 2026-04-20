@@ -7,6 +7,10 @@ import {
   displayProductType,
   zhHant,
 } from "../locale/zh-Hant.js";
+import { WHATSAPP_CHAT_URL } from "./WhatsAppFloat.js";
+
+const INSTAGRAM_URL = "https://www.instagram.com/cara.cardline/";
+const THREADS_URL = "https://www.threads.com/@cara.cardline";
 
 function IconHamburger() {
   return (
@@ -39,6 +43,42 @@ function IconInstagram({ size = 22 }: { size?: number }) {
       <path
         fill="currentColor"
         d="M7.75 2h8.5A5.75 5.75 0 0122 7.75v8.5A5.75 5.75 0 0116.25 22h-8.5A5.75 5.75 0 012 16.25v-8.5A5.75 5.75 0 017.75 2zm0 1.5A4.25 4.25 0 003.5 7.75v8.5A4.25 4.25 0 007.75 20.5h8.5a4.25 4.25 0 004.25-4.25v-8.5A4.25 4.25 0 0016.25 3.5h-8.5zM12 7a5 5 0 110 10 5 5 0 010-10zm0 1.5a3.5 3.5 0 100 7 3.5 3.5 0 000-7zm5.25-3.25a1.25 1.25 0 100 2.5 1.25 1.25 0 000-2.5z"
+      />
+    </svg>
+  );
+}
+
+function IconWhatsApp({ size = 22 }: { size?: number }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      width={size}
+      height={size}
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path
+        fill="currentColor"
+        d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.884 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"
+      />
+    </svg>
+  );
+}
+
+function IconThreads({ size = 22 }: { size?: number }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      width={size}
+      height={size}
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path
+        fill="currentColor"
+        d="M12.186 24h-.007c-3.581-.024-6.334-1.205-8.184-3.509C2.35 18.44 1.5 15.586 1.472 12.01v-.017c.03-3.579.879-6.43 2.525-8.482C5.845 1.205 8.6.024 12.18 0h.014c2.746.02 5.043.725 6.826 2.098 1.677 1.29 2.858 3.13 3.509 5.467l-2.04.569a9.072 9.072 0 00-1.206-2.098c-1.45-1.114-3.35-1.69-5.66-1.71h-.018c-2.978.024-5.303.868-6.91 2.51-1.553 1.584-2.34 3.853-2.36 6.74v.017c.02 2.895.807 5.164 2.36 6.748 1.607 1.642 3.932 2.486 6.91 2.51 2.978-.024 5.303-.868 6.91-2.51.715-.731 1.274-1.586 1.663-2.542l2.04.568a10.857 10.857 0 01-1.814 3.582c-1.783 1.373-4.08 2.078-6.826 2.098h-.014zm-.01-7.59c-1.292-.016-2.308-.38-3.023-1.079-.652-.637-1.01-1.477-1.045-2.474l-.001-.017c.035-.996.393-1.837 1.045-2.474.715-.7 1.73-1.063 3.023-1.079 1.292.016 2.308.38 3.023 1.079.652.637 1.01 1.477 1.045 2.474.035.996-.393 1.837-1.045 2.474-.715.7-1.73 1.063-3.023 1.079z"
       />
     </svg>
   );
@@ -280,7 +320,7 @@ export function SiteHeader() {
           aria-label={zhHant.navSiteAria}
         >
           <a
-            href="https://www.instagram.com/cara.cardline/"
+            href={INSTAGRAM_URL}
             className={cn(
               "inline-flex select-none items-center gap-1 rounded-[10px] p-[0.35rem] font-semibold leading-none text-[var(--fg)] no-underline caret-transparent hover:bg-[rgba(28,24,21,0.05)] hover:text-[var(--accent)]",
             )}
@@ -404,7 +444,7 @@ export function SiteHeader() {
           </button>
         </div>
         <nav
-          className="flex min-h-0 flex-1 flex-col gap-[0.15rem] px-[0.35rem] py-[0.35rem] pb-2 [&>a:last-child]:mt-auto"
+          className="flex min-h-0 flex-1 flex-col gap-[0.15rem] overflow-y-auto px-[0.35rem] py-[0.35rem] pb-2"
           aria-label={zhHant.navSiteAria}
         >
           <Link
@@ -492,20 +532,57 @@ export function SiteHeader() {
               </span>
             ) : null}
           </Link>
-          <a
-            href="https://www.instagram.com/cara.cardline/"
-            className="mt-auto inline-flex cursor-pointer items-center justify-center self-start rounded-[10px] p-[0.75rem] leading-none text-[var(--muted)] no-underline select-none caret-transparent hover:bg-[rgba(28,24,21,0.05)] hover:text-[var(--accent)]"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={zhHant.navInstagramAria}
-            title={zhHant.navInstagram}
-            onClick={closeMenu}
-          >
-            <span className="inline-flex items-center justify-center" aria-hidden>
-              <IconInstagram size={22} />
-            </span>
-          </a>
         </nav>
+        <div
+          className="mt-auto border-t border-[var(--border)] px-[0.65rem] pb-[max(0.85rem,env(safe-area-inset-bottom,0px))] pt-[0.85rem]"
+          role="region"
+          aria-label={zhHant.footerContact}
+        >
+          <p className="m-0 mb-[0.65rem] text-[0.8125rem] font-bold uppercase tracking-[0.06em] text-[var(--muted)]">
+            {zhHant.footerContact}
+          </p>
+          <div className="flex flex-wrap items-center gap-[0.35rem]">
+            <a
+              href={INSTAGRAM_URL}
+              className="inline-flex cursor-pointer items-center justify-center rounded-[10px] p-[0.65rem] leading-none text-[var(--muted)] no-underline select-none caret-transparent hover:bg-[rgba(28,24,21,0.05)] hover:text-[var(--accent)]"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={zhHant.navInstagramAria}
+              title={zhHant.navInstagram}
+              onClick={closeMenu}
+            >
+              <span className="inline-flex items-center justify-center" aria-hidden>
+                <IconInstagram size={22} />
+              </span>
+            </a>
+            <a
+              href={WHATSAPP_CHAT_URL}
+              className="inline-flex cursor-pointer items-center justify-center rounded-[10px] p-[0.65rem] leading-none text-[var(--muted)] no-underline select-none caret-transparent hover:bg-[rgba(28,24,21,0.05)] hover:text-[#25d366]"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={zhHant.floatWhatsAppAria}
+              title={zhHant.floatWhatsAppTitle}
+              onClick={closeMenu}
+            >
+              <span className="inline-flex items-center justify-center" aria-hidden>
+                <IconWhatsApp size={22} />
+              </span>
+            </a>
+            <a
+              href={THREADS_URL}
+              className="inline-flex cursor-pointer items-center justify-center rounded-[10px] p-[0.65rem] leading-none text-[var(--muted)] no-underline select-none caret-transparent hover:bg-[rgba(28,24,21,0.05)] hover:text-[var(--accent)]"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={zhHant.navThreadsAria}
+              title={zhHant.navThreads}
+              onClick={closeMenu}
+            >
+              <span className="inline-flex items-center justify-center" aria-hidden>
+                <IconThreads size={22} />
+              </span>
+            </a>
+          </div>
+        </div>
       </div>
     </header>
   );

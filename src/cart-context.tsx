@@ -14,6 +14,11 @@ import { useToast } from "./toast-context.js";
 
 const CART_STORAGE_KEY = "sf_cart_id";
 
+export type RefreshCartOptions = {
+  /** When true, do not toggle global `loading` (avoids full-page skeleton on cart edits). */
+  silent?: boolean;
+};
+
 export type CartContextValue = {
   cartId: string | null;
   lines: CartLine[];
@@ -22,7 +27,7 @@ export type CartContextValue = {
   subtotal: number;
   loading: boolean;
   error: string | null;
-  refreshCart: () => Promise<void>;
+  refreshCart: (opts?: RefreshCartOptions) => Promise<void>;
 };
 
 const CartContext = createContext<CartContextValue | null>(null);
@@ -38,7 +43,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
   );
   const [error, setError] = useState<string | null>(null);
 
-  const refreshCart = useCallback(async () => {
+  const refreshCart = useCallback(async (opts?: RefreshCartOptions) => {
+    const silent = opts?.silent ?? false;
     const id = localStorage.getItem(CART_STORAGE_KEY);
     setCartId(id);
     if (!id) {
@@ -47,7 +53,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       setError(null);
       return;
     }
-    setLoading(true);
+    if (!silent) setLoading(true);
     setError(null);
     try {
       const data = await fetchCart(id);
@@ -66,7 +72,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         );
       }
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   }, [showToast]);
 

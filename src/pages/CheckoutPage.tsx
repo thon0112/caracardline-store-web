@@ -61,6 +61,10 @@ export function CheckoutPage() {
       return;
     }
     const trimmedEmail = email.trim();
+    if (!trimmedEmail) {
+      setFormErr(zhHant.checkoutEmailRequired);
+      return;
+    }
     let shipLine1: string;
     let shipLine2: string | undefined;
     if (shipMode === "sf") {
@@ -84,7 +88,7 @@ export function CheckoutPage() {
     try {
       const body: PlaceOrderBody = {
         cartId,
-        ...(trimmedEmail ? { email: trimmedEmail } : {}),
+        email: trimmedEmail,
         shipRecipientName: trimmedName,
         shipPhone: trimmedPhone,
         shipAddressLine1: shipLine1,
@@ -154,7 +158,7 @@ export function CheckoutPage() {
       </p>
 
       <div className="grid items-start gap-x-8 gap-y-6 min-[880px]:grid-cols-[minmax(0,1fr)_minmax(16rem,22rem)]">
-        <div className="min-w-0">
+        <div className="min-w-0 min-[880px]:col-start-1 min-[880px]:row-start-1">
           {hasSoldOut && (
             <p className="mb-3 select-text text-[var(--err)] [-webkit-user-select:text]" role="alert">
               {zhHant.checkoutSoldOutBlocked}{" "}
@@ -217,7 +221,8 @@ export function CheckoutPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 onBlur={(e) => setEmail(e.target.value.trim())}
-                aria-required={false}
+                required
+                aria-required={true}
                 maxLength={320}
               />
             </div>
@@ -324,16 +329,12 @@ export function CheckoutPage() {
               {zhHant.checkoutFpsNote}
             </p>
           </form>
-
-          <Link
-            href="/cart"
-            className="mb-4 mt-5 inline-block cursor-pointer select-text text-[var(--muted)] no-underline [-webkit-user-select:text]"
-          >
-            ← {zhHant.backToCart}
-          </Link>
         </div>
 
-        <aside className="min-w-0" aria-label={zhHant.checkoutOrderPreview}>
+        <aside
+          className="min-w-0 min-[880px]:col-start-2 min-[880px]:row-span-2 min-[880px]:row-start-1"
+          aria-label={zhHant.checkoutOrderPreview}
+        >
           <div className="overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--card)] px-[1.15rem] py-4">
             <p className="m-0 mb-2 select-text text-sm text-[var(--muted)] [-webkit-user-select:text]">
               {zhHant.checkoutOrderPreview}
@@ -360,7 +361,7 @@ export function CheckoutPage() {
             <button
               type="submit"
               form="checkout-form"
-              className="mx-4 mb-4 mt-4 w-full cursor-pointer rounded-lg border border-[var(--accent)] bg-transparent px-[0.85rem] py-2 font-semibold text-[var(--accent)] hover:bg-[color-mix(in_srgb,var(--accent)_16%,transparent)] disabled:cursor-not-allowed disabled:opacity-50"
+              className="mt-4 w-full max-w-full cursor-pointer rounded-lg border border-[var(--accent)] bg-transparent px-[0.85rem] py-2 font-semibold text-[var(--accent)] hover:bg-[color-mix(in_srgb,var(--accent)_16%,transparent)] disabled:cursor-not-allowed disabled:opacity-50"
               disabled={submitting || hasSoldOut}
               title={hasSoldOut ? zhHant.checkoutSoldOutBlocked : undefined}
             >
@@ -368,6 +369,15 @@ export function CheckoutPage() {
             </button>
           </div>
         </aside>
+
+        <div className="min-w-0 min-[880px]:col-start-1 min-[880px]:row-start-2">
+          <Link
+            href="/cart"
+            className="mb-4 mt-0 inline-block cursor-pointer select-text text-[var(--muted)] no-underline [-webkit-user-select:text]"
+          >
+            ← {zhHant.backToCart}
+          </Link>
+        </div>
       </div>
     </div>
   );

@@ -12,6 +12,7 @@ import {
   zhHant,
 } from "../locale/zh-Hant.js";
 import { PageLoadingSkeleton } from "../components/PageLoadingSkeleton.js";
+import { formatZhHantDeadline } from "../format-zh-hant-deadline.js";
 import { tryToastBadRequest } from "../notify-bad-request.js";
 import { useToast } from "../toast-context.js";
 
@@ -20,14 +21,11 @@ const fpsReceiverId = (import.meta.env.VITE_FPS_RECEIVER_ID ?? "").trim();
 const fpsQrSrc =
   (import.meta.env.VITE_FPS_QR_IMAGE_URL ?? "").trim() || "/fps-payment-qr.png";
 
-function formatDeadline(iso: string | null): string | null {
-  if (!iso) return null;
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return null;
-  return d.toLocaleString("zh-Hant", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  });
+/** Shown as 訂單編號 in UI; full id remains in URL and copy-to-clipboard. */
+function orderRefDisplayLastFour(orderId: string): string {
+  const t = orderId.trim();
+  if (!t) return "—";
+  return t.length <= 4 ? t : t.slice(-4);
 }
 
 const orderRoot =
@@ -77,6 +75,17 @@ export function OrderPage() {
     return order.items.reduce((s, i) => s + i.quantity * i.unitPrice, 0);
   }, [order]);
 
+  async function copyFullOrderRef() {
+    const full = order?.orderId ?? "";
+    if (!full) return;
+    try {
+      await navigator.clipboard.writeText(full);
+      showToast(zhHant.orderRefCopiedToast);
+    } catch {
+      showToast(zhHant.orderRefCopyFailedToast);
+    }
+  }
+
   async function onPaymentSubmitted() {
     if (!orderId) return;
     setPaymentBusy(true);
@@ -122,7 +131,7 @@ export function OrderPage() {
     );
   }
 
-  const deadline = formatDeadline(order.reservationExpiresAt);
+  const deadline = formatZhHantDeadline(order.reservationExpiresAt);
   const showFpsBlock =
     order.status === "awaiting_payment" || order.status === "awaiting_confirmation";
   const statusLabel =
@@ -147,9 +156,26 @@ export function OrderPage() {
           className="text-[0.92em] leading-snug [word-break:break-all]"
           translate="no"
         >
-          {order.orderId}
+          {orderRefDisplayLastFour(order.orderId)}
         </code>
       </p>
+
+      {deadline && showFpsBlock && order.reservationExpiresAt && (
+        <div
+          role="status"
+          className="mb-[1.2rem] max-w-[42rem] select-text overflow-hidden rounded-xl border border-[#b6effb] bg-[#cff4fc] px-[1.15rem] py-[1.05rem] text-[#055160] shadow-[0_0.125rem_0.25rem_rgba(5,81,96,0.075)] [-webkit-user-select:text] md:px-[1.35rem] md:py-[1.2rem]"
+        >
+          <p className="m-0 text-center text-[1.15rem] font-bold leading-snug tracking-[0.01em] text-[#055160] min-[520px]:text-left min-[520px]:text-[1.3rem] md:text-[1.4rem]">
+            {zhHant.orderHoldUntil}{" "}
+            <time
+              dateTime={order.reservationExpiresAt}
+              className="font-bold tabular-nums text-[#055160] [overflow-wrap:anywhere]"
+            >
+              {deadline}
+            </time>
+          </p>
+        </div>
+      )}
 
       <h2 className="mb-[0.45rem] mt-[0.1rem] select-text text-[1.1rem] font-semibold [-webkit-user-select:text]">
         {zhHant.orderItems}
@@ -188,11 +214,6 @@ export function OrderPage() {
         <p className="m-0 mb-[0.4rem] select-text leading-snug [-webkit-user-select:text]">
           <strong>{zhHant.orderStatus}</strong> {statusLabel}
         </p>
-        {deadline && showFpsBlock && (
-          <p className="m-0 select-text text-sm leading-normal text-[var(--muted)] [-webkit-user-select:text]">
-            {zhHant.orderHoldUntil} {deadline}
-          </p>
-        )}
         {order.status === "expired" && (
           <p className="mb-0 mt-[0.55rem] select-text text-sm leading-normal text-[var(--muted)] [-webkit-user-select:text]">
             {zhHant.orderExpiredHint}
@@ -219,13 +240,22 @@ export function OrderPage() {
                   <p className="mb-0 mt-[0.65rem] block w-full max-w-full select-text text-sm leading-[1.55] [-webkit-user-select:text]">
                     {zhHant.fpsMemoHint}
                   </p>
-                  <p className="mb-0 mt-[0.35rem] block w-full max-w-full">
+                  <p className="mb-0 mt-[0.35rem] flex flex-wrap items-center gap-x-2 gap-y-2 select-text text-sm leading-snug [-webkit-user-select:text]">
+                    <span className="text-[var(--muted)]">{zhHant.orderRef}</span>
                     <code
-                      className="box-border block w-full [overflow-wrap:normal] [word-break:break-all]"
+                      className="text-[0.95em] font-semibold text-[var(--fg)] [word-break:break-all]"
                       translate="no"
                     >
-                      {order.orderId}
+                      {orderRefDisplayLastFour(order.orderId)}
                     </code>
+                    <button
+                      type="button"
+                      className="cursor-pointer rounded-md border border-[var(--border)] bg-[color-mix(in_srgb,var(--media-bg)_70%,var(--card))] px-[0.5rem] py-[0.2rem] text-[0.8125rem] font-semibold text-[var(--fg)] hover:border-[color-mix(in_srgb,var(--accent)_38%,var(--border))] hover:text-[var(--accent)]"
+                      onClick={() => void copyFullOrderRef()}
+                      aria-label={zhHant.orderRefCopyAria}
+                    >
+                      {zhHant.orderRefCopy}
+                    </button>
                   </p>
                   {fpsReceiverId ? (
                     <p className="mb-0 mt-[0.65rem] block w-full max-w-full select-text [-webkit-user-select:text]">
@@ -271,19 +301,6 @@ export function OrderPage() {
           </section>
         )}
       </div>
-
-      <p className="mt-7 select-text text-sm text-[var(--muted)] [-webkit-user-select:text]">
-        <Link href="/" className="text-[var(--muted)] no-underline hover:underline">
-          {zhHant.continueShopping}
-        </Link>
-        <span className="text-sm text-[var(--muted)]" aria-hidden>
-          {" "}
-          ·{" "}
-        </span>
-        <Link href="/track" className="text-[var(--muted)] no-underline hover:underline">
-          {zhHant.orderPageTrackAnother}
-        </Link>
-      </p>
     </div>
   );
 }

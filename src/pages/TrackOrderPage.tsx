@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from "react";
-import { Link, useLocation, useSearchParams } from "wouter";
+import { useLocation, useSearchParams } from "wouter";
 import { zhHant } from "../locale/zh-Hant.js";
 
 function orderIdFromSearchParams(searchParams: URLSearchParams): string {
@@ -70,17 +70,11 @@ export function TrackOrderPage() {
         ) : null}
         <button
           type="submit"
-          className="mx-4 mb-4 mt-2 w-full max-w-[28rem] cursor-pointer rounded-lg border border-[var(--accent)] bg-transparent px-[0.85rem] py-2 font-semibold text-[var(--accent)] hover:bg-[color-mix(in_srgb,var(--accent)_16%,transparent)] disabled:cursor-not-allowed disabled:opacity-50"
+          className="mb-4 mt-2 w-full min-w-0 cursor-pointer rounded-lg border border-[var(--accent)] bg-transparent px-[0.85rem] py-2 text-center font-semibold text-[var(--accent)] hover:bg-[color-mix(in_srgb,var(--accent)_16%,transparent)] disabled:cursor-not-allowed disabled:opacity-50"
         >
           {zhHant.trackOrderSubmit}
         </button>
       </form>
-
-      <p className="mt-6 select-text text-sm text-[var(--muted)] [-webkit-user-select:text]">
-        <Link href="/" className="text-[var(--muted)] no-underline hover:text-[var(--accent)]">
-          ← {zhHant.navHome}
-        </Link>
-      </p>
     </div>
   );
 }

@@ -6,7 +6,11 @@ import {
   addCartItem,
   type CatalogListItem,
 } from "../api.js";
-import { displayTitle, primaryImage } from "../catalog-helpers.js";
+import {
+  displayTitle,
+  primaryImage,
+  storefrontListingCategory,
+} from "../catalog-helpers.js";
 import { useCart } from "../cart-context.js";
 import { cn } from "../cn.js";
 import {
@@ -24,15 +28,28 @@ const CATALOG_HOME_LIMIT = 96;
 /** Max products shown per category on the home page rails */
 const HOME_CATEGORY_SAMPLE_COUNT = 5;
 
-function groupLabel(productType: string): string {
-  const t = displayProductType(productType).trim();
+function homeGroupKeyFromItem(item: CatalogListItem): string {
+  const effective = storefrontListingCategory(item);
+  if (effective) return effective;
+  const raw = item.productType.trim();
+  if (raw) return `raw:${raw.toLowerCase()}`;
+  return "__other__";
+}
+
+function homeGroupLabelFromItem(item: CatalogListItem): string {
+  const effective = storefrontListingCategory(item);
+  if (effective) {
+    const t = displayProductType(effective).trim();
+    return t.length > 0 ? t : zhHant.homeGroupOther;
+  }
+  const t = displayProductType(item.productType).trim();
   return t.length > 0 ? t : zhHant.homeGroupOther;
 }
 
 function groupItems(items: CatalogListItem[]): Map<string, CatalogListItem[]> {
   const m = new Map<string, CatalogListItem[]>();
   for (const item of items) {
-    const key = groupLabel(item.productType);
+    const key = homeGroupKeyFromItem(item);
     const list = m.get(key);
     if (list) list.push(item);
     else m.set(key, [item]);
@@ -85,10 +102,20 @@ export function HomePage() {
     const m = groupItems(availableItems);
     return [...m.entries()]
       .sort((a, b) => b[1].length - a[1].length)
-      .map(([label, row]) => [
-        label,
-        row.slice(0, HOME_CATEGORY_SAMPLE_COUNT),
-      ] as const);
+      .map(([groupKey, row]) => {
+        const sample = row[0]!;
+        const typeCode = storefrontListingCategory(sample);
+        const label = homeGroupLabelFromItem(sample);
+        const catalogHref = typeCode
+          ? `/catalog/${encodeURIComponent(typeCode)}`
+          : "/catalog";
+        return {
+          groupKey,
+          label,
+          catalogHref,
+          row: row.slice(0, HOME_CATEGORY_SAMPLE_COUNT),
+        };
+      });
   }, [availableItems]);
 
   async function ensureCart() {
@@ -128,9 +155,9 @@ export function HomePage() {
       {availableItems.length === 0 ? (
         <p className="text-[var(--muted)]">{zhHant.noProducts}</p>
       ) : (
-        grouped.map(([label, row], gi) => (
+        grouped.map(({ groupKey, label, catalogHref, row }, gi) => (
           <section
-            key={`${gi}-${label}`}
+            key={`${gi}-${groupKey}`}
             className="mb-8 select-none [-webkit-user-select:none]"
             aria-labelledby={`home-grp-${gi}`}
           >
@@ -142,7 +169,7 @@ export function HomePage() {
                 {label}
               </h2>
               <Link
-                href="/catalog"
+                href={catalogHref}
                 className="shrink-0 cursor-pointer select-none text-sm font-semibold text-[var(--accent)] no-underline caret-transparent hover:underline"
               >
                 {zhHant.homeViewAll}

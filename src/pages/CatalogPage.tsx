@@ -7,7 +7,12 @@ import {
   addCartItem,
   type CatalogListItem,
 } from "../api.js";
-import { displayTitle, primaryImage } from "../catalog-helpers.js";
+import {
+  displayListingProductType,
+  displayTitle,
+  primaryImage,
+  storefrontListingCategory,
+} from "../catalog-helpers.js";
 import { useCart } from "../cart-context.js";
 import {
   displayProductType,
@@ -77,6 +82,13 @@ export function CatalogPage() {
     localStorage.getItem("sf_cart_id"),
   );
   const [adding, setAdding] = useState<string | null>(null);
+
+  const visibleItems = useMemo(() => {
+    if (!activeCatalogTypeCode) return items;
+    return items.filter(
+      (item) => storefrontListingCategory(item) === activeCatalogTypeCode,
+    );
+  }, [items, activeCatalogTypeCode]);
 
   function setSortQuery(value: CatalogSortValue) {
     const p = new URLSearchParams(searchParams.toString());
@@ -333,7 +345,7 @@ export function CatalogPage() {
       {!loading && !err && (
         <>
           <ul className="m-0 grid list-none grid-cols-2 gap-5 select-none p-0 md:grid-cols-[repeat(auto-fill,minmax(240px,1fr))] [&_a]:select-text">
-            {items.map((item) => (
+            {visibleItems.map((item) => (
               <li
                 key={item.productId}
                 className="flex flex-col overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--card)]"
@@ -372,7 +384,7 @@ export function CatalogPage() {
                       {[
                         item.card?.collection,
                         item.card?.rare,
-                        displayProductType(item.productType),
+                        displayListingProductType(item),
                       ]
                         .filter(Boolean)
                         .join(" · ")}
@@ -398,13 +410,19 @@ export function CatalogPage() {
               </li>
             ))}
           </ul>
-          {items.length === 0 && (
+          {visibleItems.length === 0 && (
             <p className="text-[var(--muted)]">
-              {qFromUrl && items.length === 0
-                ? zhHant.catalogNoSearchResults(qFromUrl)
+              {qFromUrl.length > 0
+                ? items.length === 0
+                  ? zhHant.catalogNoSearchResults(qFromUrl)
+                  : activeCatalogTypeCode
+                    ? zhHant.catalogEmptyCategoryFilter
+                    : zhHant.catalogNoSearchResults(qFromUrl)
                 : availabilityFilter === "in_stock" && items.length === 0
                   ? zhHant.catalogEmptyInStockFilter
-                  : zhHant.noProducts}
+                  : activeCatalogTypeCode && items.length > 0
+                    ? zhHant.catalogEmptyCategoryFilter
+                    : zhHant.noProducts}
             </p>
           )}
           {nextCursor && (
