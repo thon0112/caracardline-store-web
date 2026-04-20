@@ -158,6 +158,11 @@ export const zhHant = {
   soldOutAddDisabled: "此商品已售罄。",
   /** Shown briefly after a product is added from listing or detail. */
   addToCartSuccess: "已成功加入購物車。",
+  /** Catalog — modal before POST; choose qty then confirm. */
+  catalogAddQtyDialogTitle: "加入購物車",
+  catalogAddQtyDialogConfirm: "確認加入",
+  catalogAddQtyDialogCancel: "取消",
+  catalogAddQtyLabel: "數量",
   adding: "加入中…",
   noProducts: "尚無商品。請先上架商品並連結庫存。",
   errLoadCatalog: "無法載入目錄",

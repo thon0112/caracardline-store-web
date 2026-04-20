@@ -156,7 +156,7 @@ const borderHover =
   "hover:border-[color-mix(in_srgb,var(--accent)_45%,var(--border))]";
 
 export function SiteHeader() {
-  const { cartLineCount } = useCart();
+  const { cartItemCount } = useCart();
   const [loc] = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const drawerId = useId();
@@ -256,11 +256,11 @@ export function SiteHeader() {
             "hover:text-[var(--accent)]",
           )}
           aria-label={
-            cartLineCount > 0
+            cartItemCount > 0
               ? `${zhHant.navCart}，${
-                  cartLineCount === 1
+                  cartItemCount === 1
                     ? zhHant.cartItemOne
-                    : zhHant.cartItemsMany(cartLineCount)
+                    : zhHant.cartItemsMany(cartItemCount)
                 }`
               : zhHant.navCart
           }
@@ -269,9 +269,9 @@ export function SiteHeader() {
           <span className="inline-flex items-center justify-center" aria-hidden>
             <IconCart size={22} />
           </span>
-          {cartLineCount > 0 ? (
+          {cartItemCount > 0 ? (
             <span className="absolute right-[0.1rem] top-[0.1rem] min-w-[1.05rem] translate-x-[35%] translate-y-[-35%] rounded-full bg-[var(--accent-fill)] px-[0.28rem] text-center text-[0.65rem] font-bold leading-[1.05rem] text-[var(--on-accent-fill)] shadow-[0_0_0_2px_var(--card)]">
-              {cartLineCount}
+              {cartItemCount}
             </span>
           ) : null}
         </Link>
@@ -357,9 +357,9 @@ export function SiteHeader() {
             className="inline-flex select-none items-center gap-1 whitespace-nowrap font-semibold leading-tight text-[var(--fg)] no-underline caret-transparent hover:text-[var(--accent)]"
           >
             {zhHant.navCart}
-            {cartLineCount > 0 ? (
+            {cartItemCount > 0 ? (
               <span className="ml-1 min-h-5 min-w-5 rounded-full bg-[var(--accent-fill)] px-[0.35rem] text-center text-xs font-bold leading-5 text-[var(--on-accent-fill)]">
-                {cartLineCount}
+                {cartItemCount}
               </span>
             ) : null}
           </Link>
@@ -486,9 +486,9 @@ export function SiteHeader() {
               <IconCart size={20} />
             </span>
             <span className="min-w-0 flex-1">{zhHant.navCart}</span>
-            {cartLineCount > 0 ? (
+            {cartItemCount > 0 ? (
               <span className="ml-auto shrink-0 rounded-full bg-[var(--accent-fill)] px-[0.35rem] text-center text-xs font-bold leading-5 text-[var(--on-accent-fill)]">
-                {cartLineCount}
+                {cartItemCount}
               </span>
             ) : null}
           </Link>
