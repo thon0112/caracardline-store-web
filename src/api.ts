@@ -109,6 +109,7 @@ export async function fetchCatalog(params: {
   sort?: string;
   /** `in_stock` → store-worker `availability=in_stock` (purchasable only). */
   availability?: "all" | "in_stock";
+  highlight?: boolean; // get items by each productType
 }): Promise<CatalogResponse> {
   const u = new URL("/api/catalog", window.location.origin);
   if (params.limit) u.searchParams.set("limit", String(params.limit));
@@ -118,6 +119,7 @@ export async function fetchCatalog(params: {
   if (params.sort) u.searchParams.set("sort", params.sort);
   if (params.availability === "in_stock")
     u.searchParams.set("availability", "in_stock");
+  if (params.highlight) u.searchParams.set("highlight", "true");
   const url = apiPath(u.pathname + u.search);
   logApi("GET", url);
   const res = await fetch(url);

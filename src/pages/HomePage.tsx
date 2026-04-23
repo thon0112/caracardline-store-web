@@ -24,7 +24,7 @@ import { PageLoadingSkeleton } from "../components/PageLoadingSkeleton.js";
 import { tryToastBadRequest } from "../notify-bad-request.js";
 import { TOAST_DURATION_SHORT_MS, useToast } from "../toast-context.js";
 
-const CATALOG_HOME_LIMIT = 96;
+const CATALOG_HOME_LIMIT = 6;
 /** Max products shown per category on the home page rails */
 const HOME_CATEGORY_SAMPLE_COUNT = 5;
 
@@ -73,7 +73,12 @@ export function HomePage() {
     (async () => {
       try {
         setLoading(true);
-        const data = await fetchCatalog({ limit: CATALOG_HOME_LIMIT });
+        const data = await fetchCatalog({
+          limit: CATALOG_HOME_LIMIT,
+          availability: "in_stock",
+          highlight: true,
+        });
+        
         if (!cancelled) {
           setItems(data.items);
           setErr(null);
@@ -224,7 +229,9 @@ export function HomePage() {
                       type="button"
                       className="mx-[0.65rem] mb-[0.65rem] mt-0 cursor-pointer rounded-lg border border-[var(--accent)] bg-transparent px-[0.55rem] py-[0.4rem] text-[0.8125rem] font-semibold text-[var(--accent)] hover:bg-[color-mix(in_srgb,var(--accent)_16%,transparent)] disabled:cursor-not-allowed disabled:opacity-50"
                       disabled={adding === item.productId || item.soldOut}
-                      title={item.soldOut ? zhHant.soldOutAddDisabled : undefined}
+                      title={
+                        item.soldOut ? zhHant.soldOutAddDisabled : undefined
+                      }
                       onClick={() => addToCart(item)}
                     >
                       {adding === item.productId

@@ -1,4 +1,11 @@
-import { useEffect, useLayoutEffect, useMemo, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { Link, useLocation, useRoute, useSearchParams } from "wouter";
 import {
   fetchCatalog,
@@ -27,6 +34,31 @@ import {
 import { PageLoadingSkeleton } from "../components/PageLoadingSkeleton.js";
 import { tryToastBadRequest } from "../notify-bad-request.js";
 import { TOAST_DURATION_SHORT_MS, useToast } from "../toast-context.js";
+
+const CATALOG_PAGE_LIMIT = 24;
+
+function CatalogLoadMorePlaceholder() {
+  return (
+    <ul
+      className="m-0 grid list-none grid-cols-2 gap-5 select-none p-0 md:grid-cols-[repeat(auto-fill,minmax(240px,1fr))]"
+      aria-hidden
+    >
+      {Array.from({ length: CATALOG_PAGE_LIMIT }, (_, i) => (
+        <li
+          key={i}
+          className="flex flex-col overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--card)]"
+        >
+          <div className="aspect-[3/4] animate-pulse bg-[var(--media-bg)]" />
+          <div className="px-3 pb-[0.35rem] pt-[0.65rem]">
+            <div className="h-[0.8125rem] max-w-[90%] animate-pulse rounded-md bg-[var(--media-bg)]" />
+            <div className="mt-2 h-[0.9rem] w-16 animate-pulse rounded-md bg-[var(--media-bg)]" />
+          </div>
+          <span className="mx-4 mb-4 mt-3 h-[2.35rem] animate-pulse rounded-lg bg-[var(--media-bg)]" />
+        </li>
+      ))}
+    </ul>
+  );
+}
 
 export function CatalogPage() {
   const { showToast } = useToast();
@@ -84,6 +116,9 @@ export function CatalogPage() {
     localStorage.getItem("sf_cart_id"),
   );
   const [adding, setAdding] = useState<string | null>(null);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const loadMoreInFlightRef = useRef(false);
+  const loadMoreSentinelRef = useRef<HTMLDivElement | null>(null);
 
   const visibleItems = useMemo(() => {
     if (!activeCatalogTypeCode) return items;
@@ -141,11 +176,11 @@ export function CatalogPage() {
           qFromUrl.length > 0
             ? await fetchCatalogSearch({
                 q: qFromUrl,
-                limit: 24,
+                limit: CATALOG_PAGE_LIMIT,
                 availability: avail,
               })
             : await fetchCatalog({
-                limit: 24,
+                limit: CATALOG_PAGE_LIMIT,
                 productType: activeCatalogTypeCode || undefined,
                 sort: sortFilter,
                 availability: avail,
@@ -178,33 +213,64 @@ export function CatalogPage() {
     availabilityFilter,
   ]);
 
-  async function loadMore() {
-    if (!nextCursor || invalidTypedCatalog) return;
+  const loadMore = useCallback(async () => {
+    if (!nextCursor || invalidTypedCatalog || loadMoreInFlightRef.current) {
+      return;
+    }
+    loadMoreInFlightRef.current = true;
+    setLoadingMore(true);
     try {
       const avail = availabilityFilter === "in_stock" ? "in_stock" : undefined;
       const data =
         qFromUrl.length > 0
           ? await fetchCatalogSearch({
               q: qFromUrl,
-              limit: 24,
+              limit: CATALOG_PAGE_LIMIT,
               cursor: nextCursor,
               availability: avail,
             })
           : await fetchCatalog({
-              limit: 24,
+              limit: CATALOG_PAGE_LIMIT,
               cursor: nextCursor,
               productType: activeCatalogTypeCode || undefined,
               sort: sortFilter,
               availability: avail,
             });
       setItems((prev) => [...prev, ...data.items]);
+      console.log(data.nextCursor);
       setNextCursor(data.nextCursor);
     } catch (e) {
       if (!tryToastBadRequest(e, showToast)) {
         setErr(e instanceof Error ? e.message : zhHant.errLoadMore);
       }
+    } finally {
+      loadMoreInFlightRef.current = false;
+      setLoadingMore(false);
     }
-  }
+  }, [
+    nextCursor,
+    invalidTypedCatalog,
+    qFromUrl,
+    activeCatalogTypeCode,
+    sortFilter,
+    availabilityFilter,
+    showToast,
+  ]);
+
+  useEffect(() => {
+    if (!nextCursor || invalidTypedCatalog) return;
+    const el = loadMoreSentinelRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      (entries) => {
+        if (!entries[0]?.isIntersecting) return;
+        void loadMore();
+      },
+      { root: null, rootMargin: "280px 0px", threshold: 0 },
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [nextCursor, invalidTypedCatalog, loadMore, items.length]);
 
   async function ensureCart() {
     if (cartId) return cartId;
@@ -411,14 +477,27 @@ export function CatalogPage() {
                     : zhHant.noProducts}
             </p>
           )}
-          {nextCursor && (
-            <button
-              type="button"
-              className="mx-0 mb-0 mt-6 cursor-pointer rounded-lg border border-[var(--border)] bg-transparent px-[0.85rem] py-2 font-semibold text-[var(--fg)] hover:bg-[color-mix(in_srgb,var(--accent)_16%,transparent)] disabled:cursor-not-allowed disabled:opacity-50"
-              onClick={loadMore}
-            >
-              {zhHant.loadMore}
-            </button>
+          {(nextCursor || loadingMore) && (
+            <div className="mx-0 mb-0 mt-6 w-full min-w-0">
+              {loadingMore && (
+                <div
+                  className="mb-0"
+                  role="status"
+                  aria-live="polite"
+                  aria-busy="true"
+                >
+                  <span className="sr-only">{zhHant.loadingPage}</span>
+                  <CatalogLoadMorePlaceholder />
+                </div>
+              )}
+              {nextCursor && (
+                <div
+                  ref={loadMoreSentinelRef}
+                  className="h-2 w-full shrink-0"
+                  aria-hidden
+                />
+              )}
+            </div>
           )}
         </>
       )}
