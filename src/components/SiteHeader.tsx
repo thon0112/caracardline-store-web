@@ -205,7 +205,7 @@ export function SiteHeader() {
             </Link>
             <div
               className={cn(
-                "pointer-events-none invisible absolute left-1/2 top-[calc(100%+0.2rem)] z-[60] min-w-[11.5rem] -translate-x-1/2 rounded-xl border border-[var(--border)] bg-[var(--card)] py-[0.35rem] opacity-0 shadow-[0_10px_28px_rgba(28,24,21,0.12)] transition-[opacity,visibility] duration-150 ease-out before:pointer-events-none before:absolute before:bottom-full before:left-0 before:right-0 before:h-[0.45rem] before:content-['']",
+                "pointer-events-none invisible absolute left-1/2 top-[100%] z-[60] min-w-[11.5rem] -translate-x-1/2 rounded-xl border border-[var(--border)] bg-[var(--card)] py-[0.35rem] opacity-0 shadow-[0_10px_28px_rgba(28,24,21,0.12)] transition-[opacity,visibility] duration-150 ease-out before:pointer-events-none before:absolute before:bottom-full before:left-0 before:right-0 before:h-[0.45rem] before:content-['']",
                 "group-hover/catalog:pointer-events-auto group-hover/catalog:visible group-hover/catalog:opacity-100",
                 "group-focus-within/catalog:pointer-events-auto group-focus-within/catalog:visible group-focus-within/catalog:opacity-100",
                 "group-data-[dismissed=true]/catalog:pointer-events-none group-data-[dismissed=true]/catalog:invisible group-data-[dismissed=true]/catalog:opacity-0",

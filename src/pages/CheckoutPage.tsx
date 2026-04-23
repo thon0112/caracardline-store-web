@@ -127,7 +127,9 @@ export function CheckoutPage() {
         <h1 className="m-0 mb-2 select-text text-[1.75rem] font-bold [-webkit-user-select:text]">
           {zhHant.checkoutTitle}
         </h1>
-        <p className="error select-text text-[var(--err)] [-webkit-user-select:text]">{error}</p>
+        <p className="error select-text text-[var(--err)] [-webkit-user-select:text]">
+          {error}
+        </p>
         <Link
           href="/cart"
           className="mb-4 mt-0 inline-block cursor-pointer select-text text-[var(--muted)] no-underline [-webkit-user-select:text]"
@@ -160,15 +162,23 @@ export function CheckoutPage() {
       <div className="grid items-start gap-x-8 gap-y-6 min-[880px]:grid-cols-[minmax(0,1fr)_minmax(16rem,22rem)]">
         <div className="min-w-0 min-[880px]:col-start-1 min-[880px]:row-start-1">
           {hasSoldOut && (
-            <p className="mb-3 select-text text-[var(--err)] [-webkit-user-select:text]" role="alert">
+            <p
+              className="mb-3 select-text text-[var(--err)] [-webkit-user-select:text]"
+              role="alert"
+            >
               {zhHant.checkoutSoldOutBlocked}{" "}
-              <Link href="/cart" className="font-semibold text-inherit underline">
+              <Link
+                href="/cart"
+                className="font-semibold text-inherit underline"
+              >
                 {zhHant.navCart}
               </Link>
             </p>
           )}
           {formErr && (
-            <p className="select-text text-[var(--err)] [-webkit-user-select:text]">{formErr}</p>
+            <p className="select-text text-[var(--err)] [-webkit-user-select:text]">
+              {formErr}
+            </p>
           )}
 
           <form
@@ -231,13 +241,16 @@ export function CheckoutPage() {
               <legend className="mb-[0.45rem] block p-0 text-sm font-semibold">
                 {zhHant.checkoutShipMethod}
               </legend>
-              <div className="flex flex-wrap gap-2" role="group" aria-label={zhHant.checkoutShipMethod}>
+              <div
+                className="flex flex-wrap gap-2"
+                role="group"
+                aria-label={zhHant.checkoutShipMethod}
+              >
                 <button
                   type="button"
                   className={cn(
                     "min-w-[12rem] flex-1 cursor-pointer rounded-[10px] border border-[var(--border)] bg-[var(--card)] px-[0.65rem] py-[0.55rem] font-inherit text-[0.9375rem] font-semibold leading-snug text-[var(--fg)] transition-colors duration-150 hover:border-[color-mix(in_srgb,var(--accent)_38%,var(--border))] hover:text-[var(--accent)]",
-                    shipMode === "sf" &&
-                      "border-[color-mix(in_srgb,var(--accent)_55%,var(--border))] bg-[rgba(181,111,69,0.1)] text-[var(--accent)]",
+                    shipMode === "sf" && "bg-accent/90 text-white hover:text-white",
                   )}
                   aria-pressed={shipMode === "sf"}
                   onClick={() => {
@@ -252,8 +265,7 @@ export function CheckoutPage() {
                   type="button"
                   className={cn(
                     "min-w-[12rem] flex-1 cursor-pointer rounded-[10px] border border-[var(--border)] bg-[var(--card)] px-[0.65rem] py-[0.55rem] font-inherit text-[0.9375rem] font-semibold leading-snug text-[var(--fg)] transition-colors duration-150 hover:border-[color-mix(in_srgb,var(--accent)_38%,var(--border))] hover:text-[var(--accent)]",
-                    shipMode === "manual" &&
-                      "border-[color-mix(in_srgb,var(--accent)_55%,var(--border))] bg-[rgba(181,111,69,0.1)] text-[var(--accent)]",
+                    shipMode === "manual" && "bg-accent/90 text-white hover:text-white",
                   )}
                   aria-pressed={shipMode === "manual"}
                   onClick={() => {
@@ -346,17 +358,24 @@ export function CheckoutPage() {
                   className="flex justify-between gap-3 border-b border-[var(--border)] py-[0.35rem] last:border-b-0"
                 >
                   <span className="select-text [-webkit-user-select:text]">
-                    {l.catalog.title || l.catalog.card?.name || zhHant.productFallback}
+                    {l.catalog.title ||
+                      l.catalog.card?.name ||
+                      zhHant.productFallback}
                   </span>
                   <span className="select-text text-[var(--muted)] [-webkit-user-select:text]">
-                    ×{l.quantity} · {formatPriceUsd(l.quantity * l.catalog.listPrice)}
+                    ×{l.quantity} ·{" "}
+                    {formatPriceUsd(l.quantity * l.catalog.listPrice)}
                   </span>
                 </li>
               ))}
             </ul>
             <p className="mb-0 mt-[0.85rem] flex items-baseline justify-between border-t border-[var(--border)] pt-3 font-semibold">
-              <span className="select-text [-webkit-user-select:text]">{zhHant.cartSubtotal}</span>
-              <strong className="select-text [-webkit-user-select:text]">{formatPriceUsd(subtotal)}</strong>
+              <span className="select-text [-webkit-user-select:text]">
+                {zhHant.cartSubtotal}
+              </span>
+              <strong className="select-text [-webkit-user-select:text]">
+                {formatPriceUsd(subtotal)}
+              </strong>
             </p>
             <button
               type="submit"

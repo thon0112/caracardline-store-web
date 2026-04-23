@@ -3,7 +3,7 @@ import { zhHant } from "../locale/zh-Hant.js";
 import { type SfOutlet, outletSearchHaystack } from "../sf-outlet.js";
 
 const RESULT_CAP = 45;
-const MIN_QUERY_CHARS = 2;
+const MIN_QUERY_CHARS = 0;
 
 type Props = {
   value: SfOutlet | null;
@@ -116,7 +116,7 @@ export function SfOutletPicker({ value, onChange }: Props) {
                             {o.code}
                           </span>
                           <span className="mt-0.5 block text-[0.8125rem] text-[var(--muted)]">
-                            {o.district} · {o.section} · {o.kind}
+                            {o.district}
                           </span>
                           {o.name ? (
                             <span className="mt-1 block text-sm font-semibold text-[var(--fg)]">{o.name}</span>
@@ -147,7 +147,7 @@ export function SfOutletPicker({ value, onChange }: Props) {
           </div>
           <p className="m-0 text-lg font-bold text-[var(--accent)]">{value.code}</p>
           <p className="m-0 mt-1 text-sm text-[var(--muted)]">
-            {value.district} · {value.section} · {value.kind}
+            {value.district}
           </p>
           {value.name ? <p className="m-0 mt-2 font-semibold text-[var(--fg)]">{value.name}</p> : null}
           <p className="m-0 mt-1 text-[0.9375rem] leading-snug text-[var(--fg)]">{value.address}</p>
