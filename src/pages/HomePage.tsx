@@ -24,7 +24,6 @@ import { PageLoadingSkeleton } from "../components/PageLoadingSkeleton.js";
 import { tryToastBadRequest } from "../notify-bad-request.js";
 import { TOAST_DURATION_SHORT_MS, useToast } from "../toast-context.js";
 
-const CATALOG_HOME_LIMIT = 6;
 /** Max products shown per category on the home page rails */
 const HOME_CATEGORY_SAMPLE_COUNT = 5;
 
@@ -74,7 +73,6 @@ export function HomePage() {
       try {
         setLoading(true);
         const data = await fetchCatalog({
-          limit: CATALOG_HOME_LIMIT,
           availability: "in_stock",
           highlight: true,
         });
