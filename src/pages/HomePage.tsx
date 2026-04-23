@@ -24,9 +24,6 @@ import { PageLoadingSkeleton } from "../components/PageLoadingSkeleton.js";
 import { tryToastBadRequest } from "../notify-bad-request.js";
 import { TOAST_DURATION_SHORT_MS, useToast } from "../toast-context.js";
 
-/** Max products shown per category on the home page rails */
-const HOME_CATEGORY_SAMPLE_COUNT = 5;
-
 function homeGroupKeyFromItem(item: CatalogListItem): string {
   const effective = storefrontListingCategory(item);
   if (effective) return effective;
@@ -76,7 +73,7 @@ export function HomePage() {
           availability: "in_stock",
           highlight: true,
         });
-        
+
         if (!cancelled) {
           setItems(data.items);
           setErr(null);
@@ -116,7 +113,7 @@ export function HomePage() {
           groupKey,
           label,
           catalogHref,
-          row: row.slice(0, HOME_CATEGORY_SAMPLE_COUNT),
+          row,
         };
       });
   }, [availableItems]);
