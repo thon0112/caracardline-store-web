@@ -1,4 +1,20 @@
 import { useCallback, useEffect, useId, useRef, useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faBars,
+  faBriefcase,
+  faCartShopping,
+  faFileLines,
+  faHouse,
+  faTableCells,
+  faXmark,
+} from "@fortawesome/free-solid-svg-icons";
+import {
+  faInstagram,
+  faThreads,
+  faWhatsapp,
+} from "@fortawesome/free-brands-svg-icons";
+import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 import { Link, useLocation } from "wouter";
 import { cn } from "../cn.js";
 import { useCart } from "../cart-context.js";
@@ -12,183 +28,22 @@ import { WHATSAPP_CHAT_URL } from "./WhatsAppFloat.js";
 const INSTAGRAM_URL = "https://www.instagram.com/cara.cardline/";
 const THREADS_URL = "https://www.threads.com/@cara.cardline";
 
-function IconHamburger() {
+function HeaderIcon({
+  icon,
+  size = 22,
+  className,
+}: {
+  icon: IconDefinition;
+  size?: number;
+  className?: string;
+}) {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      width={22}
-      height={22}
-      aria-hidden="true"
-      focusable="false"
-    >
-      <path
-        fill="currentColor"
-        d="M4 7a1 1 0 011-1h14a1 1 0 110 2H5a1 1 0 01-1-1zm0 5a1 1 0 011-1h14a1 1 0 110 2H5a1 1 0 01-1-1zm0 5a1 1 0 011-1h14a1 1 0 110 2H5a1 1 0 01-1-1z"
-      />
-    </svg>
-  );
-}
-
-function IconInstagram({ size = 22 }: { size?: number }) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      width={size}
-      height={size}
-      aria-hidden="true"
-      focusable="false"
-    >
-      <path
-        fill="currentColor"
-        d="M7.75 2h8.5A5.75 5.75 0 0122 7.75v8.5A5.75 5.75 0 0116.25 22h-8.5A5.75 5.75 0 012 16.25v-8.5A5.75 5.75 0 017.75 2zm0 1.5A4.25 4.25 0 003.5 7.75v8.5A4.25 4.25 0 007.75 20.5h8.5a4.25 4.25 0 004.25-4.25v-8.5A4.25 4.25 0 0016.25 3.5h-8.5zM12 7a5 5 0 110 10 5 5 0 010-10zm0 1.5a3.5 3.5 0 100 7 3.5 3.5 0 000-7zm5.25-3.25a1.25 1.25 0 100 2.5 1.25 1.25 0 000-2.5z"
-      />
-    </svg>
-  );
-}
-
-function IconWhatsApp({ size = 22 }: { size?: number }) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      width={size}
-      height={size}
-      aria-hidden="true"
-      focusable="false"
-    >
-      <path
-        fill="currentColor"
-        d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.884 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"
-      />
-    </svg>
-  );
-}
-
-function IconThreads({ size = 22 }: { size?: number }) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      width={size}
-      height={size}
-      aria-hidden="true"
-      focusable="false"
-    >
-      <path
-        fill="currentColor"
-        d="M12.186 24h-.007c-3.581-.024-6.334-1.205-8.184-3.509C2.35 18.44 1.5 15.586 1.472 12.01v-.017c.03-3.579.879-6.43 2.525-8.482C5.845 1.205 8.6.024 12.18 0h.014c2.746.02 5.043.725 6.826 2.098 1.677 1.29 2.858 3.13 3.509 5.467l-2.04.569a9.072 9.072 0 00-1.206-2.098c-1.45-1.114-3.35-1.69-5.66-1.71h-.018c-2.978.024-5.303.868-6.91 2.51-1.553 1.584-2.34 3.853-2.36 6.74v.017c.02 2.895.807 5.164 2.36 6.748 1.607 1.642 3.932 2.486 6.91 2.51 2.978-.024 5.303-.868 6.91-2.51.715-.731 1.274-1.586 1.663-2.542l2.04.568a10.857 10.857 0 01-1.814 3.582c-1.783 1.373-4.08 2.078-6.826 2.098h-.014zm-.01-7.59c-1.292-.016-2.308-.38-3.023-1.079-.652-.637-1.01-1.477-1.045-2.474l-.001-.017c.035-.996.393-1.837 1.045-2.474.715-.7 1.73-1.063 3.023-1.079 1.292.016 2.308.38 3.023 1.079.652.637 1.01 1.477 1.045 2.474.035.996-.393 1.837-1.045 2.474-.715.7-1.73 1.063-3.023 1.079z"
-      />
-    </svg>
-  );
-}
-
-function IconHome({ size = 22 }: { size?: number }) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      width={size}
-      height={size}
-      aria-hidden="true"
-      focusable="false"
-    >
-      <path
-        fill="currentColor"
-        d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8h5z"
-      />
-    </svg>
-  );
-}
-
-function IconCatalog({ size = 22 }: { size?: number }) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      width={size}
-      height={size}
-      aria-hidden="true"
-      focusable="false"
-    >
-      <path
-        fill="currentColor"
-        d="M4 4h7v7H4V4zm9 0h7v7h-7V4zM4 13h7v7H4v-7zm9 0h7v7h-7v-7z"
-      />
-    </svg>
-  );
-}
-
-function IconOrderLookup({ size = 20 }: { size?: number }) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      width={size}
-      height={size}
-      aria-hidden="true"
-      focusable="false"
-    >
-      <path
-        fill="currentColor"
-        d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11zm-8-7h6v2H10v-2zm0-4h6v2H10V9z"
-      />
-    </svg>
-  );
-}
-
-function IconOtherServices({ size = 20 }: { size?: number }) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      width={size}
-      height={size}
-      aria-hidden="true"
-      focusable="false"
-    >
-      <path
-        fill="currentColor"
-        d="M20 7h-4V5c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2zM10 5h4v2h-4V5zm10 14H4V9h16v10z"
-      />
-    </svg>
-  );
-}
-
-function IconCart({ size = 22 }: { size?: number }) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      width={size}
-      height={size}
-      aria-hidden="true"
-      focusable="false"
-    >
-      <path
-        fill="currentColor"
-        d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"
-      />
-    </svg>
-  );
-}
-
-function IconClose({ size = 22 }: { size?: number }) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      width={size}
-      height={size}
-      aria-hidden="true"
-      focusable="false"
-    >
-      <path
-        fill="currentColor"
-        d="M18.3 5.71a1 1 0 00-1.41 0L12 10.59 7.11 5.7a1 1 0 00-1.41 1.41L10.59 12l-4.9 4.89a1 1 0 101.41 1.42L12 13.41l4.89 4.9a1 1 0 001.42-1.41L13.41 12l4.9-4.89a1 1 0 000-1.4z"
-      />
-    </svg>
+    <FontAwesomeIcon
+      icon={icon}
+      className={className}
+      style={{ fontSize: size, width: "1em", height: "1em", display: "block" }}
+      aria-hidden
+    />
   );
 }
 
@@ -268,7 +123,7 @@ export function SiteHeader() {
           aria-label={menuOpen ? zhHant.navMenuClose : zhHant.navMenuOpen}
           onClick={toggleMenu}
         >
-          <IconHamburger />
+          <HeaderIcon icon={faBars} size={22} />
         </button>
         <div className="flex min-w-0 cursor-default items-center max-[767px]:flex-1 max-[767px]:justify-center">
           <Link
@@ -307,7 +162,7 @@ export function SiteHeader() {
           title={zhHant.navCart}
         >
           <span className="inline-flex items-center justify-center" aria-hidden>
-            <IconCart size={22} />
+            <HeaderIcon icon={faCartShopping} size={22} />
           </span>
           {cartItemCount > 0 ? (
             <span className="absolute right-[0.1rem] top-[0.1rem] min-w-[1.05rem] translate-x-[35%] translate-y-[-35%] rounded-full bg-[var(--accent-fill)] px-[0.28rem] text-center text-[0.65rem] font-bold leading-[1.05rem] text-[var(--on-accent-fill)] shadow-[0_0_0_2px_var(--card)]">
@@ -330,7 +185,7 @@ export function SiteHeader() {
             title={zhHant.navInstagram}
           >
             <span className="inline-flex items-center justify-center" aria-hidden>
-              <IconInstagram size={22} />
+              <HeaderIcon icon={faInstagram} size={22} />
             </span>
           </a>
           <div
@@ -434,7 +289,7 @@ export function SiteHeader() {
             aria-label={zhHant.navDrawerClose}
             onClick={closeMenu}
           >
-            <IconClose size={22} />
+            <HeaderIcon icon={faXmark} size={22} />
           </button>
         </div>
         <nav
@@ -450,7 +305,7 @@ export function SiteHeader() {
               className="inline-flex shrink-0 text-[var(--muted)] group-hover/drawer:text-[var(--accent)]"
               aria-hidden
             >
-              <IconHome size={20} />
+              <HeaderIcon icon={faHouse} size={20} />
             </span>
             <span className="min-w-0 flex-1">{zhHant.navHome}</span>
           </Link>
@@ -464,7 +319,7 @@ export function SiteHeader() {
                 className="inline-flex shrink-0 text-[var(--muted)] group-hover/drawer:text-[var(--accent)]"
                 aria-hidden
               >
-                <IconCatalog size={20} />
+                <HeaderIcon icon={faTableCells} size={20} />
               </span>
               <span className="min-w-0 flex-1">{zhHant.navCatalog}</span>
             </Link>
@@ -491,7 +346,7 @@ export function SiteHeader() {
               className="inline-flex shrink-0 text-[var(--muted)] group-hover/drawer:text-[var(--accent)]"
               aria-hidden
             >
-              <IconOtherServices size={20} />
+              <HeaderIcon icon={faBriefcase} size={20} />
             </span>
             <span className="min-w-0 flex-1">{zhHant.navOtherServices}</span>
           </Link>
@@ -504,7 +359,7 @@ export function SiteHeader() {
               className="inline-flex shrink-0 text-[var(--muted)] group-hover/drawer:text-[var(--accent)]"
               aria-hidden
             >
-              <IconOrderLookup size={20} />
+              <HeaderIcon icon={faFileLines} size={20} />
             </span>
             <span className="min-w-0 flex-1">{zhHant.navTrackOrder}</span>
           </Link>
@@ -517,7 +372,7 @@ export function SiteHeader() {
               className="inline-flex shrink-0 text-[var(--muted)] group-hover/drawer:text-[var(--accent)]"
               aria-hidden
             >
-              <IconCart size={20} />
+              <HeaderIcon icon={faCartShopping} size={20} />
             </span>
             <span className="min-w-0 flex-1">{zhHant.navCart}</span>
             {cartItemCount > 0 ? (
@@ -546,7 +401,7 @@ export function SiteHeader() {
               onClick={closeMenu}
             >
               <span className="inline-flex items-center justify-center" aria-hidden>
-                <IconInstagram size={22} />
+                <HeaderIcon icon={faInstagram} size={22} />
               </span>
             </a>
             <a
@@ -559,7 +414,7 @@ export function SiteHeader() {
               onClick={closeMenu}
             >
               <span className="inline-flex items-center justify-center" aria-hidden>
-                <IconWhatsApp size={22} />
+                <HeaderIcon icon={faWhatsapp} size={22} />
               </span>
             </a>
             <a
@@ -572,7 +427,7 @@ export function SiteHeader() {
               onClick={closeMenu}
             >
               <span className="inline-flex items-center justify-center" aria-hidden>
-                <IconThreads size={22} />
+                <HeaderIcon icon={faThreads} size={22} />
               </span>
             </a>
           </div>
