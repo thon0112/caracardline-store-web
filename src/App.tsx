@@ -15,6 +15,8 @@ import { TrackOrderPage } from "./pages/TrackOrderPage.js";
 import { AboutPage } from "./pages/AboutPage.js";
 import { DisclaimerPage } from "./pages/DisclaimerPage.js";
 import { OtherServicesPage } from "./pages/OtherServicesPage.js";
+import { ShippingPolicyPage } from "./pages/ShippingPolicyPage.js";
+import { RefundPolicyPage } from "./pages/RefundPolicyPage.js";
 
 function AppShell() {
   return (
@@ -29,10 +31,12 @@ function AppShell() {
           <Route path="/checkout" component={CheckoutPage} />
           <Route path="/track" component={TrackOrderPage} />
           <Route path="/order/:orderId" component={OrderPage} />
-          <Route path="/item/:id" component={ProductPage} />
+          <Route path="/item/:slug" component={ProductPage} />
           <Route path="/about" component={AboutPage} />
           <Route path="/services" component={OtherServicesPage} />
           <Route path="/disclaimer" component={DisclaimerPage} />
+          <Route path="/shipping" component={ShippingPolicyPage} />
+          <Route path="/refund" component={RefundPolicyPage} />
           <Route>
             <p className="text-[var(--muted)]">{zhHant.notFound}</p>
           </Route>

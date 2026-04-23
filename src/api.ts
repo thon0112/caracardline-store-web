@@ -145,10 +145,9 @@ export async function fetchCatalogSearch(params: {
   return res.json() as Promise<CatalogResponse>;
 }
 
-export async function fetchCatalogItem(
-  productId: string,
-): Promise<CatalogListItem> {
-  const path = `/api/catalog/item/${encodeURIComponent(productId)}`;
+/** Resolves by URL slug or legacy product UUID (`GET /api/catalog/item/:idOrSlug`). */
+export async function fetchCatalogItem(slugOrId: string): Promise<CatalogListItem> {
+  const path = `/api/catalog/item/${encodeURIComponent(slugOrId)}`;
   const url = apiPath(path);
   logApi("GET", url);
   const res = await fetch(url);
@@ -284,6 +283,27 @@ export async function fetchOrder(orderId: string): Promise<OrderDetailResponse> 
   const res = await fetch(url);
   await throwIfNotOk(res);
   return res.json() as Promise<OrderDetailResponse>;
+}
+
+export type LookupOrdersByEmailResponse = {
+  ok: true;
+  message: string;
+};
+
+/** POST `/api/orders/lookup-by-email` — sends matching order ids to the email (worker). */
+export async function lookupOrdersByEmail(
+  email: string,
+): Promise<LookupOrdersByEmailResponse> {
+  const path = "/api/orders/lookup-by-email";
+  const url = apiPath(path);
+  logApi("POST", url);
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email }),
+  });
+  await throwIfNotOk(res);
+  return res.json() as Promise<LookupOrdersByEmailResponse>;
 }
 
 export type PaymentSubmittedResponse = {

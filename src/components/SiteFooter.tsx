@@ -33,6 +33,24 @@ export function SiteFooter() {
           <span className="select-none text-sm text-[var(--muted)]" aria-hidden>
             ·
           </span>
+          <Link
+            href="/shipping"
+            className="cursor-pointer text-sm text-[var(--muted)] no-underline select-none caret-transparent hover:text-[var(--accent)]"
+          >
+            {zhHant.footerShipping}
+          </Link>
+          <span className="select-none text-sm text-[var(--muted)]" aria-hidden>
+            ·
+          </span>
+          <Link
+            href="/refund"
+            className="cursor-pointer text-sm text-[var(--muted)] no-underline select-none caret-transparent hover:text-[var(--accent)]"
+          >
+            {zhHant.footerRefund}
+          </Link>
+          <span className="select-none text-sm text-[var(--muted)]" aria-hidden>
+            ·
+          </span>
           <a
             href={WHATSAPP_CHAT_URL}
             target="_blank"
@@ -42,12 +60,6 @@ export function SiteFooter() {
           >
             {zhHant.footerContact}
           </a>
-          <span className="select-none text-sm text-[var(--muted)]" aria-hidden>
-            ·
-          </span>
-          <span className="text-sm text-[var(--muted)] select-none caret-transparent">
-            {zhHant.footerPrivacy}
-          </span>
         </nav>
       </div>
     </footer>

@@ -13,11 +13,8 @@ import { PageLoadingSkeleton } from "../components/PageLoadingSkeleton.js";
 import { tryToastBadRequest } from "../notify-bad-request.js";
 import { TOAST_DURATION_SHORT_MS, useToast } from "../toast-context.js";
 
-const UUID_RE =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-
-function isProductIdParam(raw: string | undefined): raw is string {
-  return typeof raw === "string" && raw.length > 0 && UUID_RE.test(raw);
+function isProductSlugParam(raw: string | undefined): raw is string {
+  return typeof raw === "string" && raw.trim().length > 0;
 }
 
 function primaryImage(item: Awaited<ReturnType<typeof fetchCatalogItem>>) {
@@ -31,7 +28,7 @@ function primaryImage(item: Awaited<ReturnType<typeof fetchCatalogItem>>) {
 export function ProductPage() {
   const { showToast } = useToast();
   const params = useParams();
-  const id = params.id;
+  const slug = params.slug;
   const [data, setData] = useState<
     Awaited<ReturnType<typeof fetchCatalogItem>> | null
   >(null);
@@ -44,7 +41,7 @@ export function ProductPage() {
   );
 
   useEffect(() => {
-    if (!isProductIdParam(id)) {
+    if (!isProductSlugParam(slug)) {
       setErr(zhHant.productInvalid);
       setLoading(false);
       return;
@@ -52,7 +49,7 @@ export function ProductPage() {
     let cancelled = false;
     (async () => {
       try {
-        const row = await fetchCatalogItem(id);
+        const row = await fetchCatalogItem(slug.trim());
         if (!cancelled) {
           setData(row);
           setErr(null);
@@ -70,7 +67,7 @@ export function ProductPage() {
     return () => {
       cancelled = true;
     };
-  }, [id, showToast]);
+  }, [slug, showToast]);
 
   async function ensureCart() {
     if (cartId) return cartId;

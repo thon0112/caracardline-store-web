@@ -16,7 +16,6 @@ import { formatZhHantDeadline } from "../format-zh-hant-deadline.js";
 import { tryToastBadRequest } from "../notify-bad-request.js";
 import { useToast } from "../toast-context.js";
 
-const fpsReceiverId = (import.meta.env.VITE_FPS_RECEIVER_ID ?? "").trim();
 /** Env overrides; otherwise bundled poster under `public/fps-payment-qr.png`. */
 const fpsQrSrc =
   (import.meta.env.VITE_FPS_QR_IMAGE_URL ?? "").trim() || "/fps-payment-qr.png";
@@ -76,7 +75,7 @@ export function OrderPage() {
   }, [order]);
 
   async function copyFullOrderRef() {
-    const full = order?.orderId ?? "";
+    const full = orderRefDisplayLastFour(order?.orderId ?? "");
     if (!full) return;
     try {
       await navigator.clipboard.writeText(full);
@@ -156,7 +155,7 @@ export function OrderPage() {
           className="text-[0.92em] leading-snug [word-break:break-all]"
           translate="no"
         >
-          {orderRefDisplayLastFour(order.orderId)}
+          {order.orderId}
         </code>
       </p>
 
@@ -256,19 +255,6 @@ export function OrderPage() {
                       {zhHant.orderRefCopy}
                     </button>
                   </p>
-                  {fpsReceiverId ? (
-                    <p className="mb-0 mt-[0.65rem] block w-full max-w-full select-text [-webkit-user-select:text]">
-                      <span className="text-sm text-[var(--muted)]">{zhHant.fpsReceiverLabel}</span>{" "}
-                      <code className="text-[0.95rem] [word-break:break-all]" translate="no">
-                        {fpsReceiverId}
-                      </code>
-                    </p>
-                  ) : (
-                    <p className="mb-0 mt-[0.65rem] select-text text-sm text-[var(--muted)] [-webkit-user-select:text]">
-                      {zhHant.fpsReceiverUnset}
-                    </p>
-                  )}
-
                   {order.status === "awaiting_payment" && (
                     <button
                       type="button"

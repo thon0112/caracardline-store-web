@@ -252,7 +252,7 @@ export function SiteHeader() {
   return (
     <header
       className={cn(
-        "sticky top-0 z-50 mb-8 select-none border-b border-[var(--border)] bg-[var(--bg)] pb-2 pt-[calc(0.5rem+env(safe-area-inset-top,0px))]",
+        "sticky top-0 z-50 mb-4 select-none border-b border-[var(--border)] bg-[var(--bg)] pb-2 pt-[calc(0.5rem+env(safe-area-inset-top,0px))]",
       )}
     >
       <div className="relative z-[2] flex min-h-10 cursor-default items-center justify-between gap-4 max-[767px]:justify-start">
@@ -279,7 +279,7 @@ export function SiteHeader() {
             aria-label={zhHant.navHome}
           >
             <img
-              className="block h-[3.2rem] w-auto max-w-[min(16.5rem,69vw)] shrink object-contain"
+              className="block h-auto w-[145px] md:w-[170px] shrink object-contain"
               src="https://cdn.caracardline.com/assets/logo-with-text.webp"
               alt=""
               width={1200}
@@ -333,12 +333,6 @@ export function SiteHeader() {
               <IconInstagram size={22} />
             </span>
           </a>
-          <Link
-            href="/"
-            className="inline-flex select-none items-center gap-1 whitespace-nowrap font-semibold leading-tight text-[var(--fg)] no-underline caret-transparent hover:text-[var(--accent)]"
-          >
-            {zhHant.navHome}
-          </Link>
           <div
             ref={catalogNavRef}
             data-dismissed={catalogSubmenuDismissed ? "true" : undefined}

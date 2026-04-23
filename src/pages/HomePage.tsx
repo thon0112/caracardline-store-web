@@ -187,7 +187,7 @@ export function HomePage() {
                     className="flex max-w-[11rem] min-w-0 shrink-0 basis-[min(42vw,11rem)] select-none flex-col overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--card)] caret-transparent [scroll-snap-align:start] [-webkit-user-select:none]"
                   >
                     <Link
-                      href={`/item/${item.productId}`}
+                      href={`/item/${encodeURIComponent(item.slug)}`}
                       className="flex min-h-0 flex-1 cursor-pointer select-none flex-col text-inherit no-underline caret-transparent [-webkit-user-select:none]"
                     >
                       <div className="relative aspect-square shrink-0 bg-[var(--media-bg)]">
@@ -212,7 +212,7 @@ export function HomePage() {
                         ) : null}
                       </div>
                       <div className="flex-1 px-3 pb-[0.35rem] pt-[0.65rem]">
-                        <h3 className="mb-1 line-clamp-2 select-text text-[0.8125rem] font-semibold leading-snug [-webkit-user-select:text]">
+                        <h3 className="mb-1 line-clamp-2 select-text text-[0.8125rem] font-semibold leading-snug [-webkit-user-select:text] min-h-[36px]">
                           {displayTitle(item)}
                         </h3>
                         <p className="m-0 select-text text-[0.9rem] font-bold text-[var(--accent)] [-webkit-user-select:text]">

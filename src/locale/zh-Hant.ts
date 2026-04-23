@@ -25,7 +25,8 @@ export const zhHant = {
   footerCopyright: (year: number) => `© ${year} Caracardline。保留所有權利。`,
   footerNavAria: "頁尾連結",
   footerContact: "聯絡我們",
-  footerPrivacy: "隱私權政策",
+  footerShipping: "運送政策",
+  footerRefund: "退款政策",
   footerAbout: "關於我們",
   footerDisclaimer: "免責聲明",
   /** Floating WhatsApp — opens chat in a new tab */
@@ -34,7 +35,7 @@ export const zhHant = {
 
   disclaimerTitle: "免責聲明",
   disclaimerIntroPre: "感謝您選擇 ",
-  disclaimerIntroBrand: "Cara Cardline",
+  disclaimerIntroBrand: "卡拉卡LINE",
   disclaimerIntroPost:
     "。在使用本網店服務前，請先細閱以下條款。凡購買產品或使用相關服務，即代表您同意並接受以下聲明：",
   disclaimerS1Title: "1. 產品狀況及真偽",
@@ -73,11 +74,10 @@ export const zhHant = {
   disclaimerS5Text:
     "產品寄出後，風險將轉移至買方或物流公司。建議客戶選擇有追蹤功能之物流服務。如有需要，建議客戶自行購買額外運輸保險。",
   disclaimerDisputePre: "如有任何爭議，",
-  disclaimerDisputeBrand: "Cara Cardline",
+  disclaimerDisputeBrand: "卡拉卡LINE",
   disclaimerDisputePost: "保留最終解釋權與決定權。",
 
-  aboutTitle: "關於 Cara Cardline",
-  aboutLede: "歡迎嚟到 Cara Cardline。",
+  aboutTitle: "關於卡拉卡LINE",
   aboutIntroP2:
     "我哋同大家一樣，都係對 Pokemon Card 有份執著嘅小粉絲。每一張卡由抽到嗰一刻、到決定寄去鑑定、再到放入防潮箱收藏，背後都係一份對PTCG嘅熱愛同回憶。",
   aboutIntroP3:
@@ -103,7 +103,7 @@ export const zhHant = {
   aboutSvc3Chips: ["細緻維護護理", "改善微瑕疵", "還原最佳外觀"],
   aboutSvc4Label: "交流",
   aboutSvc4Chips: ["高價回收報價", "Trade-in 換藏", "誠懇評估每張卡"],
-  aboutClosing1: "喺 Cara Cardline，我哋想做嘅唔單止係買賣。",
+  aboutClosing1: "喺卡拉卡LINE，我哋想做嘅唔單止係買賣。",
   aboutClosing2Prefix:
     "如果你對卡牌有任何問題，或者單純想分享下最近抽到咩好嘢，隨時 DM 我哋 ",
   aboutInstagramAt: "@cara.cardline",
@@ -117,7 +117,7 @@ export const zhHant = {
     "送評／鑑定代辦諮詢、品相與真偽相關問題說明、批量收購或單卡洽購、寄賣與合作上架等。實際能否承接視庫存、時程與雙方約定而定。",
   otherServicesHowTitle: "如何聯繫",
   otherServicesHowP1:
-    "請透過網站頁尾「聯絡我們」訊息管道，簡述您的需求（例如卡種、數量、期望時程）。我們會在能力範圍內盡快回覆。",
+    "請透過網站頁尾「聯絡我們」訊息管道，簡述您的需求。我們會在能力範圍內盡快回覆。",
   otherServicesBackCatalog: "返回商品目錄",
 
   catalogTitle: "商品目錄",
@@ -264,6 +264,19 @@ export const zhHant = {
   trackOrderIdLabel: "訂單編號",
   trackOrderSubmit: "查看訂單",
   trackOrderIdRequired: "請輸入訂單編號。",
+  trackOrderLookupDivider: "或",
+  trackOrderLookupSectionTitle: "忘記訂單編號？",
+  trackOrderLookupSectionLede:
+    "輸入下單時使用的電郵，若系統找到相關訂單，會將訂單編號寄到該信箱（請一併檢查垃圾郵件）。",
+  trackOrderLookupEmailLabel: "電郵地址",
+  trackOrderLookupSubmit: "寄出訂單編號",
+  trackOrderLookupBusy: "送出中…",
+  trackOrderLookupEmailRequired: "請輸入電郵。",
+  trackOrderLookupSuccess:
+    "請檢查您的電郵收件匣（含垃圾郵件資料夾）。若曾以此電郵下單，您會收到載有訂單編號的通知。",
+  trackOrderLookupFailed: "無法送出，請稍後再試。",
+  trackOrderLookupEmailUnavailable:
+    "暫時無法以電郵寄送訂單資訊，請改用訂單編號查詢或聯絡客服。",
   orderPageTrackAnother: "查詢其他訂單",
   orderInvalidId: "訂單編號無效。",
   orderNotFound: "找不到此訂單。",
@@ -290,8 +303,6 @@ export const zhHant = {
   fpsInstructions: "請使用「轉數快」轉入以下帳戶，並在備註填寫訂單編號以便對帳。",
   fpsPayExact: "請轉帳剛好",
   fpsMemoHint: "轉帳備註請填：",
-  fpsReceiverLabel: "收款 FPS ID / 電話",
-  fpsReceiverUnset: "請於網站環境變數設定 VITE_FPS_RECEIVER_ID 以顯示收款資訊。",
   orderMarkTransferred: "我已完成轉帳",
   orderPaymentSubmitting: "送出中…",
   orderPaymentSubmittedToast: "已記錄，我們會盡快核對入數。",
@@ -352,7 +363,7 @@ export function normalizeCatalogSort(
   for (const v of CATALOG_SORT_VALUES) {
     if (v === s) return v;
   }
-  return "date_asc";
+  return "date_desc";
 }
 
 export const CATALOG_AVAILABILITY_VALUES = ["all", "in_stock"] as const;

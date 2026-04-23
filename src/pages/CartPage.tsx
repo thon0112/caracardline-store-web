@@ -244,7 +244,7 @@ export function CartPage() {
               )}
             >
               <Link
-                href={`/item/${line.catalog.productId}`}
+                href={`/item/${encodeURIComponent(line.catalog.slug)}`}
                 className="block h-24 w-[4.5rem] shrink-0 overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--media-bg)]"
               >
                 {img ? (
@@ -255,7 +255,7 @@ export function CartPage() {
               </Link>
               <div className="min-w-[min(100%,12rem)] flex-1">
                 <Link
-                  href={`/item/${line.catalog.productId}`}
+                  href={`/item/${encodeURIComponent(line.catalog.slug)}`}
                   className="select-text font-semibold text-[var(--fg)] no-underline leading-snug [-webkit-user-select:text] hover:text-[var(--accent)]"
                 >
                   {displayTitle(line.catalog)}

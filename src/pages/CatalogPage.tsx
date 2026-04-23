@@ -32,7 +32,9 @@ export function CatalogPage() {
   const { showToast } = useToast();
   const [, setLocation] = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [matchTyped, typedParams] = useRoute<{ type: string }>("/catalog/:type");
+  const [matchTyped, typedParams] = useRoute<{ type: string }>(
+    "/catalog/:type",
+  );
   const [matchBase] = useRoute("/catalog");
   const pathSegmentType = typedParams?.type;
   const pathTypeCode = useMemo(
@@ -92,7 +94,7 @@ export function CatalogPage() {
 
   function setSortQuery(value: CatalogSortValue) {
     const p = new URLSearchParams(searchParams.toString());
-    if (value === "date_asc") p.delete("sort");
+    if (value === "date_desc") p.delete("sort");
     else p.set("sort", value);
     setSearchParams(p, { replace: true });
   }
@@ -179,8 +181,7 @@ export function CatalogPage() {
   async function loadMore() {
     if (!nextCursor || invalidTypedCatalog) return;
     try {
-      const avail =
-        availabilityFilter === "in_stock" ? "in_stock" : undefined;
+      const avail = availabilityFilter === "in_stock" ? "in_stock" : undefined;
       const data =
         qFromUrl.length > 0
           ? await fetchCatalogSearch({
@@ -249,9 +250,8 @@ export function CatalogPage() {
 
       <div className="mb-5 rounded-xl border border-[var(--border)] bg-[var(--card)] px-[1.15rem] py-4">
         <div className="flex max-w-[38rem] flex-row gap-x-3 gap-y-3 flex-wrap min-[800px]:flex-nowrap">
-   
           <form
-            className="min-w-full sm:min-w-[350px]"
+            className="min-w-full md:min-w-[350px]"
             role="search"
             onSubmit={(e) => {
               e.preventDefault();
@@ -264,7 +264,7 @@ export function CatalogPage() {
             >
               {zhHant.catalogSearchLabel}
             </label>
-            <div className="flex flex-col gap-1 min-[420px]:flex-row min-[420px]:items-stretch">
+            <div className="flex gap-1">
               <input
                 id="catalog-search-q"
                 type="search"
@@ -283,29 +283,21 @@ export function CatalogPage() {
                 >
                   {zhHant.catalogSearchSubmit}
                 </button>
-                {(qFromUrl.length > 0 || searchDraft.trim().length > 0) && (
-                  <button
-                    type="button"
-                    className="min-h-[2.5rem] cursor-pointer rounded-lg border border-[var(--border)] bg-transparent px-[0.85rem] py-2 font-semibold text-[var(--fg)] hover:bg-[color-mix(in_srgb,var(--accent)_16%,transparent)]"
-                    onClick={clearSearch}
-                  >
-                    {zhHant.catalogSearchClear}
-                  </button>
-                )}
               </div>
             </div>
           </form>
-          <div className="sm:min-w-[200px] min-w-[calc(50%-6px)]">
-            <label className="mb-[0.35rem] block text-sm font-semibold" htmlFor="catalog-sort">
+          <div className="md:min-w-[200px] max-w-[calc(60%-6px)]">
+            <label
+              className="mb-[0.35rem] block text-sm font-semibold"
+              htmlFor="catalog-sort"
+            >
               {zhHant.catalogSort}
             </label>
             <select
               className="w-full rounded-lg border border-[var(--border)] bg-[var(--card)] px-[0.65rem] py-2"
               id="catalog-sort"
               value={sortFilter}
-              onChange={(e) =>
-                setSortQuery(e.target.value as CatalogSortValue)
-              }
+              onChange={(e) => setSortQuery(e.target.value as CatalogSortValue)}
             >
               <option value="date_asc">{zhHant.catalogSortDateAsc}</option>
               <option value="date_desc">{zhHant.catalogSortDateDesc}</option>
@@ -313,7 +305,7 @@ export function CatalogPage() {
               <option value="price_desc">{zhHant.catalogSortPriceDesc}</option>
             </select>
           </div>
-          <div className="sm:min-w-[200px] min-w-[calc(50%-6px)]">
+          <div className="md:min-w-[200px] max-w-[calc(40%-6px)]">
             <label
               className="mb-[0.35rem] block text-sm font-semibold"
               htmlFor="catalog-filter-availability"
@@ -339,7 +331,10 @@ export function CatalogPage() {
 
       {err && <p className="text-[var(--err)]">{err}</p>}
       {loading && !err && (
-        <PageLoadingSkeleton variant="catalog" className="my-[0.35rem] mb-[1.1rem] mt-[0.35rem]" />
+        <PageLoadingSkeleton
+          variant="catalog"
+          className="my-[0.35rem] mb-[1.1rem] mt-[0.35rem]"
+        />
       )}
 
       {!loading && !err && (
@@ -351,7 +346,7 @@ export function CatalogPage() {
                 className="flex flex-col overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--card)]"
               >
                 <Link
-                  href={`/item/${item.productId}`}
+                  href={`/item/${encodeURIComponent(item.slug)}`}
                   className="flex-1 text-inherit no-underline"
                 >
                   <div className="relative aspect-[3/4] bg-[var(--media-bg)]">
@@ -376,23 +371,14 @@ export function CatalogPage() {
                       />
                     )}
                   </div>
-                  <div className="px-4 pb-2 pt-[0.85rem]">
-                    <h2 className="m-0 mb-[0.35rem] text-base font-semibold leading-snug">
-                      {displayTitle(item)}
-                    </h2>
-                    <p className="text-sm text-[var(--muted)]">
-                      {[
-                        item.card?.collection,
-                        item.card?.rare,
-                        displayListingProductType(item),
-                      ]
-                        .filter(Boolean)
-                        .join(" · ")}
-                    </p>
-                    <p className="m-[0.35rem_0_0] font-bold text-[var(--accent)]">
-                      {formatPriceUsd(item.listPrice)}
-                    </p>
-                  </div>
+                  <div className="flex-1 px-3 pb-[0.35rem] pt-[0.65rem]">
+                        <h3 className="mb-1 line-clamp-2 select-text text-[0.8125rem] font-semibold leading-snug [-webkit-user-select:text] min-h-[36px]">
+                          {displayTitle(item)}
+                        </h3>
+                        <p className="m-0 select-text text-[0.9rem] font-bold text-[var(--accent)] [-webkit-user-select:text]">
+                          {formatPriceUsd(item.listPrice)}
+                        </p>
+                      </div>
                 </Link>
                 <button
                   type="button"
