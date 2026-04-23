@@ -35,7 +35,7 @@ import { PageLoadingSkeleton } from "../components/PageLoadingSkeleton.js";
 import { tryToastBadRequest } from "../notify-bad-request.js";
 import { TOAST_DURATION_SHORT_MS, useToast } from "../toast-context.js";
 
-const CATALOG_PAGE_LIMIT = 24;
+const CATALOG_PAGE_LIMIT = 12;
 
 function CatalogLoadMorePlaceholder() {
   return (
