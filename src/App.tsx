@@ -1,4 +1,6 @@
-import { Route, Switch } from "wouter";
+import { useEffect } from "react";
+import { Route, Switch, useLocation } from "wouter";
+import { trackPageView } from "./analytics.js";
 import { SiteFooter } from "./components/SiteFooter.js";
 import { SiteHeader } from "./components/SiteHeader.js";
 import { WhatsAppFloat } from "./components/WhatsAppFloat.js";
@@ -19,6 +21,12 @@ import { ShippingPolicyPage } from "./pages/ShippingPolicyPage.js";
 import { RefundPolicyPage } from "./pages/RefundPolicyPage.js";
 
 function AppShell() {
+  const [location] = useLocation();
+
+  useEffect(() => {
+    trackPageView(location);
+  }, [location]);
+
   return (
     <div className="mx-auto box-border flex min-h-screen w-full max-w-[1100px] flex-col px-6 pb-6">
       <SiteHeader />
