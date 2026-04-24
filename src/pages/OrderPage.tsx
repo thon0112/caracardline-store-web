@@ -85,6 +85,16 @@ export function OrderPage() {
     }
   }
 
+  async function copyFpsId(fpsId: string) {
+    if (!fpsId) return;
+    try {
+      await navigator.clipboard.writeText(fpsId);
+      showToast(zhHant.fpsIdCopiedToast);
+    } catch {
+      showToast(zhHant.fpsIdCopyFailedToast);
+    }
+  }
+
   async function onPaymentSubmitted() {
     if (!orderId) return;
     setPaymentBusy(true);
@@ -132,7 +142,8 @@ export function OrderPage() {
 
   const deadline = formatZhHantDeadline(order.reservationExpiresAt);
   const showFpsBlock =
-    order.status === "awaiting_payment" || order.status === "awaiting_confirmation";
+    order.status === "awaiting_payment" ||
+    order.status === "awaiting_confirmation";
   const statusLabel =
     order.status === "awaiting_payment"
       ? zhHant.orderStatusAwaitingPayment
@@ -174,7 +185,8 @@ export function OrderPage() {
               </span>
               <span className="inline select-text text-sm leading-normal text-[var(--muted)] [-webkit-user-select:text]">
                 {" "}
-                ×{item.quantity} · {formatPriceUsd(item.unitPrice)} {zhHant.cartEach}
+                ×{item.quantity} · {formatPriceUsd(item.unitPrice)}{" "}
+                {zhHant.cartEach}
               </span>
             </div>
             <div className="shrink-0 select-text text-right text-[1.05rem] font-bold tabular-nums leading-snug text-[var(--accent)] [-webkit-user-select:text]">
@@ -231,15 +243,37 @@ export function OrderPage() {
                   <p className="mb-0 mt-0 block w-full max-w-full select-text text-sm leading-[1.55] [-webkit-user-select:text]">
                     {zhHant.fpsInstructions}
                   </p>
+                  <p className="mb-0 mt-[0.35rem] flex flex-wrap items-center gap-x-2 gap-y-2 select-text text-sm leading-snug [-webkit-user-select:text]">
+                    <span className="text-[var(--muted)]">掃描QRCode或輸入FPS ID:</span>
+                    <code
+                      className="text-[0.95em] font-semibold text-[var(--fg)] [word-break:break-all]"
+                      translate="no"
+                    >
+                      105679567
+                    </code>
+                    <button
+                      type="button"
+                      className="cursor-pointer rounded-md border border-[var(--border)] bg-[color-mix(in_srgb,var(--media-bg)_70%,var(--card))] px-[0.5rem] py-[0.2rem] text-[0.8125rem] font-semibold text-[var(--fg)] hover:border-[color-mix(in_srgb,var(--accent)_38%,var(--border))] hover:text-[var(--accent)]"
+                      onClick={() => void copyFpsId("105679567")}
+                      aria-label={zhHant.orderRefCopyAria}
+                    >
+                      {zhHant.orderRefCopy}
+                    </button>
+                  </p>
                   <p className="mb-0 mt-[0.65rem] box-border max-w-full rounded-lg border border-[var(--border)] bg-[color-mix(in_srgb,var(--media-bg)_88%,var(--card))] px-[0.9rem] py-[0.65rem] text-[1.06rem] leading-snug [overflow-wrap:normal] [word-break:normal]">
                     {zhHant.fpsPayExact}{" "}
-                    <strong className="tabular-nums">{formatPriceUsd(total)}</strong>
+                    <strong className="tabular-nums">
+                      {formatPriceUsd(total)}
+                    </strong>
                   </p>
+
                   <p className="mb-0 mt-[0.65rem] block w-full max-w-full select-text text-sm leading-[1.55] [-webkit-user-select:text]">
                     {zhHant.fpsMemoHint}
                   </p>
                   <p className="mb-0 mt-[0.35rem] flex flex-wrap items-center gap-x-2 gap-y-2 select-text text-sm leading-snug [-webkit-user-select:text]">
-                    <span className="text-[var(--muted)]">{zhHant.orderRef}</span>
+                    <span className="text-[var(--muted)]">
+                      {zhHant.orderRef}
+                    </span>
                     <code
                       className="text-[0.95em] font-semibold text-[var(--fg)] [word-break:break-all]"
                       translate="no"

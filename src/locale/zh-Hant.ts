@@ -11,8 +11,7 @@ export const zhHant = {
   navHome: "首頁",
   navCatalog: "商品目錄",
   /** Instagram @cara.cardline — opens in a new tab */
-  navInstagramAria:
-    "Instagram：開啟 Caracardline 官方帳號（新視窗）",
+  navInstagramAria: "Instagram：開啟 Caracardline 官方帳號（新視窗）",
   navInstagram: "Instagram",
   /** Threads @cara.cardline — opens in a new tab */
   navThreadsAria: "Threads：開啟 Caracardline 官方帳號（新視窗）",
@@ -234,10 +233,13 @@ export const zhHant = {
   checkoutShipModeManual: "填寫地址",
   checkoutShipModeHint:
     "順豐模式會將您選擇的自提點寫入訂單地址欄位，方便出貨對單；您亦可改為手動輸入完整收件地址。",
+  fpsIdCopiedToast: "已複製 FPS ID。",
+  fpsIdCopyFailedToast: "無法複製，請手動選取或長按複製。",
   checkoutSfSearchLabel: "搜尋順豐自提點",
   checkoutSfSearchPlaceholder: "輸入地區、自提碼或地址關鍵字…",
   checkoutSfLoading: "載入自提點資料…",
-  checkoutSfLoadFailed: "無法載入順豐自提點資料，請改用「自行填寫地址」或稍後再試。",
+  checkoutSfLoadFailed:
+    "無法載入順豐自提點資料，請改用「自行填寫地址」或稍後再試。",
   checkoutSfEmptyQuery:
     "請輸入至少兩個字元以搜尋順豐自提點（可試地區名、自提碼或地址片段）。",
   checkoutSfNoResults: "沒有符合的結果，請改用其他關鍵字或順豐自提碼。",
@@ -251,7 +253,8 @@ export const zhHant = {
   checkoutShipCountry: "國家／地區（必填）",
   /** Shown in readonly country field; API still uses ISO code HK. */
   checkoutShipCountryHongKongDisplay: "香港（HK）",
-  checkoutFpsNote: "送出後訂單即成立，請依訂單頁指示以 FPS 轉帳；款項核對後我們會處理出貨。",
+  checkoutFpsNote:
+    "送出後訂單即成立，請依訂單頁指示以 FPS 轉帳；款項核對後我們會處理出貨。",
   checkoutSubmit: "建立訂單",
   checkoutSubmitting: "建立中…",
   checkoutPlaceFailed: "無法建立訂單",
@@ -259,8 +262,7 @@ export const zhHant = {
 
   orderTitle: "訂單",
   trackOrderTitle: "查詢訂單狀態",
-  trackOrderLede:
-    "請輸入訂單編號，即可查看狀態與付款指示。",
+  trackOrderLede: "請輸入訂單編號，即可查看狀態與付款指示。",
   trackOrderIdLabel: "訂單編號",
   trackOrderSubmit: "查看訂單",
   trackOrderIdRequired: "請輸入訂單編號。",
@@ -300,14 +302,16 @@ export const zhHant = {
   fpsTitle: "FPS 轉帳",
   /** Alt text for FPS payment QR poster image */
   fpsQrAlt: "轉數快（FPS）付款二維碼：港幣收款資訊",
-  fpsInstructions: "請使用「轉數快」轉入以下帳戶，並在備註填寫訂單編號以便對帳。",
+  fpsInstructions:
+    "「轉數快」轉入以下帳戶，並在備註填寫訂單編號以便對帳。",
   fpsPayExact: "請轉帳剛好",
   fpsMemoHint: "轉帳備註請填：",
   orderMarkTransferred: "我已完成轉帳",
   orderPaymentSubmitting: "送出中…",
   orderPaymentSubmittedToast: "已記錄，我們會盡快核對入數。",
   orderPaymentSubmitFailed: "無法更新狀態",
-  orderAwaitingConfirmationHint: "我們收到通知後會核對銀行入數；通過後會再與您聯絡。",
+  orderAwaitingConfirmationHint:
+    "我們收到通知後會核對銀行入數；通過後會再與您聯絡。",
 } as const;
 
 /** Maps store-worker `productType` codes to Traditional Chinese labels. */
@@ -324,7 +328,8 @@ export const CATALOG_PRODUCT_TYPE_CODES = [
   "accessory",
 ] as const;
 
-export type CatalogProductTypeCode = (typeof CATALOG_PRODUCT_TYPE_CODES)[number];
+export type CatalogProductTypeCode =
+  (typeof CATALOG_PRODUCT_TYPE_CODES)[number];
 
 export function displayProductType(productType: string): string {
   const raw = productType.trim();
@@ -391,7 +396,11 @@ export function formatPriceUsd(amount: number): string {
 export function toastTextForBadRequest(message: string): string {
   const m = message.trim();
   if (!m) return zhHant.apiBadRequestGeneric;
-  if (m.startsWith("{") || m.includes("formErrors") || m.includes("fieldErrors")) {
+  if (
+    m.startsWith("{") ||
+    m.includes("formErrors") ||
+    m.includes("fieldErrors")
+  ) {
     return zhHant.apiBadRequestInvalidBody;
   }
   switch (m) {
