@@ -237,7 +237,6 @@ export function CatalogPage() {
               availability: avail,
             });
       setItems((prev) => [...prev, ...data.items]);
-      console.log(data.nextCursor);
       setNextCursor(data.nextCursor);
     } catch (e) {
       if (!tryToastBadRequest(e, showToast)) {
