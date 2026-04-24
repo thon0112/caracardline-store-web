@@ -190,7 +190,7 @@ export function HomePage() {
                       href={`/item/${encodeURIComponent(item.slug)}`}
                       className="flex min-h-0 flex-1 cursor-pointer select-none flex-col text-inherit no-underline caret-transparent [-webkit-user-select:none]"
                     >
-                      <div className="relative aspect-square shrink-0 bg-[var(--media-bg)]">
+                      <div className="relative aspect-[3/4] shrink-0 bg-[var(--media-bg)]">
                         {item.soldOut && (
                           <span
                             className="absolute right-[0.35rem] top-[0.35rem] z-[1] rounded-[5px] bg-[color-mix(in_srgb,var(--err)_88%,transparent)] px-[0.35rem] py-[0.15rem] text-[0.6875rem] font-bold leading-snug text-[var(--card)]"
