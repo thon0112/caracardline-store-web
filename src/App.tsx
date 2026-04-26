@@ -28,7 +28,7 @@ function AppShell() {
   }, [location]);
 
   return (
-    <div className="mx-auto box-border flex min-h-screen w-full max-w-[1100px] flex-col px-6 pb-6">
+    <div className="mx-auto box-border flex min-h-screen w-full max-w-[1100px] flex-col px-4 pb-6">
       <SiteHeader />
       <main className="min-h-0 min-w-0 w-full flex-1 overflow-x-clip">
         <Switch>

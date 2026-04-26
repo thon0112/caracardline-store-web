@@ -99,7 +99,7 @@ export function HomeBannerCarousel() {
 
   return (
     <section
-      className="mb-6 box-border w-screen max-w-[100vw] [margin-left:calc(50%-50vw)]"
+      className="mb-6 box-border w-[calc(100vw-12px)] max-w-[100vw] [margin-left:calc(50%-50vw)]"
       aria-roledescription="carousel"
       aria-label={zhHant.homeBannerAria}
     >
