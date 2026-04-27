@@ -35,7 +35,6 @@ export function initGoogleAnalytics(): void {
   const id = measurementId();
   if (!id || initStarted) return;
   initStarted = true;
-  console.log("initGoogleAnalytics");
 
   window.dataLayer = window.dataLayer ?? [];
   window.gtag = function gtag(...args: unknown[]) {
@@ -48,10 +47,7 @@ export function initGoogleAnalytics(): void {
   script.async = true;
   script.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(id)}`;
   script.onload = () => {
-    console.log("gtag loaded");
-    console.log(id);
     window.gtag?.("config", id, { send_page_view: false, debug_mode: true });
-    console.log("gtag config");
     scriptReady = true;
     flushPendingPageViews();
   };
