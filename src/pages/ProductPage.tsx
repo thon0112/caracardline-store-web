@@ -150,7 +150,7 @@ export function ProductPage() {
           )}
           {img ? (
             <img
-              className="block md:min-h-[450px] max-h-[400px] w-full object-contain rounded-xl border border-[var(--border)]"
+              className="block min-h-[350px] md:min-h-[450px] max-h-[400px] w-full object-contain rounded-xl border border-[var(--border)]"
               src={img}
               alt=""
             />

@@ -47,7 +47,7 @@ export function initGoogleAnalytics(): void {
   script.async = true;
   script.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(id)}`;
   script.onload = () => {
-    window.gtag?.("config", id, { send_page_view: false });
+    window.gtag?.("config", id, { send_page_view: false, debug_mode: true });
     scriptReady = true;
     flushPendingPageViews();
   };
