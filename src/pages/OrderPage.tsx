@@ -69,10 +69,16 @@ export function OrderPage() {
     void load();
   }, [load]);
 
-  const total = useMemo(() => {
+  const lineMerchandiseTotal = useMemo(() => {
     if (!order) return 0;
     return order.items.reduce((s, i) => s + i.quantity * i.unitPrice, 0);
   }, [order]);
+
+  const merchandiseSubtotal = order?.merchandiseSubtotal ?? lineMerchandiseTotal;
+  const orderDiscountTotal = order?.discountTotal ?? 0;
+  const total =
+    order?.totalDue ??
+    Math.max(0, merchandiseSubtotal - orderDiscountTotal);
 
   async function copyFullOrderRef() {
     const full = orderRefDisplayLastFour(order?.orderId ?? "");
@@ -195,13 +201,38 @@ export function OrderPage() {
           </li>
         ))}
       </ul>
-      <div className="mb-5 mt-[0.35rem] flex items-baseline justify-between gap-4 border-t-2 border-[color-mix(in_srgb,var(--border)_70%,var(--fg))] pt-4 text-[1.05rem]">
-        <span className="select-text font-semibold text-[var(--muted)] [-webkit-user-select:text]">
-          {zhHant.orderAmountDue}
-        </span>
-        <strong className="select-text text-[1.3rem] font-bold tabular-nums tracking-[0.01em] text-[var(--accent)] [-webkit-user-select:text]">
-          {formatPriceUsd(total)}
-        </strong>
+      <div className="mb-5 mt-[0.35rem] space-y-[0.35rem] border-t-2 border-[color-mix(in_srgb,var(--border)_70%,var(--fg))] pt-4 text-[1.05rem]">
+        <div className="flex items-baseline justify-between gap-4">
+          <span className="select-text font-semibold text-[var(--muted)] [-webkit-user-select:text]">
+            {zhHant.cartSubtotal}
+          </span>
+          <span className="select-text font-semibold tabular-nums text-[var(--fg)] [-webkit-user-select:text]">
+            {formatPriceUsd(merchandiseSubtotal)}
+          </span>
+        </div>
+        {orderDiscountTotal > 0 && (
+          <div className="flex items-baseline justify-between gap-4 text-[0.98rem]">
+            <span className="select-text font-semibold text-[var(--muted)] [-webkit-user-select:text]">
+              {zhHant.cartDiscount}
+              {order.couponCode ? (
+                <span className="ml-1 font-normal text-[var(--muted)]">
+                  （{order.couponCode}）
+                </span>
+              ) : null}
+            </span>
+            <span className="select-text font-semibold tabular-nums text-[var(--fg)] [-webkit-user-select:text]">
+              −{formatPriceUsd(orderDiscountTotal)}
+            </span>
+          </div>
+        )}
+        <div className="flex items-baseline justify-between gap-4 border-t border-[var(--border)] pt-[0.45rem] text-[1.08rem]">
+          <span className="select-text font-semibold text-[var(--muted)] [-webkit-user-select:text]">
+            {zhHant.orderAmountDue}
+          </span>
+          <strong className="select-text text-[1.3rem] font-bold tabular-nums tracking-[0.01em] text-[var(--accent)] [-webkit-user-select:text]">
+            {formatPriceUsd(total)}
+          </strong>
+        </div>
       </div>
 
       <div className="mb-[1.35rem] block overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--card)] px-[1.05rem] py-[1.05rem] md:px-[1.45rem] md:py-5">

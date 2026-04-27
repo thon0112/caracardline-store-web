@@ -23,7 +23,17 @@ type ShipMode = "sf" | "manual";
 export function CheckoutPage() {
   const { showToast } = useToast();
   const [, setLocation] = useLocation();
-  const { cartId, lines, subtotal, loading, error, refreshCart } = useCart();
+  const {
+    cartId,
+    lines,
+    subtotal,
+    discountTotal,
+    totalDue,
+    couponCapExhausted,
+    loading,
+    error,
+    refreshCart,
+  } = useCart();
   const [submitting, setSubmitting] = useState(false);
   const [formErr, setFormErr] = useState<string | null>(null);
 
@@ -109,6 +119,8 @@ export function CheckoutPage() {
         err.message === "cart not found"
       ) {
         setFormErr(zhHant.apiErrorCartNotFound);
+      } else if (isApiError(err) && err.status === 409) {
+        setFormErr(zhHant.apiErrorCouponRedemptionLimit);
       } else if (isApiError(err) && err.status === 400) {
         setFormErr(toastTextForBadRequest(err.message));
       } else {
@@ -159,7 +171,7 @@ export function CheckoutPage() {
         {zhHant.checkoutLede}
       </p>
 
-      <div className="grid items-start gap-x-8 gap-y-6 min-[880px]:grid-cols-[minmax(0,1fr)_minmax(16rem,22rem)]">
+      <div className="grid items-start gap-x-8 gap-y-6 min-[880px]:grid-cols-[minmax(0,1fr)_minmax(20rem,26rem)]">
         <div className="min-w-0 min-[880px]:col-start-1 min-[880px]:row-start-1">
           {hasSoldOut && (
             <p
@@ -357,7 +369,7 @@ export function CheckoutPage() {
                   key={l.lineId}
                   className="flex justify-between gap-3 border-b border-[var(--border)] py-[0.35rem] last:border-b-0"
                 >
-                  <span className="select-text [-webkit-user-select:text]">
+                  <span className="max-w-[60%] select-text [-webkit-user-select:text]">
                     {l.catalog.title ||
                       l.catalog.card?.name ||
                       zhHant.productFallback}
@@ -369,14 +381,42 @@ export function CheckoutPage() {
                 </li>
               ))}
             </ul>
-            <p className="mb-0 mt-[0.85rem] flex items-baseline justify-between border-t border-[var(--border)] pt-3 font-semibold">
-              <span className="select-text [-webkit-user-select:text]">
-                {zhHant.cartSubtotal}
-              </span>
-              <strong className="select-text [-webkit-user-select:text]">
-                {formatPriceUsd(subtotal)}
-              </strong>
-            </p>
+            {couponCapExhausted && (
+              <p
+                className="mb-2 mt-2 select-text text-sm text-[var(--err)] [-webkit-user-select:text]"
+                role="status"
+              >
+                {zhHant.cartCouponCapExhausted}
+              </p>
+            )}
+            <div className="mb-0 mt-[0.85rem] space-y-[0.35rem] border-t border-[var(--border)] pt-3">
+              <p className="m-0 flex items-baseline justify-between font-semibold">
+                <span className="select-text [-webkit-user-select:text]">
+                  {zhHant.cartSubtotal}
+                </span>
+                <strong className="select-text [-webkit-user-select:text]">
+                  {formatPriceUsd(subtotal)}
+                </strong>
+              </p>
+              {discountTotal > 0 && (
+                <p className="m-0 flex items-baseline justify-between text-[0.9375rem] font-semibold text-[var(--muted)]">
+                  <span className="select-text [-webkit-user-select:text]">
+                    {zhHant.cartDiscount}
+                  </span>
+                  <span className="select-text [-webkit-user-select:text]">
+                    −{formatPriceUsd(discountTotal)}
+                  </span>
+                </p>
+              )}
+              <p className="m-0 flex items-baseline justify-between border-t border-[var(--border)] pt-[0.35rem] text-base font-semibold">
+                <span className="select-text [-webkit-user-select:text]">
+                  {zhHant.cartTotalDue}
+                </span>
+                <strong className="select-text text-[var(--accent)] [-webkit-user-select:text]">
+                  {formatPriceUsd(totalDue)}
+                </strong>
+              </p>
+            </div>
             <button
               type="submit"
               form="checkout-form"

@@ -1,8 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Link } from "wouter";
 import {
+  applyCartCoupon,
   deleteCartLine,
   patchCartLineQuantity,
+  removeCartCoupon,
   type CartCatalogItem,
   type CartLine,
 } from "../api.js";
@@ -115,9 +117,22 @@ function CartLineQtyField({
 
 export function CartPage() {
   const { showToast } = useToast();
-  const { cartId, lines, subtotal, loading, error, refreshCart } = useCart();
+  const {
+    cartId,
+    lines,
+    subtotal,
+    discountTotal,
+    totalDue,
+    couponCode,
+    couponCapExhausted,
+    loading,
+    error,
+    refreshCart,
+  } = useCart();
   const [busyLineId, setBusyLineId] = useState<string | null>(null);
   const [actionErr, setActionErr] = useState<string | null>(null);
+  const [couponDraft, setCouponDraft] = useState("");
+  const [couponBusy, setCouponBusy] = useState(false);
 
   async function setQuantity(line: CartLine, next: number): Promise<boolean> {
     if (!cartId) return false;
@@ -137,6 +152,40 @@ export function CartPage() {
       return false;
     } finally {
       setBusyLineId(null);
+    }
+  }
+
+  async function onApplyCoupon(e: FormEvent) {
+    e.preventDefault();
+    if (!cartId || couponBusy) return;
+    const raw = couponDraft.trim();
+    if (!raw) return;
+    setCouponBusy(true);
+    try {
+      await applyCartCoupon(cartId, { code: raw });
+      setCouponDraft("");
+      await refreshCart({ silent: true });
+    } catch (err) {
+      if (!tryToastBadRequest(err, showToast)) {
+        showToast(err instanceof Error ? err.message : zhHant.cartCouponNotApplicableGeneric);
+      }
+    } finally {
+      setCouponBusy(false);
+    }
+  }
+
+  async function onRemoveCoupon() {
+    if (!cartId || couponBusy) return;
+    setCouponBusy(true);
+    try {
+      await removeCartCoupon(cartId);
+      await refreshCart({ silent: true });
+    } catch (err) {
+      if (!tryToastBadRequest(err, showToast)) {
+        showToast(err instanceof Error ? err.message : zhHant.cartCouponNotApplicableGeneric);
+      }
+    } finally {
+      setCouponBusy(false);
     }
   }
 
@@ -310,13 +359,83 @@ export function CartPage() {
           );
         })}
       </ul>
-      <div className="mt-6 flex items-baseline justify-end gap-4 border-t border-[var(--border)] pt-5">
-        <span className="select-text font-semibold text-[var(--muted)] [-webkit-user-select:text]">
-          {zhHant.cartSubtotal}
-        </span>
-        <span className="select-text text-[1.35rem] font-bold text-[var(--accent)] [-webkit-user-select:text]">
-          {formatPriceUsd(subtotal)}
-        </span>
+      <form
+        className="mt-8 flex max-w-[26rem] flex-col gap-[0.45rem]"
+        onSubmit={(e) => void onApplyCoupon(e)}
+      >
+        <label className="select-text text-sm font-semibold [-webkit-user-select:text]" htmlFor="cart-coupon-code">
+          {zhHant.cartCouponCodeLabel}
+        </label>
+        <div className="flex flex-wrap gap-2">
+          <input
+            id="cart-coupon-code"
+            type="text"
+            name="couponCode"
+            autoComplete="off"
+            spellCheck={false}
+            disabled={couponBusy || hasSoldOut}
+            value={couponDraft}
+            onChange={(e) => setCouponDraft(e.target.value)}
+            placeholder={zhHant.cartCouponPlaceholder}
+            className="min-w-[12rem] flex-1 rounded-lg border border-[var(--border)] bg-[var(--card)] px-[0.65rem] py-2 font-inherit text-base text-[var(--fg)] placeholder:text-[var(--muted)] disabled:opacity-50"
+            maxLength={64}
+          />
+          <button
+            type="submit"
+            disabled={couponBusy || hasSoldOut || !couponDraft.trim()}
+            className="cursor-pointer rounded-lg border border-[var(--accent)] bg-transparent px-[0.85rem] py-2 font-semibold text-[var(--accent)] hover:bg-[color-mix(in_srgb,var(--accent)_16%,transparent)] disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {couponBusy ? zhHant.cartCouponApplying : zhHant.cartCouponApply}
+          </button>
+        </div>
+        {couponCode && (
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+            <span className="select-text text-sm text-[var(--muted)] [-webkit-user-select:text]">
+              <span className="font-semibold text-[var(--fg)]">{couponCode}</span>
+            </span>
+            <button
+              type="button"
+              disabled={couponBusy || hasSoldOut}
+              className="cursor-pointer border-none bg-transparent p-0 font-inherit text-sm text-[var(--muted)] underline hover:text-[var(--accent)] disabled:opacity-50"
+              onClick={() => void onRemoveCoupon()}
+            >
+              {zhHant.cartCouponRemove}
+            </button>
+          </div>
+        )}
+        {couponCapExhausted && (
+          <p className="m-0 select-text text-sm text-[var(--err)] [-webkit-user-select:text]" role="status">
+            {zhHant.cartCouponCapExhausted}
+          </p>
+        )}
+      </form>
+      <div className="mt-6 space-y-[0.35rem] border-t border-[var(--border)] pt-5">
+        <div className="flex items-baseline justify-end gap-4">
+          <span className="select-text font-semibold text-[var(--muted)] [-webkit-user-select:text]">
+            {zhHant.cartSubtotal}
+          </span>
+          <span className="select-text text-[1.15rem] font-bold tabular-nums text-[var(--accent)] [-webkit-user-select:text]">
+            {formatPriceUsd(subtotal)}
+          </span>
+        </div>
+        {discountTotal > 0 && (
+          <div className="flex items-baseline justify-end gap-4">
+            <span className="select-text font-semibold text-[var(--muted)] [-webkit-user-select:text]">
+              {zhHant.cartDiscount}
+            </span>
+            <span className="select-text text-[1.05rem] font-semibold tabular-nums text-[var(--accent)] [-webkit-user-select:text]">
+              −{formatPriceUsd(discountTotal)}
+            </span>
+          </div>
+        )}
+        <div className="flex items-baseline justify-end gap-4 border-t border-[var(--border)] pt-[0.45rem]">
+          <span className="select-text font-semibold text-[var(--muted)] [-webkit-user-select:text]">
+            {zhHant.cartTotalDue}
+          </span>
+          <span className="select-text text-[1.35rem] font-bold tabular-nums text-[var(--accent)] [-webkit-user-select:text]">
+            {formatPriceUsd(totalDue)}
+          </span>
+        </div>
       </div>
       <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-3">
         <Link

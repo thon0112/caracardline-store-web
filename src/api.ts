@@ -67,9 +67,19 @@ export type CartLine = {
   catalog: CartCatalogItem;
 };
 
+/** Mirrors store-worker GET `/api/carts/:cartId` `pricing` field. */
+export type CartPricing = {
+  merchandiseSubtotal: number;
+  discountTotal: number;
+  totalDue: number;
+  couponCode: string | null;
+  couponCapExhausted?: boolean;
+};
+
 export type CartResponse = {
   cartId: string;
   items: CartLine[];
+  pricing: CartPricing;
 };
 
 export async function readApiErrorMessage(res: Response): Promise<string> {
@@ -191,7 +201,74 @@ export async function fetchCart(cartId: string): Promise<CartResponse> {
   logApi("GET", url);
   const res = await fetch(url);
   await throwIfNotOk(res);
-  return res.json() as Promise<CartResponse>;
+  const raw = (await res.json()) as Partial<CartResponse>;
+  const items = raw.items ?? [];
+  const ms = items.reduce(
+    (s, line) => s + line.quantity * line.catalog.listPrice,
+    0,
+  );
+  const pricing: CartPricing =
+    raw.pricing ??
+    ({
+      merchandiseSubtotal: ms,
+      discountTotal: 0,
+      totalDue: ms,
+      couponCode: null,
+    } satisfies CartPricing);
+  return { cartId: raw.cartId!, items, pricing };
+}
+
+export async function applyCartCoupon(
+  cartId: string,
+  body: { code: string },
+): Promise<CartResponse> {
+  const path = `/api/carts/${encodeURIComponent(cartId)}/coupon`;
+  const url = apiPath(path);
+  logApi("POST", url);
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  await throwIfNotOk(res);
+  const raw = (await res.json()) as Partial<CartResponse>;
+  const items = raw.items ?? [];
+  const ms = items.reduce(
+    (s, line) => s + line.quantity * line.catalog.listPrice,
+    0,
+  );
+  const pricing: CartPricing =
+    raw.pricing ??
+    ({
+      merchandiseSubtotal: ms,
+      discountTotal: 0,
+      totalDue: ms,
+      couponCode: null,
+    } satisfies CartPricing);
+  return { cartId: raw.cartId!, items, pricing };
+}
+
+export async function removeCartCoupon(cartId: string): Promise<CartResponse> {
+  const path = `/api/carts/${encodeURIComponent(cartId)}/coupon`;
+  const url = apiPath(path);
+  logApi("DELETE", url);
+  const res = await fetch(url, { method: "DELETE" });
+  await throwIfNotOk(res);
+  const raw = (await res.json()) as Partial<CartResponse>;
+  const items = raw.items ?? [];
+  const ms = items.reduce(
+    (s, line) => s + line.quantity * line.catalog.listPrice,
+    0,
+  );
+  const pricing: CartPricing =
+    raw.pricing ??
+    ({
+      merchandiseSubtotal: ms,
+      discountTotal: 0,
+      totalDue: ms,
+      couponCode: null,
+    } satisfies CartPricing);
+  return { cartId: raw.cartId!, items, pricing };
 }
 
 export async function patchCartLineQuantity(
@@ -275,6 +352,10 @@ export type OrderDetailResponse = {
   shipCountry: string | null;
   createdAt: string;
   reservationExpiresAt: string | null;
+  merchandiseSubtotal?: number;
+  discountTotal?: number;
+  totalDue?: number;
+  couponCode?: string | null;
   items: OrderLineItem[];
 };
 

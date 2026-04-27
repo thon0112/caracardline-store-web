@@ -196,6 +196,15 @@ export const zhHant = {
   cartQtyAria: "數量（請輸入數字）",
   cartRemove: "移除",
   cartSubtotal: "小計",
+  cartDiscount: "折扣",
+  cartTotalDue: "應付金額",
+  cartCouponCodeLabel: "優惠碼",
+  cartCouponApplying: "套用中…",
+  cartCouponPlaceholder: "輸入優惠碼",
+  cartCouponApply: "套用",
+  cartCouponRemove: "移除優惠碼",
+  cartCouponCapExhausted:
+    "此優惠活動名額已滿；若仍結帳將以原價計算（須支付的總額見下方）。",
   cartGoCheckout: "前往結帳",
   /** Banner when any cart line is no longer purchasable */
   cartSoldOutNotice: "購物車內有已售罄商品，請先移除此類項目再結帳。",
@@ -216,6 +225,10 @@ export const zhHant = {
   apiErrorCartEmpty: "購物車是空的，無法建立訂單。",
   apiErrorInvalidOrderStatus: "訂單狀態不允許此操作。",
   apiErrorCartNotFound: "找不到購物車。",
+  apiErrorCouponInvalidCode: "優惠碼無效。",
+  apiErrorCouponRedemptionLimit: "優惠碼名額已滿，請移除優惠碼或稍後再試。",
+  cartCouponBelowThreshold: "購物車未達此優惠的最低金額。",
+  cartCouponNotApplicableGeneric: "無法套用此優惠碼。",
 
   checkoutTitle: "結帳",
   checkoutLede:
@@ -418,7 +431,28 @@ export function toastTextForBadRequest(message: string): string {
       return zhHant.apiErrorCartNotFound;
     case "invalid order id":
       return zhHant.orderInvalidId;
-    default:
+    case "invalid coupon code":
+      return zhHant.apiErrorCouponInvalidCode;
+    case "invalid cart coupon":
+      return zhHant.apiErrorCouponInvalidCode;
+    case "coupon redemption limit reached":
+      return zhHant.apiErrorCouponRedemptionLimit;
+    default: {
+      if (m.startsWith("coupon not applicable:")) {
+        const r = m.slice("coupon not applicable:".length).trim();
+        if (r === "below_threshold") return zhHant.cartCouponBelowThreshold;
+        if (
+          r === "inactive" ||
+          r === "before_start" ||
+          r === "after_end" ||
+          r === "wrong_kind"
+        ) {
+          return zhHant.cartCouponNotApplicableGeneric;
+        }
+        if (r === "cap_exhausted") return zhHant.apiErrorCouponRedemptionLimit;
+        return zhHant.cartCouponNotApplicableGeneric;
+      }
       return m;
+    }
   }
 }
