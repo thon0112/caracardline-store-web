@@ -414,7 +414,7 @@ export function CatalogPage() {
                   href={`/item/${encodeURIComponent(item.slug)}`}
                   className="flex-1 text-inherit no-underline"
                 >
-                  <div className="relative aspect-[3/4] bg-[var(--media-bg)]">
+                  <div className="relative aspect-[3/5] bg-[var(--media-bg)]">
                     {item.soldOut && (
                       <span
                         className="absolute right-2 top-2 z-[1] rounded-md bg-[color-mix(in_srgb,var(--err)_88%,transparent)] px-[0.45rem] py-0.5 text-xs font-bold leading-snug text-[var(--card)]"
