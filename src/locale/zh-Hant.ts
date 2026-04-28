@@ -180,6 +180,16 @@ export const zhHant = {
   productBackCatalog: "返回商品目錄",
   productPsaId: "PSA 編號",
   productSoldOut: "此商品已售罄，僅供瀏覽。",
+  /** Product detail — image gallery */
+  productImageGalleryAria: "商品圖片",
+  productImagePrev: "上一張",
+  productImageNext: "下一張",
+  productImageThumbAria: (i: number, total: number) =>
+    `第 ${i} 張，共 ${total} 張`,
+  /** Product detail — fullscreen image dialog */
+  productImageLightboxTitle: "商品大圖",
+  productImageCloseLightbox: "關閉",
+  productImageOpenLightboxAria: "以全螢幕檢視此圖",
   errAddFailed: "加入失敗",
 
   cartTitle: "購物車",
