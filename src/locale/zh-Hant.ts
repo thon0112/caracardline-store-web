@@ -317,6 +317,11 @@ export const zhHant = {
   orderStatusAwaitingConfirmation: "已通知轉帳，待核對入數",
   orderStatusExpired: "已過期（庫存已釋放）",
   orderStatusPaid: "已付款",
+  orderShippingHeading: "配送追蹤",
+  orderCarrierLabel: "承運商",
+  orderTrackingLabel: "追蹤號碼",
+  orderSfTrackingLink: "查看運送狀態",
+  orderSfTrackingLinkAria: "於新視窗開啟順豐速運追蹤頁面",
   /** Order page — deadline line above FPS (reservation / payment window). */
   orderPaymentDeadlineLabel: "付款截止時間: ",
   orderExpiredHint: "若您已轉帳，請聯絡客服並提供訂單編號與入數證明。",

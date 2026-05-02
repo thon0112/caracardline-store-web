@@ -30,6 +30,15 @@ function orderRefDisplayLastFour(orderId: string): string {
 const orderRoot =
   "box-border w-full min-w-0 max-w-[48rem] cursor-default select-none caret-transparent [-webkit-user-select:none] [&_.error]:select-text [&_a]:cursor-pointer [&_button]:cursor-pointer [&_code]:select-text [&_code]:[-webkit-user-select:text] [&_strong]:select-text";
 
+function sfExpressWaybillUrl(trackingNumber: string): string {
+  const t = trackingNumber.trim();
+  return `https://htm.sf-express.com/hk/tc/dynamic_function/waybill/#search/bill-number/${encodeURIComponent(t)}`;
+}
+
+function isSfWaybillId(id: string): boolean {
+  return id.trim().toUpperCase().startsWith("SF");
+}
+
 export function OrderPage() {
   const { showToast } = useToast();
   const params = useParams<{ orderId: string }>();
@@ -234,6 +243,54 @@ export function OrderPage() {
           </strong>
         </div>
       </div>
+
+      {(order.shipCarrier?.trim() || order.shipTrackingNumber?.trim()) && (
+        <section
+          className="mb-5 border border-[var(--border)] bg-[var(--card)] px-[1.05rem] py-[1.05rem] md:px-[1.45rem] md:py-5"
+          aria-labelledby="order-shipping-heading"
+        >
+          <h2
+            id="order-shipping-heading"
+            className="m-0 mb-[0.55rem] select-text text-[1.1rem] font-semibold [-webkit-user-select:text]"
+          >
+            {zhHant.orderShippingHeading}
+          </h2>
+          {order.shipCarrier?.trim() ? (
+            <p className="m-0 mb-[0.35rem] select-text text-sm leading-snug [-webkit-user-select:text]">
+              <span className="font-semibold text-[var(--muted)]">
+                {zhHant.orderCarrierLabel}
+              </span>{" "}
+              <span translate="no">{order.shipCarrier.trim() === "SF" ? "順豐速運" : order.shipCarrier.trim()}</span>
+            </p>
+          ) : null}
+          {order.shipTrackingNumber?.trim() ? (
+            <p className="m-0 flex flex-col gap-[0.45rem] sm:flex-row sm:flex-wrap sm:items-baseline sm:gap-x-3 sm:gap-y-1">
+              <span className="select-text text-sm leading-snug [-webkit-user-select:text]">
+                <span className="font-semibold text-[var(--muted)]">
+                  {zhHant.orderTrackingLabel}
+                </span>{" "}
+                <code
+                  className="text-[0.95em] font-semibold text-[var(--fg)] [word-break:break-all]"
+                  translate="no"
+                >
+                  {order.shipTrackingNumber.trim()}
+                </code>
+              </span>
+              {isSfWaybillId(order.shipTrackingNumber) ? (
+                <a
+                  href={sfExpressWaybillUrl(order.shipTrackingNumber)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex w-fit shrink-0 select-text text-sm font-semibold text-[var(--accent)] underline underline-offset-2 [-webkit-user-select:text]"
+                  aria-label={`${zhHant.orderSfTrackingLink}（${zhHant.orderSfTrackingLinkAria}）`}
+                >
+                  {zhHant.orderSfTrackingLink}
+                </a>
+              ) : null}
+            </p>
+          ) : null}
+        </section>
+      )}
 
       <div className="mb-[1.35rem] block overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--card)] px-[1.05rem] py-[1.05rem] md:px-[1.45rem] md:py-5">
         <p className="m-0 mb-[0.4rem] select-text leading-snug [-webkit-user-select:text]">

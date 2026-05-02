@@ -350,6 +350,10 @@ export type OrderDetailResponse = {
   shipRegion: string | null;
   shipPostalCode: string | null;
   shipCountry: string | null;
+  /** Set when staff records carrier (e.g. SF Express). */
+  shipCarrier: string | null;
+  /** Waybill / tracking number when shipped. */
+  shipTrackingNumber: string | null;
   createdAt: string;
   reservationExpiresAt: string | null;
   merchandiseSubtotal?: number;
