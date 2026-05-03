@@ -437,7 +437,7 @@ export function ProductPage() {
           <h1 className="m-0 mb-2 text-[1.75rem] font-bold">{data.title}</h1>
           {subtitle && <p className="text-[var(--muted)]">{subtitle}</p>}
           {data.description && (
-            <p className="m-0 mb-6 mt-3 max-w-[42rem]">{data.description}</p>
+            <p className="m-0 mb-6 mt-3 max-w-[42rem] whitespace-pre-line">{data.description}</p>
           )}
           {data.psaId && (
             <p className="text-sm text-[var(--muted)]">
