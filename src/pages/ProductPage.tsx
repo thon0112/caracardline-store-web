@@ -310,6 +310,48 @@ function ProductImageGallery({
   );
 }
 
+// --- PRODUCT SCHEMA COMPONENT ---
+function ProductSchema({ data }: { data: CatalogListItem }) {
+  // Build images array
+  const images = collectProductImageUrls(data);
+
+  // Build offers schema (as per sold out and price)
+  const offer: any = {
+    "@type": "Offer",
+    priceCurrency: "HKD",
+    price: data.listPrice,
+    availability: data.soldOut
+      ? "https://schema.org/OutOfStock"
+      : "https://schema.org/InStock",
+    url: typeof window !== "undefined" ? window.location.href : undefined,
+  };
+
+  // Optional: add itemCondition if possible
+  if (data.condition) {
+    offer.itemCondition = "https://schema.org/NewCondition";
+  }
+
+  // Use data.productId as sku and identifier
+  const productSchema = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: data.title,
+    image: images,
+    description: data.description,
+    sku: data.productId,
+    offers: offer,
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{
+        __html: JSON.stringify(productSchema),
+      }}
+    />
+  );
+}
+
 export function ProductPage() {
   const { showToast } = useToast();
   const params = useParams();
@@ -411,6 +453,8 @@ export function ProductPage() {
 
   return (
     <article className="select-none [-webkit-user-select:none]">
+      {/* --- Product Schema for SEO --- */}
+      <ProductSchema data={data} />
       <Link
         href={catalogListHref}
         className="mb-4 inline-block cursor-pointer select-none text-[var(--muted)] no-underline caret-transparent"
