@@ -203,6 +203,11 @@ export function OrderPage() {
                 ×{item.quantity} · {formatPriceUsd(item.unitPrice)}{" "}
                 {zhHant.cartEach}
               </span>
+              {item.poolNumber != null && (
+                <span className="block select-text text-sm leading-normal text-[var(--accent)] [-webkit-user-select:text]">
+                  {zhHant.productPoolSelected(item.poolNumber)}
+                </span>
+              )}
             </div>
             <div className="shrink-0 select-text text-right text-[1.05rem] font-bold tabular-nums leading-snug text-[var(--accent)] [-webkit-user-select:text]">
               {formatPriceUsd(item.quantity * item.unitPrice)}

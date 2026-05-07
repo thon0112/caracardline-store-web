@@ -34,6 +34,7 @@ import {
 import { PageLoadingSkeleton } from "../components/PageLoadingSkeleton.js";
 import { tryToastBadRequest } from "../notify-bad-request.js";
 import { TOAST_DURATION_SHORT_MS, useToast } from "../toast-context.js";
+import { isCardPoolEnabled } from "../store-config.js";
 
 const CATALOG_PAGE_LIMIT = 12;
 
@@ -121,8 +122,11 @@ export function CatalogPage() {
   const loadMoreSentinelRef = useRef<HTMLDivElement | null>(null);
 
   const visibleItems = useMemo(() => {
-    if (!activeCatalogTypeCode) return items;
-    return items.filter(
+    const base = isCardPoolEnabled
+      ? items
+      : items.filter((item) => item.productType !== "card_pool");
+    if (!activeCatalogTypeCode) return base;
+    return base.filter(
       (item) => storefrontListingCategory(item) === activeCatalogTypeCode,
     );
   }, [items, activeCatalogTypeCode]);
@@ -437,27 +441,33 @@ export function CatalogPage() {
                     )}
                   </div>
                   <div className="flex-1 px-3 pb-[0.35rem] pt-[0.65rem]">
-                        <h3 className="mb-1 line-clamp-2 select-text text-[0.8125rem] font-semibold leading-snug [-webkit-user-select:text] min-h-[36px]">
-                          {displayTitle(item)}
-                        </h3>
-                        <p className="m-0 select-text text-[0.9rem] font-bold text-[var(--accent)] [-webkit-user-select:text]">
-                          {formatPriceUsd(item.listPrice)}
-                        </p>
-                      </div>
+                    <h3 className="mb-1 line-clamp-2 select-text text-[0.8125rem] font-semibold leading-snug [-webkit-user-select:text] min-h-[36px]">
+                      {displayTitle(item)}
+                    </h3>
+                    <p className="m-0 select-text text-[0.9rem] font-bold text-[var(--accent)] [-webkit-user-select:text]">
+                      {formatPriceUsd(item.listPrice)}
+                    </p>
+                  </div>
                 </Link>
-                <button
-                  type="button"
-                  className="mx-4 mb-4 mt-3 cursor-pointer rounded-lg border border-[var(--accent)] bg-transparent px-[0.85rem] py-2 font-semibold text-[var(--accent)] hover:bg-[color-mix(in_srgb,var(--accent)_16%,transparent)] disabled:cursor-not-allowed disabled:opacity-50"
-                  disabled={adding === item.productId || item.soldOut}
-                  title={item.soldOut ? zhHant.soldOutAddDisabled : undefined}
-                  onClick={() => addToCart(item)}
-                >
-                  {adding === item.productId
-                    ? zhHant.adding
-                    : item.soldOut
-                      ? zhHant.soldOutBadge
-                      : zhHant.addToCart}
-                </button>
+                {item.productType !== "card_pool" && (
+                  <button
+                    type="button"
+                    className="mx-4 mb-4 mt-3 cursor-pointer rounded-lg border border-[var(--accent)] bg-transparent px-[0.85rem] py-2 font-semibold text-[var(--accent)] hover:bg-[color-mix(in_srgb,var(--accent)_16%,transparent)] disabled:cursor-not-allowed disabled:opacity-50"
+                    disabled={
+                      adding === item.productId ||
+                      item.soldOut ||
+                      item.productType === "card_pool"
+                    }
+                    title={item.soldOut ? zhHant.soldOutAddDisabled : undefined}
+                    onClick={() => addToCart(item)}
+                  >
+                    {adding === item.productId
+                      ? zhHant.adding
+                      : item.soldOut
+                        ? zhHant.soldOutBadge
+                        : zhHant.addToCart}
+                  </button>
+                )}
               </li>
             ))}
           </ul>

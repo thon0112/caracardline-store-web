@@ -180,6 +180,20 @@ export const zhHant = {
   productBackCatalog: "返回商品目錄",
   productPsaId: "PSA 編號",
   productSoldOut: "此商品已售罄，僅供瀏覽。",
+  productPoolPickLabel: "卡拉福袋選號",
+  productPoolPickHint: (poolSize: number) =>
+    `請選擇 1 至 ${poolSize} 的號碼（可複選）；點選已選號碼可取消。已在購物車的號碼會以醒目樣式標示。已售出會顯示為售罄。`,
+  productPoolNumberInCart: "已在購物車",
+  productPoolSelected: (n: number) => `已選號碼：${n}`,
+  productPoolSelectedMany: (nums: number[]) =>
+    `已選號碼（${nums.length}）：${nums.join("、")}`,
+  productPoolSelectRequired: "請至少選擇一個福袋號碼。",
+  productPoolAddToCartMany: (n: number) => `加入購物車（${n} 個號碼）`,
+  productPoolAddMultiSuccess: (n: number) =>
+    `已將 ${n} 個號碼加入購物車。`,
+  productPoolAddPartialSuccess: (added: number, tried: number) =>
+    `已加入 ${added} / ${tried} 個號碼；其餘可能已被選走，請重新選號。`,
+  productPoolPickFromDetail: "到商品頁選號",
   /** Product detail — image gallery */
   productImageGalleryAria: "商品圖片",
   productImagePrev: "上一張",
@@ -218,10 +232,16 @@ export const zhHant = {
   cartGoCheckout: "前往結帳",
   /** Banner when any cart line is no longer purchasable */
   cartSoldOutNotice: "購物車內有已售罄商品，請先移除此類項目再結帳。",
+  /** Cart — card_pool line whose number was claimed by another order */
+  cartPoolNumberTakenNotice:
+    "購物車內有福袋號碼已被其他買家選走，請先移除該項目或回到商品頁重新選號後再結帳。",
+  cartPoolNumberTakenLineNote: "此福袋號碼已被選走，請移除後重新選號。",
   /** Shown under a line that is still in the cart but marked sold out in catalog */
   cartSoldOutLineNote: "此商品已售罄，請移除後再結帳。",
   /** Checkout guard when cart still contains sold-out lines */
   checkoutSoldOutBlocked: "含有已售罄商品，無法建立訂單。請返回購物車移除。",
+  checkoutPoolNumberTakenBlocked:
+    "有福袋號碼已被其他買家選走，無法結帳。請返回購物車移除或重新選號。",
   errUpdateFailed: "更新失敗",
   errRemoveFailed: "移除失敗",
   errCartLoadFailed: "無法載入購物車",
@@ -231,6 +251,11 @@ export const zhHant = {
   apiBadRequestInvalidBody: "送出的資料格式不正確。",
   apiErrorItemUnavailable: "此商品暫無法加入購物車。",
   apiErrorInsufficientQty: "庫存不足，無法使用此數量。",
+  apiErrorPoolNumberRequired: "請先選擇福袋號碼。",
+  apiErrorPoolNumberRange: "所選福袋號碼超出可選範圍。",
+  apiErrorPoolNumberSoldOut: "此福袋號碼已售出，請選擇其他號碼。",
+  apiErrorPoolLineQty: "福袋商品每次只能購買一個號碼。",
+  apiErrorPoolAlreadyInCart: "此福袋號碼已在購物車中。",
   apiErrorInvalidLine: "購物車項目無效。",
   apiErrorCartEmpty: "購物車是空的，無法建立訂單。",
   apiErrorInvalidOrderStatus: "訂單狀態不允許此操作。",
@@ -347,6 +372,7 @@ const PRODUCT_TYPE_LABELS: Record<string, string> = {
   booster_box: "PTCG 原盒",
   card: "單卡",
   accessory: "周邊",
+  card_pool: "卡拉福袋",
 };
 
 /** Ordered for hamburger nav and `/catalog/:type` paths. */
@@ -354,6 +380,7 @@ export const CATALOG_PRODUCT_TYPE_CODES = [
   "booster_box",
   "card",
   "accessory",
+  "card_pool",
 ] as const;
 
 export type CatalogProductTypeCode =
@@ -436,6 +463,18 @@ export function toastTextForBadRequest(message: string): string {
       return zhHant.apiErrorItemUnavailable;
     case "insufficient quantity":
       return zhHant.apiErrorInsufficientQty;
+    case "pool number is required":
+    case "missing pool number":
+      return zhHant.apiErrorPoolNumberRequired;
+    case "pool number out of range":
+      return zhHant.apiErrorPoolNumberRange;
+    case "pool number sold out":
+      return zhHant.apiErrorPoolNumberSoldOut;
+    case "card pool lines must have quantity 1":
+    case "card pool lines must stay quantity 1":
+      return zhHant.apiErrorPoolLineQty;
+    case "pool number already in cart":
+      return zhHant.apiErrorPoolAlreadyInCart;
     case "invalid line id":
       return zhHant.apiErrorInvalidLine;
     case "cart is empty":

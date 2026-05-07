@@ -6,6 +6,7 @@ import {
   addCartItem,
   createCart,
   fetchCatalogItem,
+  isApiError,
   type CatalogListItem,
 } from "../api.js";
 import { useCart } from "../cart-context.js";
@@ -19,6 +20,7 @@ import {
 import { PageLoadingSkeleton } from "../components/PageLoadingSkeleton.js";
 import { tryToastBadRequest } from "../notify-bad-request.js";
 import { TOAST_DURATION_SHORT_MS, useToast } from "../toast-context.js";
+import { isCardPoolEnabled } from "../store-config.js";
 
 function isProductSlugParam(raw: string | undefined): raw is string {
   return typeof raw === "string" && raw.trim().length > 0;
@@ -362,10 +364,26 @@ export function ProductPage() {
   const [err, setErr] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [adding, setAdding] = useState(false);
-  const { refreshCart } = useCart();
+  /** Sorted unique pool numbers (multi-select). */
+  const [selectedPoolNumbers, setSelectedPoolNumbers] = useState<number[]>([]);
   const [cartId, setCartId] = useState<string | null>(() =>
     localStorage.getItem("sf_cart_id"),
   );
+  const { refreshCart, lines } = useCart();
+
+  const poolNumbersInCart = useMemo(() => {
+    if (!data || data.productType !== "card_pool" || !data.pool) {
+      return new Set<number>();
+    }
+    const pid = data.productId;
+    const nums = new Set<number>();
+    for (const line of lines) {
+      if (line.catalog.productId === pid && line.poolNumber != null) {
+        nums.add(line.poolNumber);
+      }
+    }
+    return nums;
+  }, [data, lines]);
 
   useEffect(() => {
     if (!isProductSlugParam(slug)) {
@@ -379,6 +397,7 @@ export function ProductPage() {
         const row = await fetchCatalogItem(slug.trim());
         if (!cancelled) {
           setData(row);
+          setSelectedPoolNumbers([]);
           setErr(null);
         }
       } catch (e) {
@@ -404,14 +423,88 @@ export function ProductPage() {
     return newId;
   }
 
+  function togglePoolNumber(n: number) {
+    setSelectedPoolNumbers((prev) => {
+      const set = new Set(prev);
+      if (set.has(n)) set.delete(n);
+      else set.add(n);
+      return Array.from(set).sort((a, b) => a - b);
+    });
+  }
+
   async function addToCart() {
     if (!data) return;
+    const isCardPool = data.productType === "card_pool" && data.pool != null;
+    if (isCardPool && selectedPoolNumbers.length === 0) {
+      showToast(zhHant.productPoolSelectRequired, TOAST_DURATION_SHORT_MS);
+      return;
+    }
     try {
       setAdding(true);
       const cid = await ensureCart();
-      await addCartItem(cid, { productId: data.productId, quantity: 1 });
+      if (!isCardPool) {
+        await addCartItem(cid, {
+          productId: data.productId,
+          quantity: 1,
+        });
+        await refreshCart();
+        showToast(zhHant.addToCartSuccess, TOAST_DURATION_SHORT_MS);
+        return;
+      }
+
+      const toAdd = [...selectedPoolNumbers];
+      const added: number[] = [];
+      let stoppedOnConflict = false;
+      for (const poolNumber of toAdd) {
+        try {
+          await addCartItem(cid, {
+            productId: data.productId,
+            quantity: 1,
+            poolNumber,
+          });
+          added.push(poolNumber);
+        } catch (e) {
+          if (isApiError(e) && (e.status === 409 || e.status === 400)) {
+            stoppedOnConflict = true;
+            if (!tryToastBadRequest(e, showToast)) {
+              showToast(e.message, TOAST_DURATION_SHORT_MS);
+            }
+            break;
+          }
+          throw e;
+        }
+      }
+
       await refreshCart();
-      showToast(zhHant.addToCartSuccess, TOAST_DURATION_SHORT_MS);
+
+      if (added.length === toAdd.length) {
+        showToast(
+          added.length > 1
+            ? zhHant.productPoolAddMultiSuccess(added.length)
+            : zhHant.addToCartSuccess,
+          TOAST_DURATION_SHORT_MS,
+        );
+        setSelectedPoolNumbers([]);
+      } else if (added.length > 0) {
+        showToast(
+          zhHant.productPoolAddPartialSuccess(added.length, toAdd.length),
+          TOAST_DURATION_SHORT_MS,
+        );
+        setSelectedPoolNumbers((prev) =>
+          prev.filter((n) => !added.includes(n)),
+        );
+      }
+
+      if (stoppedOnConflict || added.length < toAdd.length) {
+        const seg =
+          (slug && slug.trim()) || data.slug || data.productId;
+        try {
+          const row = await fetchCatalogItem(seg);
+          setData(row);
+        } catch {
+          /* ignore refresh failure */
+        }
+      }
     } catch (e) {
       if (!tryToastBadRequest(e, showToast)) {
         setErr(e instanceof Error ? e.message : zhHant.errAddFailed);
@@ -442,6 +535,20 @@ export function ProductPage() {
     );
   }
 
+  if (data.productType === "card_pool" && !isCardPoolEnabled) {
+    return (
+      <div>
+        <p className="text-[var(--err)]">{zhHant.productNotFound}</p>
+        <Link
+          href="/"
+          className="mb-4 inline-block cursor-pointer select-none text-[var(--muted)] no-underline caret-transparent"
+        >
+          ← {zhHant.productBack}
+        </Link>
+      </div>
+    );
+  }
+
   const subtitle = [
     data.card?.collection,
     data.card?.rare,
@@ -450,6 +557,11 @@ export function ProductPage() {
   ]
     .filter(Boolean)
     .join(" · ");
+  const isCardPool = data.productType === "card_pool" && data.pool != null;
+  const soldNumbers = new Set(data.pool?.soldNumbers ?? []);
+  const allNumbers = isCardPool
+    ? Array.from({ length: data.pool!.poolSize }, (_, i) => i + 1)
+    : [];
 
   return (
     <article className="select-none [-webkit-user-select:none]">
@@ -493,17 +605,78 @@ export function ProductPage() {
           <p className="my-4 text-2xl font-bold text-[var(--accent)]">
             {formatPriceUsd(data.listPrice)}
           </p>
+          {isCardPool && (
+            <section className="mb-4 rounded-xl border border-[var(--border)] bg-[var(--card)] p-4">
+              <p className="m-0 mb-2 text-sm font-semibold text-[var(--fg)]">
+                {zhHant.productPoolPickLabel}
+              </p>
+              <p className="m-0 mb-3 text-xs text-[var(--muted)]">
+                {zhHant.productPoolPickHint(data.pool!.poolSize)}
+              </p>
+              <div className="grid grid-cols-5 gap-2 max-[520px]:grid-cols-4">
+                {allNumbers.map((n) => {
+                  const sold = soldNumbers.has(n);
+                  const inCart = poolNumbersInCart.has(n);
+                  const selected = selectedPoolNumbers.includes(n);
+                  return (
+                    <button
+                      key={n}
+                      type="button"
+                      disabled={sold}
+                      title={
+                        sold
+                          ? undefined
+                          : inCart
+                            ? zhHant.productPoolNumberInCart
+                            : undefined
+                      }
+                      onClick={() => togglePoolNumber(n)}
+                      className={cn(
+                        "cursor-pointer rounded-md border px-2 py-1.5 text-sm font-semibold transition-colors",
+                        sold
+                          ? "cursor-not-allowed border-[var(--border)] bg-[color-mix(in_srgb,var(--muted)_15%,var(--card))] text-[var(--muted)] line-through opacity-70"
+                          : inCart
+                            ? "border-[var(--accent)] bg-[color-mix(in_srgb,var(--accent)_22%,var(--card))] text-[var(--accent)] ring-2 ring-[color-mix(in_srgb,var(--accent)_45%,transparent)]"
+                            : selected
+                              ? "border-[var(--accent)] bg-[color-mix(in_srgb,var(--accent)_15%,var(--card))] text-[var(--accent)]"
+                              : "border-[var(--border)] bg-transparent text-[var(--fg)] hover:border-[var(--accent)]",
+                      )}
+                    >
+                      {n}
+                    </button>
+                  );
+                })}
+              </div>
+              {selectedPoolNumbers.length > 0 && (
+                <p className="m-0 mt-3 text-sm text-[var(--accent)]">
+                  {selectedPoolNumbers.length === 1
+                    ? zhHant.productPoolSelected(selectedPoolNumbers[0]!)
+                    : zhHant.productPoolSelectedMany(selectedPoolNumbers)}
+                </p>
+              )}
+            </section>
+          )}
           {data.soldOut && (
             <p className="mt-2 text-[var(--muted)]">{zhHant.productSoldOut}</p>
           )}
           <button
             type="button"
             className="mb-4 mt-3 cursor-pointer rounded-lg border border-[var(--accent)] bg-transparent px-[0.85rem] py-2 font-semibold text-[var(--accent)] hover:bg-[color-mix(in_srgb,var(--accent)_16%,transparent)] disabled:cursor-not-allowed disabled:opacity-50"
-            disabled={adding || data.soldOut}
+            disabled={
+              adding ||
+              data.soldOut ||
+              (isCardPool && selectedPoolNumbers.length === 0)
+            }
             title={data.soldOut ? zhHant.soldOutAddDisabled : undefined}
             onClick={addToCart}
           >
-            {adding ? zhHant.adding : data.soldOut ? zhHant.soldOutBadge : zhHant.addToCart}
+            {adding
+              ? zhHant.adding
+              : data.soldOut
+                ? zhHant.soldOutBadge
+                : isCardPool && selectedPoolNumbers.length > 1
+                  ? zhHant.productPoolAddToCartMany(selectedPoolNumbers.length)
+                  : zhHant.addToCart}
           </button>
         </div>
       </div>

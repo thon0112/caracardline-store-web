@@ -8,6 +8,7 @@ import {
   type CartCatalogItem,
   type CartLine,
 } from "../api.js";
+import { cartHasTakenPoolNumbers, lineHasTakenPoolNumber } from "../cart-pool-conflict.js";
 import { useCart } from "../cart-context.js";
 import { cn } from "../cn.js";
 import { formatPriceUsd, zhHant } from "../locale/zh-Hant.js";
@@ -28,6 +29,7 @@ function displayTitle(item: CartCatalogItem): string {
 }
 
 function maxLineQty(catalog: CartCatalogItem, lineQuantity: number): number {
+  if (catalog.productType === "card_pool") return 1;
   if (catalog.soldOut) return Math.max(1, lineQuantity);
   const stockCap = catalog.hideQuantity
     ? 99
@@ -255,6 +257,8 @@ export function CartPage() {
   }
 
   const hasSoldOut = lines.some((l) => l.catalog.soldOut);
+  const hasPoolNumberTaken = cartHasTakenPoolNumbers(lines);
+  const checkoutBlocked = hasSoldOut || hasPoolNumberTaken;
 
   return (
     <div className={cartPageRoot}>
@@ -274,6 +278,14 @@ export function CartPage() {
           {zhHant.cartSoldOutNotice}
         </p>
       )}
+      {hasPoolNumberTaken && (
+        <p
+          className="my-3 rounded-lg border border-[color-mix(in_srgb,var(--err)_35%,var(--border))] bg-[color-mix(in_srgb,var(--err)_10%,var(--card))] px-[0.85rem] py-[0.65rem] text-[0.9rem] leading-snug text-[var(--fg)]"
+          role="alert"
+        >
+          {zhHant.cartPoolNumberTakenNotice}
+        </p>
+      )}
       {actionErr && (
         <p className="select-text text-[var(--err)] [-webkit-user-select:text]">{actionErr}</p>
       )}
@@ -284,12 +296,16 @@ export function CartPage() {
           const busy = busyLineId === line.lineId;
           const lineTotal = line.quantity * line.catalog.listPrice;
           const soldOut = line.catalog.soldOut;
+          const poolTaken = lineHasTakenPoolNumber(line);
+          const lineBlocked = soldOut || poolTaken;
+          const isPoolLine =
+            line.catalog.productType === "card_pool" || line.poolNumber != null;
           return (
             <li
               key={line.lineId}
               className={cn(
                 "flex flex-wrap items-start gap-4 border-b border-[var(--border)] py-4",
-                soldOut && "[&_img]:opacity-72 [&_img]:grayscale-[25%]",
+                lineBlocked && "[&_img]:opacity-72 [&_img]:grayscale-[25%]",
               )}
             >
               <Link
@@ -312,16 +328,26 @@ export function CartPage() {
                 <p className="mt-[0.35rem] select-text text-sm text-[var(--muted)] [-webkit-user-select:text]">
                   {formatPriceUsd(line.catalog.listPrice)} {zhHant.cartEach}
                 </p>
+                {line.poolNumber != null && (
+                  <p className="mt-[0.25rem] select-text text-sm text-[var(--accent)] [-webkit-user-select:text]">
+                    {zhHant.productPoolSelected(line.poolNumber)}
+                  </p>
+                )}
                 {soldOut && (
                   <p className="mt-[0.35rem] select-text text-[0.8125rem] font-semibold text-[var(--err)] [-webkit-user-select:text]">
                     {zhHant.cartSoldOutLineNote}
+                  </p>
+                )}
+                {poolTaken && !soldOut && (
+                  <p className="mt-[0.35rem] select-text text-[0.8125rem] font-semibold text-[var(--err)] [-webkit-user-select:text]">
+                    {zhHant.cartPoolNumberTakenLineNote}
                   </p>
                 )}
                 <div className="mt-[0.65rem] flex flex-wrap items-center gap-x-3 gap-y-2 select-none [-webkit-user-select:none] caret-transparent">
                   <button
                     type="button"
                     className="h-8 w-8 cursor-pointer rounded-md border border-[var(--border)] bg-[var(--card)] p-0 text-base font-semibold leading-none text-[var(--fg)] hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-40"
-                    disabled={busy || soldOut || line.quantity <= 1}
+                    disabled={busy || lineBlocked || isPoolLine || line.quantity <= 1}
                     aria-label={zhHant.cartDecreaseAria}
                     onClick={() => void setQuantity(line, line.quantity - 1)}
                   >
@@ -330,13 +356,13 @@ export function CartPage() {
                   <CartLineQtyField
                     line={line}
                     max={max}
-                    disabled={busy || soldOut}
+                    disabled={busy || lineBlocked || isPoolLine}
                     onCommit={setQuantity}
                   />
                   <button
                     type="button"
                     className="h-8 w-8 cursor-pointer rounded-md border border-[var(--border)] bg-[var(--card)] p-0 text-base font-semibold leading-none text-[var(--fg)] hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-40"
-                    disabled={busy || soldOut || line.quantity >= max}
+                    disabled={busy || lineBlocked || isPoolLine || line.quantity >= max}
                     aria-label={zhHant.cartIncreaseAria}
                     onClick={() => void setQuantity(line, line.quantity + 1)}
                   >
@@ -373,7 +399,7 @@ export function CartPage() {
             name="couponCode"
             autoComplete="off"
             spellCheck={false}
-            disabled={couponBusy || hasSoldOut}
+            disabled={couponBusy || checkoutBlocked}
             value={couponDraft}
             onChange={(e) => setCouponDraft(e.target.value)}
             placeholder={zhHant.cartCouponPlaceholder}
@@ -382,7 +408,7 @@ export function CartPage() {
           />
           <button
             type="submit"
-            disabled={couponBusy || hasSoldOut || !couponDraft.trim()}
+            disabled={couponBusy || checkoutBlocked || !couponDraft.trim()}
             className="cursor-pointer rounded-lg border border-[var(--accent)] bg-transparent px-[0.85rem] py-2 font-semibold text-[var(--accent)] hover:bg-[color-mix(in_srgb,var(--accent)_16%,transparent)] disabled:cursor-not-allowed disabled:opacity-50"
           >
             {couponBusy ? zhHant.cartCouponApplying : zhHant.cartCouponApply}
@@ -395,7 +421,7 @@ export function CartPage() {
             </span>
             <button
               type="button"
-              disabled={couponBusy || hasSoldOut}
+              disabled={couponBusy || checkoutBlocked}
               className="cursor-pointer border-none bg-transparent p-0 font-inherit text-sm text-[var(--muted)] underline hover:text-[var(--accent)] disabled:opacity-50"
               onClick={() => void onRemoveCoupon()}
             >
@@ -444,13 +470,21 @@ export function CartPage() {
         >
           ← {zhHant.continueShopping}
         </Link>
-        {hasSoldOut ? (
+        {checkoutBlocked ? (
           <span
             className="mx-4 mb-4 mt-3 inline-block cursor-not-allowed rounded-lg border border-[var(--accent)] bg-transparent px-[0.85rem] py-2 text-center font-semibold text-[var(--accent)] opacity-50 pointer-events-none"
             role="button"
             aria-disabled="true"
-            aria-label={zhHant.cartSoldOutNotice}
-            title={zhHant.cartSoldOutNotice}
+            aria-label={
+              hasSoldOut
+                ? zhHant.cartSoldOutNotice
+                : zhHant.cartPoolNumberTakenNotice
+            }
+            title={
+              hasSoldOut
+                ? zhHant.cartSoldOutNotice
+                : zhHant.cartPoolNumberTakenNotice
+            }
           >
             {zhHant.cartGoCheckout}
           </span>

@@ -56,6 +56,10 @@ export type CatalogListItem = {
     largeImage: string | null;
     rare: string | null;
   } | null;
+  pool: {
+    poolSize: number;
+    soldNumbers: number[];
+  } | null;
 };
 
 /** Cart line payload mirrors `GET /api/carts/:id` catalog entries. */
@@ -64,6 +68,7 @@ export type CartCatalogItem = CatalogListItem;
 export type CartLine = {
   lineId: string;
   quantity: number;
+  poolNumber: number | null;
   catalog: CartCatalogItem;
 };
 
@@ -182,7 +187,7 @@ export async function createCart(): Promise<{ cartId: string }> {
 
 export async function addCartItem(
   cartId: string,
-  body: { productId: string; quantity?: number },
+  body: { productId: string; quantity?: number; poolNumber?: number },
 ): Promise<void> {
   const path = `/api/carts/${cartId}/items`;
   const url = apiPath(path);
@@ -336,6 +341,7 @@ export type OrderLineItem = {
   title: string;
   quantity: number;
   unitPrice: number;
+  poolNumber?: number | null;
 };
 
 export type OrderDetailResponse = {

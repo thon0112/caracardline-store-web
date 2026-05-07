@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import { Link, useLocation } from "wouter";
 import { cn } from "../cn.js";
 import { isApiError, placeOrder, type PlaceOrderBody } from "../api.js";
+import { cartHasTakenPoolNumbers } from "../cart-pool-conflict.js";
 import { useCart } from "../cart-context.js";
 import {
   formatPriceUsd,
@@ -49,14 +50,23 @@ export function CheckoutPage() {
     if (loading || error) return;
     if (!cartId || lines.length === 0) {
       setLocation("/cart");
+      return;
     }
-  }, [loading, error, cartId, lines.length, setLocation]);
+    if (cartHasTakenPoolNumbers(lines)) {
+      setLocation("/cart");
+    }
+  }, [loading, error, cartId, lines, setLocation]);
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
     if (!cartId || lines.length === 0) return;
     if (lines.some((l) => l.catalog.soldOut)) {
       setFormErr(zhHant.checkoutSoldOutBlocked);
+      return;
+    }
+    if (cartHasTakenPoolNumbers(lines)) {
+      setFormErr(zhHant.checkoutPoolNumberTakenBlocked);
+      void refreshCart({ silent: true });
       return;
     }
     setFormErr(null);
@@ -120,7 +130,9 @@ export function CheckoutPage() {
       ) {
         setFormErr(zhHant.apiErrorCartNotFound);
       } else if (isApiError(err) && err.status === 409) {
-        setFormErr(zhHant.apiErrorCouponRedemptionLimit);
+        /* Worker uses 409 for pool conflicts and coupon cap; map body like 400. */
+        void refreshCart({ silent: true });
+        setFormErr(toastTextForBadRequest(err.message));
       } else if (isApiError(err) && err.status === 400) {
         setFormErr(toastTextForBadRequest(err.message));
       } else {
@@ -153,6 +165,10 @@ export function CheckoutPage() {
   }
 
   if (loading || !cartId || lines.length === 0) {
+    return <PageLoadingSkeleton variant="checkout" />;
+  }
+
+  if (cartHasTakenPoolNumbers(lines)) {
     return <PageLoadingSkeleton variant="checkout" />;
   }
 
@@ -370,11 +386,18 @@ export function CheckoutPage() {
                   className="flex justify-between gap-3 border-b border-[var(--border)] py-[0.35rem] last:border-b-0"
                 >
                   <span className="max-w-[60%] select-text [-webkit-user-select:text]">
-                    {l.catalog.title ||
-                      l.catalog.card?.name ||
-                      zhHant.productFallback}
+                    <span className="block leading-snug">
+                      {l.catalog.title ||
+                        l.catalog.card?.name ||
+                        zhHant.productFallback}
+                    </span>
+                    {l.poolNumber != null && (
+                      <span className="mt-[0.25rem] block text-sm leading-snug text-[var(--accent)]">
+                        {zhHant.productPoolSelected(l.poolNumber)}
+                      </span>
+                    )}
                   </span>
-                  <span className="select-text text-[var(--muted)] [-webkit-user-select:text]">
+                  <span className="shrink-0 select-text text-[var(--muted)] [-webkit-user-select:text]">
                     ×{l.quantity} ·{" "}
                     {formatPriceUsd(l.quantity * l.catalog.listPrice)}
                   </span>
