@@ -7,6 +7,7 @@ import {
   type OrderDetailResponse,
 } from "../api.js";
 import {
+  displayOrderStatus,
   formatPriceUsd,
   toastTextForBadRequest,
   zhHant,
@@ -19,6 +20,10 @@ import { useToast } from "../toast-context.js";
 /** Env overrides; otherwise bundled poster under `public/fps-payment-qr.png`. */
 const fpsQrSrc =
   (import.meta.env.VITE_FPS_QR_IMAGE_URL ?? "").trim() || "/fps-payment-qr.png";
+const paymeQrSrc =
+  (import.meta.env.VITE_PAYME_QR_IMAGE_URL ?? "").trim() ||
+  "https://cdn.caracardline.com/assets/1778311662960-0a6947c21431598f-payme.webp";
+const paymeCode = "https://payme.hsbc/caracardline";
 
 /** Shown as 訂單編號 in UI; full id remains in URL and copy-to-clipboard. */
 function orderRefDisplayLastFour(orderId: string): string {
@@ -48,6 +53,7 @@ export function OrderPage() {
   const [loadErr, setLoadErr] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [paymentBusy, setPaymentBusy] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<"fps" | "payme">("fps");
 
   const load = useCallback(async () => {
     if (!orderId) {
@@ -159,16 +165,7 @@ export function OrderPage() {
   const showFpsBlock =
     order.status === "awaiting_payment" ||
     order.status === "awaiting_confirmation";
-  const statusLabel =
-    order.status === "awaiting_payment"
-      ? zhHant.orderStatusAwaitingPayment
-      : order.status === "awaiting_confirmation"
-        ? zhHant.orderStatusAwaitingConfirmation
-        : order.status === "expired"
-          ? zhHant.orderStatusExpired
-          : order.status === "paid"
-            ? zhHant.orderStatusPaid
-            : order.status;
+  const statusLabel = displayOrderStatus(order.status);
 
   return (
     <div className={orderRoot}>
@@ -326,32 +323,75 @@ export function OrderPage() {
           <section className="m-0 min-w-0" aria-labelledby="fps-section-title">
             <div className="mt-[0.85rem] flex flex-col flex-wrap items-start justify-between gap-x-5 gap-y-4 border-t border-[var(--border)] pt-[0.9rem] md:table md:w-full md:table-fixed md:border-separate md:[border-spacing:min(1.25rem,3vw)_0]">
               <div className="box-border min-w-0 max-w-full flex-[1_1_14rem] md:table-cell md:w-auto md:align-top md:vertical-align-top">
+                <div className="mb-[0.75rem]">
+                  <p className="m-0 mb-[0.45rem] select-text text-sm font-semibold leading-snug text-[var(--muted)] [-webkit-user-select:text]">
+                    {zhHant.orderPaymentMethodTitle}
+                  </p>
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+                    <label className="inline-flex cursor-pointer items-center gap-2 select-text text-sm [-webkit-user-select:text]">
+                      <input
+                        type="radio"
+                        name="order-payment-method"
+                        value="fps"
+                        checked={paymentMethod === "fps"}
+                        onChange={() => setPaymentMethod("fps")}
+                      />
+                      <span>{zhHant.orderPaymentMethodFps}</span>
+                    </label>
+                    <label className="inline-flex cursor-pointer items-center gap-2 select-text text-sm [-webkit-user-select:text]">
+                      <input
+                        type="radio"
+                        name="order-payment-method"
+                        value="payme"
+                        checked={paymentMethod === "payme"}
+                        onChange={() => setPaymentMethod("payme")}
+                      />
+                      <span>{zhHant.orderPaymentMethodPayme}</span>
+                    </label>
+                  </div>
+                </div>
                 <h2
                   id="fps-section-title"
                   className="m-0 mb-[0.55rem] border-none p-0 select-text text-[1.1rem] font-semibold leading-snug [-webkit-user-select:text]"
                 >
-                  {zhHant.fpsTitle}
+                  {paymentMethod === "fps" ? zhHant.fpsTitle : zhHant.paymeTitle}
                 </h2>
                 <div className="box-border w-full min-w-0 max-w-full flex-[0_1_auto] [overflow-wrap:normal] [word-break:normal]">
                   <p className="mb-0 mt-0 block w-full max-w-full select-text text-sm leading-[1.55] [-webkit-user-select:text]">
-                    {zhHant.fpsInstructions}
+                    {paymentMethod === "fps"
+                      ? zhHant.fpsInstructions
+                      : zhHant.paymeInstructions}
                   </p>
                   <p className="mb-0 mt-[0.35rem] flex flex-wrap items-center gap-x-2 gap-y-2 select-text text-sm leading-snug [-webkit-user-select:text]">
-                    <span className="text-[var(--muted)]">掃描QRCode或輸入FPS ID:</span>
-                    <code
+                    <span className="text-[var(--muted)]">
+                      {paymentMethod === "fps"
+                        ? "掃描QRCode或輸入FPS ID:"
+                        : zhHant.paymeCodeLabel}
+                    </span>
+                    {paymentMethod === "fps" && <code
                       className="text-[0.95em] font-semibold text-[var(--fg)] [word-break:break-all]"
                       translate="no"
                     >
                       105679567
-                    </code>
-                    <button
-                      type="button"
-                      className="cursor-pointer rounded-md border border-[var(--border)] bg-[color-mix(in_srgb,var(--media-bg)_70%,var(--card))] px-[0.5rem] py-[0.2rem] text-[0.8125rem] font-semibold text-[var(--fg)] hover:border-[color-mix(in_srgb,var(--accent)_38%,var(--border))] hover:text-[var(--accent)]"
-                      onClick={() => void copyFpsId("105679567")}
-                      aria-label={zhHant.orderRefCopyAria}
+                    </code>}
+                    {paymentMethod === "payme" && <a
+                      className="text-[0.95em] font-semibold text-[var(--fg)] [word-break:break-all]"
+                      href={paymeCode}
+                      target="_blank"
+                      rel="noopener noreferrer"
                     >
-                      {zhHant.orderRefCopy}
-                    </button>
+                      {paymeCode}
+                    </a>}
+                    {paymentMethod === "fps" && (
+                      <button
+                        type="button"
+                        className="cursor-pointer rounded-md border border-[var(--border)] bg-[color-mix(in_srgb,var(--media-bg)_70%,var(--card))] px-[0.5rem] py-[0.2rem] text-[0.8125rem] font-semibold text-[var(--fg)] hover:border-[color-mix(in_srgb,var(--accent)_38%,var(--border))] hover:text-[var(--accent)]"
+                        onClick={() => void copyFpsId("105679567")}
+                        aria-label={zhHant.orderRefCopyAria}
+                      >
+                        {zhHant.orderRefCopy}
+                      </button>
+                    )}
                   </p>
                   <p className="mb-0 mt-[0.65rem] box-border max-w-full rounded-lg border border-[var(--border)] bg-[color-mix(in_srgb,var(--media-bg)_88%,var(--card))] px-[0.9rem] py-[0.65rem] text-[1.06rem] leading-snug [overflow-wrap:normal] [word-break:normal]">
                     {zhHant.fpsPayExact}{" "}
@@ -403,8 +443,8 @@ export function OrderPage() {
               </div>
               <div className="box-border flex w-full max-w-full flex-[0_0_auto] shrink-0 items-center justify-center self-center px-0 py-[0.35rem] md:table-cell md:w-[248px] md:max-w-[248px] md:justify-end md:self-start md:px-0 md:pb-0 md:pl-[0.35rem] md:pt-0 md:text-right md:align-top md:vertical-align-top">
                 <img
-                  src={fpsQrSrc}
-                  alt={zhHant.fpsQrAlt}
+                  src={paymentMethod === "fps" ? fpsQrSrc : paymeQrSrc}
+                  alt={paymentMethod === "fps" ? zhHant.fpsQrAlt : zhHant.paymeQrAlt}
                   className="block h-auto max-w-[min(100%,232px)] rounded-[10px] border border-[var(--border)] md:inline-block md:align-top"
                   decoding="async"
                 />

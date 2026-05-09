@@ -102,6 +102,15 @@ export function CartProvider({ children }: { children: ReactNode }) {
     return () => window.removeEventListener("storage", onStorage);
   }, [refreshCart]);
 
+  useEffect(() => {
+    function onCartStorageHint() {
+      void refreshCart();
+    }
+    window.addEventListener("sf-cart-storage", onCartStorageHint);
+    return () =>
+      window.removeEventListener("sf-cart-storage", onCartStorageHint);
+  }, [refreshCart]);
+
   const cartItemCount = useMemo(
     () => lines.reduce((sum, l) => sum + l.quantity, 0),
     [lines],

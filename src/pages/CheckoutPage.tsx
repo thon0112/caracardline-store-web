@@ -3,6 +3,7 @@ import { Link, useLocation } from "wouter";
 import { cn } from "../cn.js";
 import { isApiError, placeOrder, type PlaceOrderBody } from "../api.js";
 import { cartHasTakenPoolNumbers } from "../cart-pool-conflict.js";
+import { useAuth } from "../auth-context.js";
 import { useCart } from "../cart-context.js";
 import {
   formatPriceUsd,
@@ -24,6 +25,7 @@ type ShipMode = "sf" | "manual";
 export function CheckoutPage() {
   const { showToast } = useToast();
   const [, setLocation] = useLocation();
+  const { user } = useAuth();
   const {
     cartId,
     lines,
@@ -56,6 +58,26 @@ export function CheckoutPage() {
       setLocation("/cart");
     }
   }, [loading, error, cartId, lines, setLocation]);
+
+  useEffect(() => {
+    if (user?.email && email === "") {
+      setEmail(user.email);
+    }
+  }, [user?.email, email]);
+
+  useEffect(() => {
+    if (!user) return;
+    setShipRecipientName((p) => p || user.defaultShipRecipientName?.trim() || "");
+    setShipPhone((p) => p || user.defaultShipPhone?.trim() || "");
+    setShipAddressLine1((p) => p || user.defaultShipAddressLine1?.trim() || "");
+    setShipAddressLine2((p) => p || user.defaultShipAddressLine2?.trim() || "");
+  }, [
+    user?.id,
+    user?.defaultShipRecipientName,
+    user?.defaultShipPhone,
+    user?.defaultShipAddressLine1,
+    user?.defaultShipAddressLine2,
+  ]);
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
@@ -186,6 +208,11 @@ export function CheckoutPage() {
       <p className="m-0 mb-6 max-w-[42rem] select-text text-[var(--muted)] [-webkit-user-select:text]">
         {zhHant.checkoutLede}
       </p>
+      {user ? (
+        <p className="-mt-4 mb-6 max-w-[42rem] text-sm text-[var(--muted)]">
+          {zhHant.checkoutSavedAddressHint}
+        </p>
+      ) : null}
 
       <div className="grid items-start gap-x-8 gap-y-6 min-[880px]:grid-cols-[minmax(0,1fr)_minmax(20rem,26rem)]">
         <div className="min-w-0 min-[880px]:col-start-1 min-[880px]:row-start-1">

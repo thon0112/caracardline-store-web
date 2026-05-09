@@ -6,6 +6,10 @@ export const zhHant = {
   navCart: "購物車",
   /** Header / footer — look up an existing order by id */
   navTrackOrder: "查詢訂單",
+  /** Signed-in account (`/account`) */
+  navAccount: "我的帳戶",
+  /** Google OAuth entry point */
+  navLoginGoogle: "Google 登入",
   /** Header / drawer — `/services` */
   navOtherServices: "其他服務",
   navHome: "首頁",
@@ -266,10 +270,31 @@ export const zhHant = {
   cartCouponNotApplicableGeneric: "無法套用此優惠碼。",
 
   checkoutTitle: "結帳",
+  accountTitle: "我的帳戶",
+  accountOrdersHeading: "訂單紀錄",
+  accountNoOrders: "尚無訂單紀錄。",
+  accountOrderView: "查看訂單",
+  accountLogout: "登出",
+  accountLoading: "載入中…",
+  accountLoginHint: "使用 Google 登入後，可在此查看與帳戶電郵相符的訂單。",
+  accountNeedLogin: "請先登入以查看此頁。",
+  accountDefaultShippingHeading: "預設收件地址",
+  accountDefaultShippingIntro:
+    "結帳時會自動填入以下欄位（您仍可於結帳頁修改）。可選擇順豐自提或填寫完整地址；目前僅配送香港。",
+  accountDefaultShipCity: "城市（必填）",
+  accountDefaultShipRegion: "區域／省份（必填）",
+  accountDefaultShipPostal: "郵遞區號（選填）",
+  accountSaveDefaultShipping: "儲存預設地址",
+  accountDefaultShippingSaving: "儲存中…",
+  accountDefaultShippingSavedToast: "已儲存預設收件地址。",
+  accountDefaultShippingSaveError:
+    "無法儲存預設地址，請檢查欄位是否符合要求。",
   checkoutLede:
     "目前僅送香港。可選擇順豐自提或填寫完整收件地址；請填寫收件人資訊。送出訂單後即可於訂單頁查看轉帳與付款指示。",
   checkoutOrderPreview: "訂單預覽",
   checkoutEmail: "電郵（必填）",
+  checkoutEmailMismatchAccount:
+    "結帳電郵須與目前 Google 登入帳戶的電郵一致。",
   checkoutNameRequired: "請填寫收件人姓名。",
   checkoutShipName: "收件人姓名（必填）",
   checkoutShipPhone: "電話（必填）",
@@ -303,6 +328,9 @@ export const zhHant = {
   checkoutShipCountryHongKongDisplay: "香港（HK）",
   checkoutFpsNote:
     "送出後訂單即成立，請依訂單頁指示以 FPS 轉帳；款項核對後我們會處理出貨。",
+  /** Shown when signed in — prefilled fields can come from `/account`. */
+  checkoutSavedAddressHint:
+    "已登入：若曾在「我的帳戶」儲存預設收件地址，姓名／電話與詳細地址將自動填入（仍可修改）。",
   checkoutSubmit: "建立訂單",
   checkoutSubmitting: "建立中…",
   checkoutPlaceFailed: "無法建立訂單",
@@ -352,11 +380,18 @@ export const zhHant = {
   orderExpiredHint: "若您已轉帳，請聯絡客服並提供訂單編號與入數證明。",
   orderItems: "訂單明細",
   orderAmountDue: "應付總額",
+  orderPaymentMethodTitle: "付款方式",
+  orderPaymentMethodFps: "FPS 轉帳",
+  orderPaymentMethodPayme: "Payme 付款",
   fpsTitle: "FPS 轉帳",
   /** Alt text for FPS payment QR poster image */
   fpsQrAlt: "轉數快（FPS）付款二維碼：港幣收款資訊",
   fpsInstructions:
     "「轉數快」轉入以下帳戶，並在備註填寫訂單編號以便對帳。",
+  paymeTitle: "Payme 付款",
+  paymeQrAlt: "Payme 付款二維碼",
+  paymeInstructions: "請使用 Payme 掃描下方二維碼或輸入付款代碼完成轉帳。",
+  paymeCodeLabel: "Payme 連結:",
   fpsPayExact: "請轉帳剛好",
   fpsMemoHint: "轉帳備註請填：",
   orderMarkTransferred: "我已完成轉帳",
@@ -447,6 +482,23 @@ export function formatPriceUsd(amount: number): string {
   return `$${amount.toFixed(2)}`;
 }
 
+/** Maps store-worker order status codes to user-facing Traditional Chinese labels. */
+export function displayOrderStatus(status: string): string {
+  const normalized = status.trim().toLowerCase();
+  switch (normalized) {
+    case "awaiting_payment":
+      return zhHant.orderStatusAwaitingPayment;
+    case "awaiting_confirmation":
+      return zhHant.orderStatusAwaitingConfirmation;
+    case "expired":
+      return zhHant.orderStatusExpired;
+    case "paid":
+      return zhHant.orderStatusPaid;
+    default:
+      return status;
+  }
+}
+
 /** User-facing copy for HTTP 400 bodies from the store API. */
 export function toastTextForBadRequest(message: string): string {
   const m = message.trim();
@@ -481,6 +533,8 @@ export function toastTextForBadRequest(message: string): string {
       return zhHant.apiErrorCartEmpty;
     case "invalid order status":
       return zhHant.apiErrorInvalidOrderStatus;
+    case "checkout email must match your signed-in account":
+      return zhHant.checkoutEmailMismatchAccount;
     case "cart not found":
       return zhHant.apiErrorCartNotFound;
     case "invalid order id":

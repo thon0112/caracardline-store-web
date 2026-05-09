@@ -4,6 +4,7 @@ import { trackPageView } from "./analytics.js";
 import { SiteFooter } from "./components/SiteFooter.js";
 import { SiteHeader } from "./components/SiteHeader.js";
 import { WhatsAppFloat } from "./components/WhatsAppFloat.js";
+import { AuthProvider } from "./auth-context.js";
 import { CartProvider } from "./cart-context.js";
 import { zhHant } from "./locale/zh-Hant.js";
 import { ToastProvider } from "./toast-context.js";
@@ -14,6 +15,7 @@ import { CartPage } from "./pages/CartPage.js";
 import { CheckoutPage } from "./pages/CheckoutPage.js";
 import { OrderPage } from "./pages/OrderPage.js";
 import { TrackOrderPage } from "./pages/TrackOrderPage.js";
+import { AccountPage } from "./pages/AccountPage.js";
 import { AboutPage } from "./pages/AboutPage.js";
 import { DisclaimerPage } from "./pages/DisclaimerPage.js";
 import { OtherServicesPage } from "./pages/OtherServicesPage.js";
@@ -37,6 +39,7 @@ function AppShell() {
           <Route path="/catalog" component={CatalogPage} />
           <Route path="/cart" component={CartPage} />
           <Route path="/checkout" component={CheckoutPage} />
+          <Route path="/account" component={AccountPage} />
           <Route path="/track" component={TrackOrderPage} />
           <Route path="/order/:orderId" component={OrderPage} />
           <Route path="/item/:slug" component={ProductPage} />
@@ -59,9 +62,11 @@ function AppShell() {
 export function App() {
   return (
     <ToastProvider>
-      <CartProvider>
-        <AppShell />
-      </CartProvider>
+      <AuthProvider>
+        <CartProvider>
+          <AppShell />
+        </CartProvider>
+      </AuthProvider>
     </ToastProvider>
   );
 }

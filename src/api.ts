@@ -15,6 +15,11 @@ function apiPath(path: string) {
   return path;
 }
 
+/** Sends session cookies for Google SSO and cart claim (`credentials: include`). */
+function fetchApi(url: string, init?: RequestInit): Promise<Response> {
+  return fetch(url, { credentials: "include", ...init });
+}
+
 export class ApiError extends Error {
   readonly status: number;
 
@@ -137,7 +142,7 @@ export async function fetchCatalog(params: {
   if (params.highlight) u.searchParams.set("highlight", "true");
   const url = apiPath(u.pathname + u.search);
   logApi("GET", url);
-  const res = await fetch(url);
+  const res = await fetchApi(url);
   await throwIfNotOk(res);
   return res.json() as Promise<CatalogResponse>;
 }
@@ -157,7 +162,7 @@ export async function fetchCatalogSearch(params: {
     u.searchParams.set("availability", "in_stock");
   const url = apiPath(u.pathname + u.search);
   logApi("GET", url);
-  const res = await fetch(url);
+  const res = await fetchApi(url);
   await throwIfNotOk(res);
   return res.json() as Promise<CatalogResponse>;
 }
@@ -167,7 +172,7 @@ export async function fetchCatalogItem(slugOrId: string): Promise<CatalogListIte
   const path = `/api/catalog/item/${encodeURIComponent(slugOrId)}`;
   const url = apiPath(path);
   logApi("GET", url);
-  const res = await fetch(url);
+  const res = await fetchApi(url);
   await throwIfNotOk(res);
   return res.json() as Promise<CatalogListItem>;
 }
@@ -176,7 +181,7 @@ export async function createCart(): Promise<{ cartId: string }> {
   const path = "/api/carts";
   const url = apiPath(path);
   logApi("POST", url);
-  const res = await fetch(url, {
+  const res = await fetchApi(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: "{}",
@@ -192,7 +197,7 @@ export async function addCartItem(
   const path = `/api/carts/${cartId}/items`;
   const url = apiPath(path);
   logApi("POST", url);
-  const res = await fetch(url, {
+  const res = await fetchApi(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
@@ -204,7 +209,7 @@ export async function fetchCart(cartId: string): Promise<CartResponse> {
   const path = `/api/carts/${encodeURIComponent(cartId)}`;
   const url = apiPath(path);
   logApi("GET", url);
-  const res = await fetch(url);
+  const res = await fetchApi(url);
   await throwIfNotOk(res);
   const raw = (await res.json()) as Partial<CartResponse>;
   const items = raw.items ?? [];
@@ -230,7 +235,7 @@ export async function applyCartCoupon(
   const path = `/api/carts/${encodeURIComponent(cartId)}/coupon`;
   const url = apiPath(path);
   logApi("POST", url);
-  const res = await fetch(url, {
+  const res = await fetchApi(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
@@ -257,7 +262,7 @@ export async function removeCartCoupon(cartId: string): Promise<CartResponse> {
   const path = `/api/carts/${encodeURIComponent(cartId)}/coupon`;
   const url = apiPath(path);
   logApi("DELETE", url);
-  const res = await fetch(url, { method: "DELETE" });
+  const res = await fetchApi(url, { method: "DELETE" });
   await throwIfNotOk(res);
   const raw = (await res.json()) as Partial<CartResponse>;
   const items = raw.items ?? [];
@@ -284,7 +289,7 @@ export async function patchCartLineQuantity(
   const path = `/api/carts/${encodeURIComponent(cartId)}/items/${encodeURIComponent(lineId)}`;
   const url = apiPath(path);
   logApi("PATCH", url);
-  const res = await fetch(url, {
+  const res = await fetchApi(url, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ quantity }),
@@ -299,7 +304,7 @@ export async function deleteCartLine(
   const path = `/api/carts/${encodeURIComponent(cartId)}/items/${encodeURIComponent(lineId)}`;
   const url = apiPath(path);
   logApi("DELETE", url);
-  const res = await fetch(url, { method: "DELETE" });
+  const res = await fetchApi(url, { method: "DELETE" });
   await throwIfNotOk(res);
 }
 
@@ -326,7 +331,7 @@ export async function placeOrder(body: PlaceOrderBody): Promise<PlaceOrderRespon
   const path = "/api/orders";
   const url = apiPath(path);
   logApi("POST", url);
-  const res = await fetch(url, {
+  const res = await fetchApi(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
@@ -373,7 +378,7 @@ export async function fetchOrder(orderId: string): Promise<OrderDetailResponse> 
   const path = `/api/orders/${encodeURIComponent(orderId)}`;
   const url = apiPath(path);
   logApi("GET", url);
-  const res = await fetch(url);
+  const res = await fetchApi(url);
   await throwIfNotOk(res);
   return res.json() as Promise<OrderDetailResponse>;
 }
@@ -390,7 +395,7 @@ export async function lookupOrdersByEmail(
   const path = "/api/orders/lookup-by-email";
   const url = apiPath(path);
   logApi("POST", url);
-  const res = await fetch(url, {
+  const res = await fetchApi(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email }),
@@ -411,11 +416,116 @@ export async function submitPaymentSubmitted(
   const path = `/api/orders/${encodeURIComponent(orderId)}/payment-submitted`;
   const url = apiPath(path);
   logApi("POST", url);
-  const res = await fetch(url, {
+  const res = await fetchApi(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: "{}",
   });
   await throwIfNotOk(res);
   return res.json() as Promise<PaymentSubmittedResponse>;
+}
+
+export type SessionUser = {
+  id: string;
+  email: string;
+  name: string | null;
+  avatarUrl: string | null;
+  defaultShipRecipientName: string | null;
+  defaultShipPhone: string | null;
+  defaultShipAddressLine1: string | null;
+  defaultShipAddressLine2: string | null;
+  defaultShipCity: string | null;
+  defaultShipRegion: string | null;
+  defaultShipPostalCode: string | null;
+  defaultShipCountry: string | null;
+};
+
+export type DefaultShippingPatch = {
+  defaultShipRecipientName: string;
+  defaultShipPhone: string;
+  defaultShipAddressLine1: string;
+  defaultShipAddressLine2?: string | null;
+  defaultShipCity: string;
+  defaultShipRegion: string;
+  defaultShipPostalCode?: string | null;
+  defaultShipCountry: string;
+};
+
+/** GET `/api/me` — returns null when not signed in. */
+export async function fetchSessionUser(): Promise<SessionUser | null> {
+  const url = apiPath("/api/me");
+  logApi("GET", url);
+  const res = await fetchApi(url);
+  if (res.status === 401) return null;
+  await throwIfNotOk(res);
+  return res.json() as Promise<SessionUser>;
+}
+
+/** PATCH `/api/me/default-shipping` — returns updated profile. */
+export async function patchDefaultShippingAddress(
+  body: DefaultShippingPatch,
+): Promise<SessionUser> {
+  const url = apiPath("/api/me/default-shipping");
+  logApi("PATCH", url);
+  const res = await fetchApi(url, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  await throwIfNotOk(res);
+  return res.json() as Promise<SessionUser>;
+}
+
+export async function logoutSession(): Promise<void> {
+  const url = apiPath("/api/auth/logout");
+  logApi("POST", url);
+  const res = await fetchApi(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: "{}",
+  });
+  await throwIfNotOk(res);
+}
+
+/** Browser navigates to worker OAuth start (full page redirect). */
+export function getGoogleAuthStartUrl(nextPath?: string): string {
+  const path =
+    nextPath != null && nextPath.startsWith("/")
+      ? `/api/auth/google?next=${encodeURIComponent(nextPath)}`
+      : "/api/auth/google";
+  return apiPath(path);
+}
+
+export type MyOrderSummary = {
+  orderId: string;
+  status: string;
+  email: string | null;
+  createdAt: string;
+  totalDue: number | null;
+  merchandiseSubtotal: number | null;
+  discountTotal: number | null;
+};
+
+export type MyOrdersResponse = {
+  orders: MyOrderSummary[];
+};
+
+export async function fetchMyOrders(): Promise<MyOrdersResponse> {
+  const url = apiPath("/api/orders/mine");
+  logApi("GET", url);
+  const res = await fetchApi(url);
+  await throwIfNotOk(res);
+  return res.json() as Promise<MyOrdersResponse>;
+}
+
+export async function claimCart(cartId: string): Promise<{ cartId: string }> {
+  const url = apiPath(`/api/carts/${encodeURIComponent(cartId)}/claim`);
+  logApi("POST", url);
+  const res = await fetchApi(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: "{}",
+  });
+  await throwIfNotOk(res);
+  return res.json() as Promise<{ cartId: string }>;
 }
