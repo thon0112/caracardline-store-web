@@ -30,6 +30,8 @@ import { WHATSAPP_CHAT_URL } from "./WhatsAppFloat.js";
 const INSTAGRAM_URL = "https://www.instagram.com/cara.cardline/";
 const THREADS_URL = "https://www.threads.com/@cara.cardline";
 
+const SERVICE_NAV_LINKS = [{ href: "/card-repair", label: zhHant.navCardRepair }] as const;
+
 function HeaderIcon({
   icon,
   size = 22,
@@ -59,7 +61,9 @@ export function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
   const drawerId = useId();
   const catalogNavRef = useRef<HTMLDivElement>(null);
+  const servicesNavRef = useRef<HTMLDivElement>(null);
   const [catalogSubmenuDismissed, setCatalogSubmenuDismissed] = useState(false);
+  const [servicesSubmenuDismissed, setServicesSubmenuDismissed] = useState(false);
 
   const closeMenu = useCallback(() => setMenuOpen(false), []);
   const toggleMenu = useCallback(() => setMenuOpen((o) => !o), []);
@@ -71,6 +75,19 @@ export function SiteHeader() {
   const dismissCatalogSubmenu = useCallback(() => {
     setCatalogSubmenuDismissed(true);
     const root = catalogNavRef.current;
+    const ae = document.activeElement;
+    if (root && ae instanceof HTMLElement && root.contains(ae)) {
+      ae.blur();
+    }
+  }, []);
+
+  const clearServicesSubmenuDismissed = useCallback(() => {
+    setServicesSubmenuDismissed(false);
+  }, []);
+
+  const dismissServicesSubmenu = useCallback(() => {
+    setServicesSubmenuDismissed(true);
+    const root = servicesNavRef.current;
     const ae = document.activeElement;
     if (root && ae instanceof HTMLElement && root.contains(ae)) {
       ae.blur();
@@ -223,12 +240,47 @@ export function SiteHeader() {
               </ul>
             </div>
           </div>
-          <Link
-            href="/services"
-            className="inline-flex select-none items-center gap-1 whitespace-nowrap font-semibold leading-tight text-[var(--fg)] no-underline caret-transparent hover:text-[var(--accent)]"
+          <div
+            ref={servicesNavRef}
+            data-dismissed={servicesSubmenuDismissed ? "true" : undefined}
+            className="group/services relative inline-flex items-stretch self-stretch"
+            onMouseLeave={clearServicesSubmenuDismissed}
           >
-            {zhHant.navOtherServices}
-          </Link>
+            <Link
+              href="/services"
+              className="inline-flex h-full select-none items-center self-center gap-1 whitespace-nowrap font-semibold leading-tight text-[var(--fg)] no-underline caret-transparent hover:text-[var(--accent)]"
+              aria-haspopup="true"
+              onMouseEnter={clearServicesSubmenuDismissed}
+              onFocus={clearServicesSubmenuDismissed}
+            >
+              {zhHant.navOtherServices}
+            </Link>
+            <div
+              className={cn(
+                "pointer-events-none invisible absolute left-1/2 top-[100%] z-[60] min-w-[11.5rem] -translate-x-1/2 rounded-xl border border-[var(--border)] bg-[var(--card)] py-[0.35rem] opacity-0 shadow-[0_10px_28px_rgba(28,24,21,0.12)] transition-[opacity,visibility] duration-150 ease-out before:pointer-events-none before:absolute before:bottom-full before:left-0 before:right-0 before:h-[0.45rem] before:content-['']",
+                "group-hover/services:pointer-events-auto group-hover/services:visible group-hover/services:opacity-100",
+                "group-focus-within/services:pointer-events-auto group-focus-within/services:visible group-focus-within/services:opacity-100",
+                "group-data-[dismissed=true]/services:pointer-events-none group-data-[dismissed=true]/services:invisible group-data-[dismissed=true]/services:opacity-0",
+                "motion-reduce:transition-none",
+              )}
+              role="group"
+              aria-label={zhHant.navServicesSubAria}
+            >
+              <ul className="m-0 list-none p-0">
+                {SERVICE_NAV_LINKS.map(({ href, label }) => (
+                  <li key={href} className="m-0 p-0">
+                    <Link
+                      href={href}
+                      className="flex whitespace-nowrap px-4 py-[0.55rem] text-[0.9375rem] font-semibold leading-snug text-[var(--muted)] no-underline hover:bg-[rgba(28,24,21,0.05)] hover:text-[var(--accent)]"
+                      onClick={dismissServicesSubmenu}
+                    >
+                      {label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
           <Link
             href="/track"
             className="inline-flex select-none items-center gap-1 whitespace-nowrap font-semibold leading-tight text-[var(--fg)] no-underline caret-transparent hover:text-[var(--accent)]"
@@ -405,19 +457,37 @@ export function SiteHeader() {
               ))}
             </ul>
           </div>
-          <Link
-            href="/services"
-            className="group/drawer flex cursor-pointer items-center gap-[0.65rem] rounded-[10px] px-[0.85rem] py-3 text-base font-semibold text-[var(--fg)] no-underline hover:bg-[rgba(28,24,21,0.05)] hover:text-[var(--accent)]"
-            onClick={closeMenu}
-          >
-            <span
-              className="inline-flex shrink-0 text-[var(--muted)] group-hover/drawer:text-[var(--accent)]"
-              aria-hidden
+          <div className="flex flex-col gap-[0.05rem]">
+            <Link
+              href="/services"
+              className="group/drawer flex cursor-pointer items-center gap-[0.65rem] rounded-[10px] px-[0.85rem] py-3 text-base font-semibold text-[var(--fg)] no-underline hover:bg-[rgba(28,24,21,0.05)] hover:text-[var(--accent)]"
+              onClick={closeMenu}
             >
-              <HeaderIcon icon={faBriefcase} size={20} />
-            </span>
-            <span className="min-w-0 flex-1">{zhHant.navOtherServices}</span>
-          </Link>
+              <span
+                className="inline-flex shrink-0 text-[var(--muted)] group-hover/drawer:text-[var(--accent)]"
+                aria-hidden
+              >
+                <HeaderIcon icon={faBriefcase} size={20} />
+              </span>
+              <span className="min-w-0 flex-1">{zhHant.navOtherServices}</span>
+            </Link>
+            <ul
+              className="m-0 mb-[0.1rem] list-none p-0"
+              aria-label={zhHant.navServicesSubAria}
+            >
+              {SERVICE_NAV_LINKS.map(({ href, label }) => (
+                <li key={href} className="m-0 p-0">
+                  <Link
+                    href={href}
+                    className="flex cursor-pointer items-center rounded-[10px] py-[0.55rem] pl-[2.55rem] pr-[0.85rem] text-[0.9375rem] font-semibold leading-snug text-[var(--muted)] no-underline hover:bg-[rgba(28,24,21,0.05)] hover:text-[var(--accent)]"
+                    onClick={closeMenu}
+                  >
+                    {label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
           <Link
             href="/track"
             className="group/drawer flex cursor-pointer items-center gap-[0.65rem] rounded-[10px] px-[0.85rem] py-3 text-base font-semibold text-[var(--fg)] no-underline hover:bg-[rgba(28,24,21,0.05)] hover:text-[var(--accent)]"

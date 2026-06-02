@@ -19,6 +19,7 @@ import { AccountPage } from "./pages/AccountPage.js";
 import { AboutPage } from "./pages/AboutPage.js";
 import { DisclaimerPage } from "./pages/DisclaimerPage.js";
 import { OtherServicesPage } from "./pages/OtherServicesPage.js";
+import { CardRepairServicePage } from "./pages/CardRepairServicePage.js";
 import { ShippingPolicyPage } from "./pages/ShippingPolicyPage.js";
 import { RefundPolicyPage } from "./pages/RefundPolicyPage.js";
 
@@ -45,6 +46,7 @@ function AppShell() {
           <Route path="/item/:slug" component={ProductPage} />
           <Route path="/about" component={AboutPage} />
           <Route path="/services" component={OtherServicesPage} />
+          <Route path="/card-repair" component={CardRepairServicePage} />
           <Route path="/disclaimer" component={DisclaimerPage} />
           <Route path="/shipping" component={ShippingPolicyPage} />
           <Route path="/refund" component={RefundPolicyPage} />

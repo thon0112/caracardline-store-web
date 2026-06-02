@@ -11,7 +11,14 @@ export const zhHant = {
   /** Google OAuth entry point */
   navLoginGoogle: "Google 登入",
   /** Header / drawer — `/services` */
-  navOtherServices: "其他服務",
+  navOtherServices: "更多服務",
+  /** Drawer / desktop dropdown under 更多服務 */
+  navServicesSubAria: "服務項目",
+  /** Header / drawer — `/card-repair` */
+  navCardRepair: "卡牌修復服務",
+  cardRepairPriceLabel: "修復費用",
+  cardRepairPriceFrom: "$300 起",
+  cardRepairPriceNote: "視乎修復項目及卡牌價錢調整",
   navHome: "首頁",
   navCatalog: "商品目錄",
   /** Instagram @cara.cardline — opens in a new tab */
@@ -112,7 +119,7 @@ export const zhHant = {
   aboutInstagramAt: "@cara.cardline",
   aboutClosing2Suffix: " 傾下偈。",
 
-  otherServicesTitle: "其他服務",
+  otherServicesTitle: "更多服務",
   otherServicesLede:
     "除網店購物外，若您需要鑑定送評、批量洽購、寄賣或其他合作，歡迎與我們聯繫；以下為常見服務方向，實際內容與費用以洽談為準。",
   otherServicesScopeTitle: "服務範圍（範例）",
@@ -122,6 +129,20 @@ export const zhHant = {
   otherServicesHowP1:
     "請透過網站頁尾「聯絡我們」訊息管道，簡述您的需求。我們會在能力範圍內盡快回覆。",
   otherServicesBackCatalog: "返回商品目錄",
+
+  cardRepairTitle: "卡牌修復服務",
+  cardRepairLede:
+    "以下展示部分修復前後對比案例（Before / After）。每張卡的受損程度與材質不同，實際效果以評估為準；如需報價與流程，請 WhatsApp 聯絡我們。",
+  cardRepairCtaWhatsApp: "WhatsApp 查詢",
+  cardRepairCtaHint: "（建議附上卡牌正反面清晰照片）",
+  cardRepairBefore: "修復前",
+  cardRepairAfter: "修復後",
+  cardRepairEmptyTitle: "暫時沒有展示案例",
+  cardRepairEmptyBody: "展示案例即將更新，歡迎 WhatsApp 查詢了解修復服務。",
+  cardRepairNotesTitle: "注意事項",
+  cardRepairNote1: "修復服務旨在改善外觀觀感與基本護理；不保證達到特定鑑定分數。",
+  cardRepairNote2: "修復屬不可逆處理，建議先諮詢評估可行性與風險。",
+  cardRepairNote3: "若需加急或特別處理，請先說明交期與需求。",
 
   catalogTitle: "商品目錄",
   /** Catalog — keyword search (title, SKU, card name, etc.) */
