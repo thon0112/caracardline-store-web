@@ -17,7 +17,8 @@ export const zhHant = {
   /** Header / drawer — `/card-repair` */
   navCardRepair: "卡牌修復服務",
   cardRepairPriceLabel: "修復費用",
-  cardRepairPriceFrom: "$300 起",
+  cardRepairPriceFrom: "$300.00 起",
+  cardRepairPricePeriod: "需時 14 - 21 個工作日 (加急另議)",
   cardRepairPriceNote: "視乎修復項目及卡牌價錢調整",
   navHome: "首頁",
   navCatalog: "商品目錄",

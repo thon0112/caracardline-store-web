@@ -56,7 +56,6 @@ const CARD_REPAIR_GALLERY: CardRepairGalleryItem[] = [
       "https://cdn.caracardline.com/assets/1780414184940-72050a4421b301f0-9-after.webp",
     note: "出現嚴重裂紋或損傷，有脫色",
   },
-
   {
     id: "case-006",
     title: "白邊/白點 （背面)",
@@ -66,9 +65,33 @@ const CARD_REPAIR_GALLERY: CardRepairGalleryItem[] = [
       "https://cdn.caracardline.com/assets/1780416971798-886acf34b0f7768c-Untitled-design--5-.webp",
     note: "補色屬於加工類，如白點範圍太大或者太深不建議補色",
   },
+  {
+    id: "case-007",
+    title: "刮傷/劃痕 （背面)",
+    beforeUrl:
+      "https://cdn.caracardline.com/assets/1780580176953-859e8d574932310e-Untitled-design--5-.webp",
+    afterUrl:
+      "https://cdn.caracardline.com/assets/1780580170904-8db390837c45d3fd-Untitled-design--6-.webp",
+    note: "示例為嚴重刮傷，如輕微刮傷可完全修復",
+  },
+  {
+    id: "case-008",
+    title: "壓痕 （背面)",
+    imagePosition: "top",
+    beforeUrl:
+      "https://cdn.caracardline.com/assets/1780580593554-1d18fcc0b92bcc52-Untitled-design--7-.webp",
+    afterUrl:
+      "https://cdn.caracardline.com/assets/1780580605854-eb69a953a1f29ce3-Untitled-design--8-.webp",
+  },
 ];
 
-function TwoUp({ item,index }: { item: CardRepairGalleryItem,index: number }) {
+function TwoUp({
+  item,
+  index,
+}: {
+  item: CardRepairGalleryItem;
+  index: number;
+}) {
   return (
     <article className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-[0_10px_26px_rgba(28,24,21,0.08)]">
       <div className="mb-3 flex items-start justify-between gap-3">
@@ -76,11 +99,9 @@ function TwoUp({ item,index }: { item: CardRepairGalleryItem,index: number }) {
           <h2 className="m-0 text-[1.05rem] font-bold leading-snug text-[var(--fg)]">
             示例{index + 1}：{item.title}
           </h2>
-          {item.note ? (
-            <p className="m-0 mt-1 text-[0.9375rem] leading-[1.55] text-[var(--muted)]">
-              {item.note}
-            </p>
-          ) : null}
+          <p className="min-h-6 m-0 mt-1 text-[0.9375rem] leading-[1.55] text-[var(--muted)]">
+            {item.note}
+          </p>
         </div>
       </div>
 
@@ -142,6 +163,9 @@ export function CardRepairServicePage() {
                   {zhHant.cardRepairPriceFrom}
                 </span>
               </div>
+              <p className="text-[0.9375rem] font-semibold text-[var(--fg)]">
+                {zhHant.cardRepairPricePeriod}
+              </p>
               <p className="m-0 text-[0.9375rem] leading-[1.5] text-[var(--muted)]">
                 {zhHant.cardRepairPriceNote}
               </p>
