@@ -20,6 +20,7 @@ export const zhHant = {
   cardRepairPriceFrom: "$300.00 起",
   cardRepairPricePeriod: "需時 14 - 21 個工作日 (加急另議)",
   cardRepairPriceNote: "視乎修復項目及卡牌價錢調整",
+  cardRepairStepsTitle: "可修復項目及示例",
   navHome: "首頁",
   navCatalog: "商品目錄",
   /** Instagram @cara.cardline — opens in a new tab */

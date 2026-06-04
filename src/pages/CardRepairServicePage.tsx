@@ -145,9 +145,9 @@ export function CardRepairServicePage() {
         </h1>
         <div className="flex flex-wrap w-full gap-4">
           <img
-            src="https://cdn.caracardline.com/assets/1776263425636-49754c0823dc4d2f-banner-6.webp"
-            className="mt-3 h-auto w-full rounded-2xl border border-[var(--border)] object-cover flex-1 max-w-[700px]"
-            alt=""
+            src="https://cdn.caracardline.com/assets/1780582479414-4238e26fe63f0393-fix-step.webp"
+            className="mt-3 h-auto w-full object-cover flex-1 max-w-[700px]"
+            alt="A four-panel instructional graphic illustrating a card repair process, featuring a Cubone as the repair technician"
             decoding="async"
           />
           <section
@@ -187,8 +187,13 @@ export function CardRepairServicePage() {
           </section>
         </div>
       </header>
-
-      <p className="mt-8 mb-4 leading-[1.65] text-[var(--muted)] max-w-[680px]">
+      {/* <img
+        src="https://cdn.caracardline.com/assets/1780582479414-4238e26fe63f0393-fix-step.webp"
+        alt=""
+        className="w-full rounded-2xl border border-[var(--border)] object-cover"
+      /> */}
+      <h2 className="mt-8 text-[1.75rem] font-bold">{zhHant.cardRepairStepsTitle}</h2>
+      <p className="mt-2 mb-4 leading-[1.65] text-[var(--muted)] max-w-[680px]">
         {zhHant.cardRepairLede}
       </p>
 
@@ -209,7 +214,7 @@ export function CardRepairServicePage() {
         </section>
       )}
 
-      <section className="mt-6 max-w-[50rem] rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4">
+      <section className="mt-6 mb-4 max-w-[50rem] rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4">
         <h2 className="m-0 text-[1.1rem] font-bold">
           {zhHant.cardRepairNotesTitle}
         </h2>
