@@ -130,7 +130,7 @@ export const zhHant = {
     "請透過網站頁尾「聯絡我們」訊息管道，簡述您的需求。我們會在能力範圍內盡快回覆。",
   otherServicesBackCatalog: "返回商品目錄",
 
-  cardRepairTitle: "卡牌修復服務",
+  cardRepairTitle: "專業卡牌修復服務",
   cardRepairLede:
     "以下展示部分修復前後對比案例（Before / After）。每張卡的受損程度與材質不同，實際效果以評估為準；如需報價與流程，請 WhatsApp 聯絡我們。",
   cardRepairCtaWhatsApp: "WhatsApp 查詢",

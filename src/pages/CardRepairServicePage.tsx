@@ -7,13 +7,15 @@ type CardRepairGalleryItem = {
   beforeUrl: string;
   afterUrl: string;
   note?: string | null;
+  imagePosition?: "top" | "center" | "bottom";
 };
 
 /** Edit this list to add before/after showcase cases. Image URLs can be CDN or `/public` paths. */
 const CARD_REPAIR_GALLERY: CardRepairGalleryItem[] = [
   {
     id: "case-001",
-    title: "示例：壓痕 （正面)",
+    title: "壓痕 （正面)",
+    imagePosition: "top",
     beforeUrl:
       "https://cdn.caracardline.com/assets/1780415180990-bdc1ca5d74a6e7bc-before.webp",
     afterUrl:
@@ -21,7 +23,7 @@ const CARD_REPAIR_GALLERY: CardRepairGalleryItem[] = [
   },
   {
     id: "case-002",
-    title: "示例：摺痕 （正面)",
+    title: "摺痕 （正面)",
     beforeUrl:
       "https://cdn.caracardline.com/assets/1780415995380-0c0f514c776423d5-Untitled-design--4-.webp",
     afterUrl:
@@ -30,7 +32,8 @@ const CARD_REPAIR_GALLERY: CardRepairGalleryItem[] = [
   },
   {
     id: "case-003",
-    title: "示例：邊角摺痕 （背面)",
+    title: "邊角摺痕 （背面)",
+    imagePosition: "top",
     beforeUrl:
       "https://cdn.caracardline.com/assets/1780414240992-9c3fcf5f6fc2a13f-2-before.webp",
     afterUrl:
@@ -38,7 +41,7 @@ const CARD_REPAIR_GALLERY: CardRepairGalleryItem[] = [
   },
   {
     id: "case-004",
-    title: "示例：狗咬邊 （背面)",
+    title: "狗咬邊 （背面)",
     beforeUrl:
       "https://cdn.caracardline.com/assets/1780416499917-ae73cbb49c00536a-Untitled-design--7-.webp",
     afterUrl:
@@ -46,7 +49,7 @@ const CARD_REPAIR_GALLERY: CardRepairGalleryItem[] = [
   },
   {
     id: "case-005",
-    title: "示例：嚴重損傷（背面）",
+    title: "嚴重損傷（背面）",
     beforeUrl:
       "https://cdn.caracardline.com/assets/1780414186023-a377ff8573fea381-9-before.webp",
     afterUrl:
@@ -56,7 +59,7 @@ const CARD_REPAIR_GALLERY: CardRepairGalleryItem[] = [
 
   {
     id: "case-006",
-    title: "示例：白邊/白點 （背面)",
+    title: "白邊/白點 （背面)",
     beforeUrl:
       "https://cdn.caracardline.com/assets/1780416971285-3db6a10887302aac-Untitled-design--4-.webp",
     afterUrl:
@@ -65,13 +68,13 @@ const CARD_REPAIR_GALLERY: CardRepairGalleryItem[] = [
   },
 ];
 
-function TwoUp({ item }: { item: CardRepairGalleryItem }) {
+function TwoUp({ item,index }: { item: CardRepairGalleryItem,index: number }) {
   return (
     <article className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-[0_10px_26px_rgba(28,24,21,0.08)]">
       <div className="mb-3 flex items-start justify-between gap-3">
         <div className="min-w-0">
           <h2 className="m-0 text-[1.05rem] font-bold leading-snug text-[var(--fg)]">
-            {item.title}
+            示例{index + 1}：{item.title}
           </h2>
           {item.note ? (
             <p className="m-0 mt-1 text-[0.9375rem] leading-[1.55] text-[var(--muted)]">
@@ -81,7 +84,7 @@ function TwoUp({ item }: { item: CardRepairGalleryItem }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+      <div className="grid gap-1 grid-cols-2 sm:gap-3">
         <div className="relative rounded-xl border border-[var(--border)] bg-[var(--bg)]">
           <div className="absolute left-3 top-3 z-[2] rounded-full bg-[rgba(28,24,21,0.72)] px-3 py-1 text-[0.8rem] font-bold tracking-[0.02em] text-white">
             {zhHant.cardRepairBefore}
@@ -89,7 +92,7 @@ function TwoUp({ item }: { item: CardRepairGalleryItem }) {
           <img
             src={item.beforeUrl}
             alt={`${item.title} before`}
-            className="block aspect-[3/4] w-full rounded-xl object-cover"
+            className={`block aspect-[4/4] w-full rounded-xl object-cover ${item.imagePosition === "top" ? "object-top" : item.imagePosition === "center" ? "object-center" : "object-bottom"}`}
             loading="lazy"
             decoding="async"
           />
@@ -102,7 +105,7 @@ function TwoUp({ item }: { item: CardRepairGalleryItem }) {
           <img
             src={item.afterUrl}
             alt={`${item.title} after`}
-            className="block aspect-[3/4] w-full rounded-xl object-cover "
+            className={`block aspect-[4/4] w-full rounded-xl object-cover ${item.imagePosition === "top" ? "object-top" : item.imagePosition === "center" ? "object-center" : "object-bottom"}`}
             loading="lazy"
             decoding="async"
           />
@@ -120,49 +123,48 @@ export function CardRepairServicePage() {
           {zhHant.cardRepairTitle}
         </h1>
         <div className="flex flex-wrap w-full gap-4">
-        <img
-          src="https://cdn.caracardline.com/assets/1776263425636-49754c0823dc4d2f-banner-6.webp"
-          className="mt-3 h-auto w-full rounded-2xl border border-[var(--border)] object-cover flex-1 max-w-[700px]"
-          alt=""
-          decoding="async"
-        />
-        <section
-          className="mt-4 flex-1 rounded-2xl border border-[color-mix(in_srgb,var(--border)_78%,var(--accent)_22%)] bg-gradient-to-br from-[color-mix(in_srgb,var(--card)_92%,var(--accent))] via-[var(--card)] to-[var(--card)] p-4 shadow-[0_10px_36px_rgba(28,24,21,0.06)] sm:p-5"
-          aria-label={zhHant.cardRepairTitle}
-     
-        >
-          <div className="mt-4 min-w-[300px] flex flex-col gap-3 rounded-xl border border-[var(--border)] bg-[var(--bg)] p-4">
-            <div className="flex min-w-0 items-baseline gap-2">
-              <span className="shrink-0 text-[0.9375rem] font-semibold text-[var(--fg)]">
-                {zhHant.cardRepairPriceLabel}
-              </span>
-              <span className="text-[2rem] font-bold leading-none tracking-tight text-[var(--accent)]">
-                {zhHant.cardRepairPriceFrom}
+          <img
+            src="https://cdn.caracardline.com/assets/1776263425636-49754c0823dc4d2f-banner-6.webp"
+            className="mt-3 h-auto w-full rounded-2xl border border-[var(--border)] object-cover flex-1 max-w-[700px]"
+            alt=""
+            decoding="async"
+          />
+          <section
+            className="mt-4 flex-1 rounded-2xl border border-[color-mix(in_srgb,var(--border)_78%,var(--accent)_22%)] bg-gradient-to-br from-[color-mix(in_srgb,var(--card)_92%,var(--accent))] via-[var(--card)] to-[var(--card)] p-4 shadow-[0_10px_36px_rgba(28,24,21,0.06)] sm:p-5"
+            aria-label={zhHant.cardRepairTitle}
+          >
+            <div className="mt-4 min-w-[300px] flex flex-col gap-3 rounded-xl border border-[var(--border)] bg-[var(--bg)] p-4">
+              <div className="flex min-w-0 items-baseline gap-2">
+                <span className="shrink-0 text-[0.9375rem] font-semibold text-[var(--fg)]">
+                  {zhHant.cardRepairPriceLabel}
+                </span>
+                <span className="text-[2rem] font-bold leading-none tracking-tight text-[var(--accent)]">
+                  {zhHant.cardRepairPriceFrom}
+                </span>
+              </div>
+              <p className="m-0 text-[0.9375rem] leading-[1.5] text-[var(--muted)]">
+                {zhHant.cardRepairPriceNote}
+              </p>
+            </div>
+
+            <div className="mt-4 md:mt-8 md:pt-8 flex flex-col items-center md:items-start gap-2 border-t border-[var(--border)] pt-4">
+              <a
+                href={WHATSAPP_CHAT_URL}
+                className="inline-flex cursor-pointer items-center justify-center rounded-xl border border-[var(--border)] bg-[#25d366] px-4 py-2 text-[0.95rem] font-semibold text-white no-underline hover:bg-[#25d366]/80"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {zhHant.cardRepairCtaWhatsApp}
+              </a>
+              <span className="text-[0.85rem] text-[var(--muted)]">
+                {zhHant.cardRepairCtaHint}
               </span>
             </div>
-            <p className="m-0 text-[0.9375rem] leading-[1.5] text-[var(--muted)]">
-              {zhHant.cardRepairPriceNote}
-            </p>
-          </div>
-
-          <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-[var(--border)] pt-4">
-            <a
-              href={WHATSAPP_CHAT_URL}
-              className="inline-flex cursor-pointer items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--card)] px-4 py-2 text-[0.95rem] font-semibold text-[var(--fg)] no-underline hover:text-[#25d366]"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {zhHant.cardRepairCtaWhatsApp}
-            </a>
-            <span className="text-[0.85rem] text-[var(--muted)]">
-              {zhHant.cardRepairCtaHint}
-            </span>
-          </div>
-        </section>
+          </section>
         </div>
       </header>
 
-      <p className="mt-8 mb-4 leading-[1.65] text-[var(--muted)]">
+      <p className="mt-8 mb-4 leading-[1.65] text-[var(--muted)] max-w-[680px]">
         {zhHant.cardRepairLede}
       </p>
 
@@ -177,8 +179,8 @@ export function CardRepairServicePage() {
         </section>
       ) : (
         <section className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          {CARD_REPAIR_GALLERY.map((it) => (
-            <TwoUp key={it.id} item={it} />
+          {CARD_REPAIR_GALLERY.map((it, index) => (
+            <TwoUp key={it.id} item={it} index={index} />
           ))}
         </section>
       )}
