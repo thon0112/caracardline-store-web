@@ -20,6 +20,7 @@ import {
   zhHant,
 } from "../locale/zh-Hant.js";
 import { HomeBannerCarousel } from "../components/HomeBannerCarousel.js";
+import { HomeJsonLd } from "../home-schema.js";
 import { PageLoadingSkeleton } from "../components/PageLoadingSkeleton.js";
 import { tryToastBadRequest } from "../notify-bad-request.js";
 import { TOAST_DURATION_SHORT_MS, useToast } from "../toast-context.js";
@@ -150,6 +151,7 @@ export function HomePage() {
 
   return (
     <div className="-mt-1">
+      <HomeJsonLd items={availableItems} />
       <HomeBannerCarousel />
 
       {availableItems.length === 0 ? (

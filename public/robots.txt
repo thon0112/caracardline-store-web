@@ -1,0 +1,11 @@
+# https://caracardline.com/robots.txt
+
+User-agent: *
+Allow: /
+
+# Transactional and account pages — not useful in search results
+Disallow: /cart
+Disallow: /checkout
+Disallow: /account
+Disallow: /order/
+Disallow: /track

@@ -14,6 +14,25 @@ export function primaryImage(item: CatalogListItem): string | null {
   return c.largeImage || c.image;
 }
 
+/** Ordered gallery URLs: primary image precedence, then all `imageUrls` when set. */
+export function collectProductImageUrls(item: CatalogListItem): string[] {
+  const out: string[] = [];
+  const push = (u: string | null | undefined) => {
+    const s = typeof u === "string" ? u.trim() : "";
+    if (s && !out.includes(s)) out.push(s);
+  };
+  if (item.imageUrls?.length) {
+    for (const u of item.imageUrls) push(u);
+    return out;
+  }
+  const c = item.card;
+  if (c) {
+    push(c.largeImage);
+    push(c.image);
+  }
+  return out;
+}
+
 export function displayTitle(item: CatalogListItem): string {
   return item.title || item.card?.name || zhHant.productFallback;
 }

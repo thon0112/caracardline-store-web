@@ -1,17 +1,16 @@
-import { zhHant } from "../locale/zh-Hant.js";
 import { WHATSAPP_CHAT_URL } from "../components/WhatsAppFloat.js";
+import {
+  CardRepairJsonLd,
+  type CardRepairGalleryItem,
+} from "../card-repair-schema.js";
+import { zhHant } from "../locale/zh-Hant.js";
 
-type CardRepairGalleryItem = {
-  id: string;
-  title: string;
-  beforeUrl: string;
-  afterUrl: string;
-  note?: string | null;
+type CardRepairGalleryEntry = CardRepairGalleryItem & {
   imagePosition?: "top" | "center" | "bottom";
 };
 
 /** Edit this list to add before/after showcase cases. Image URLs can be CDN or `/public` paths. */
-const CARD_REPAIR_GALLERY: CardRepairGalleryItem[] = [
+const CARD_REPAIR_GALLERY: CardRepairGalleryEntry[] = [
   {
     id: "case-001",
     title: "壓痕 （正面)",
@@ -89,7 +88,7 @@ function TwoUp({
   item,
   index,
 }: {
-  item: CardRepairGalleryItem;
+  item: CardRepairGalleryEntry;
   index: number;
 }) {
   return (
@@ -139,6 +138,7 @@ function TwoUp({
 export function CardRepairServicePage() {
   return (
     <div>
+      <CardRepairJsonLd gallery={CARD_REPAIR_GALLERY} />
       <header className="mb-5">
         <h1 className="m-0 text-[1.75rem] font-bold">
           {zhHant.cardRepairTitle}

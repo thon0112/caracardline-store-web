@@ -10,6 +10,7 @@ import {
   type CatalogListItem,
 } from "../api.js";
 import { useCart } from "../cart-context.js";
+import { collectProductImageUrls } from "../catalog-helpers.js";
 import { cn } from "../cn.js";
 import {
   displayProductType,
@@ -17,6 +18,7 @@ import {
   normalizeCatalogTypeFilter,
   zhHant,
 } from "../locale/zh-Hant.js";
+import { ProductJsonLd } from "../product-schema.js";
 import { PageLoadingSkeleton } from "../components/PageLoadingSkeleton.js";
 import { tryToastBadRequest } from "../notify-bad-request.js";
 import { TOAST_DURATION_SHORT_MS, useToast } from "../toast-context.js";
@@ -24,25 +26,6 @@ import { isCardPoolEnabled } from "../store-config.js";
 
 function isProductSlugParam(raw: string | undefined): raw is string {
   return typeof raw === "string" && raw.trim().length > 0;
-}
-
-/** Ordered gallery URLs: matches former primary-image precedence, with all `imageUrls` when set. */
-function collectProductImageUrls(item: CatalogListItem): string[] {
-  const out: string[] = [];
-  const push = (u: string | null | undefined) => {
-    const s = typeof u === "string" ? u.trim() : "";
-    if (s && !out.includes(s)) out.push(s);
-  };
-  if (item.imageUrls?.length) {
-    for (const u of item.imageUrls) push(u);
-    return out;
-  }
-  const c = item.card;
-  if (c) {
-    push(c.largeImage);
-    push(c.image);
-  }
-  return out;
 }
 
 function ProductImageGallery({
@@ -312,48 +295,6 @@ function ProductImageGallery({
   );
 }
 
-// --- PRODUCT SCHEMA COMPONENT ---
-function ProductSchema({ data }: { data: CatalogListItem }) {
-  // Build images array
-  const images = collectProductImageUrls(data);
-
-  // Build offers schema (as per sold out and price)
-  const offer: any = {
-    "@type": "Offer",
-    priceCurrency: "HKD",
-    price: data.listPrice,
-    availability: data.soldOut
-      ? "https://schema.org/OutOfStock"
-      : "https://schema.org/InStock",
-    url: typeof window !== "undefined" ? window.location.href : undefined,
-  };
-
-  // Optional: add itemCondition if possible
-  if (data.condition) {
-    offer.itemCondition = "https://schema.org/NewCondition";
-  }
-
-  // Use data.productId as sku and identifier
-  const productSchema = {
-    "@context": "https://schema.org",
-    "@type": "Product",
-    name: data.title,
-    image: images,
-    description: data.description,
-    sku: data.productId,
-    offers: offer,
-  };
-
-  return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{
-        __html: JSON.stringify(productSchema),
-      }}
-    />
-  );
-}
-
 export function ProductPage() {
   const { showToast } = useToast();
   const params = useParams();
@@ -565,8 +506,7 @@ export function ProductPage() {
 
   return (
     <article className="select-none [-webkit-user-select:none]">
-      {/* --- Product Schema for SEO --- */}
-      <ProductSchema data={data} />
+      <ProductJsonLd data={data} catalogListHref={catalogListHref} />
       <Link
         href={catalogListHref}
         className="mb-4 inline-block cursor-pointer select-none text-[var(--muted)] no-underline caret-transparent"
