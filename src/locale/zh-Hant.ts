@@ -170,6 +170,8 @@ export const zhHant = {
   catalogSortDateDesc: "上架時間（新→舊）",
   catalogSortPriceAsc: "價格（低→高）",
   catalogSortPriceDesc: "價格（高→低）",
+  /** Catalog card_pool listing — total pool numbers */
+  catalogPoolSize: (poolSize: number) => `共 ${poolSize} 口`,
   /** Drawer: sub-list under 商品目錄 */
   navCatalogSubAria: "商品分類",
 
@@ -207,7 +209,6 @@ export const zhHant = {
   productBackCatalog: "返回商品目錄",
   productPsaId: "PSA 編號",
   productSoldOut: "此商品已售罄，僅供瀏覽。",
-  productPoolPickLabel: "卡拉福袋選號",
   productPoolPickHint: (poolSize: number) =>
     `請選擇 1 至 ${poolSize} 的號碼（可複選）；點選已選號碼可取消。已在購物車的號碼會以醒目樣式標示。已售出會顯示為售罄。`,
   productPoolNumberInCart: "已在購物車",

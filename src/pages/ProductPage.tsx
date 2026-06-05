@@ -153,7 +153,7 @@ function ProductImageGallery({
 
   if (n === 0) {
     return (
-      <div className="aspect-[3/4] max-h-[400px] w-full rounded-xl border border-dashed border-[var(--border)] bg-[var(--card)]" />
+      <div className="aspect-[3/4] max-h-[500px] w-full rounded-xl border border-dashed border-[var(--border)] bg-[var(--card)]" />
     );
   }
 
@@ -177,7 +177,7 @@ function ProductImageGallery({
               src={src}
               alt={imageAlt}
               draggable={false}
-              className="mx-auto block max-h-[400px] min-h-[260px] w-full max-w-full select-none object-contain md:min-h-[300px]"
+              className="mx-auto block max-h-[500px] min-h-[260px] w-full max-w-full select-none object-contain md:min-h-[300px]"
             />
           </div>
         </button>
@@ -607,9 +607,6 @@ export function ProductPage() {
           </p>
           {isCardPool && (
             <section className="mb-4 rounded-xl border border-[var(--border)] bg-[var(--card)] p-4">
-              <p className="m-0 mb-2 text-sm font-semibold text-[var(--fg)]">
-                {zhHant.productPoolPickLabel}
-              </p>
               <p className="m-0 mb-3 text-xs text-[var(--muted)]">
                 {zhHant.productPoolPickHint(data.pool!.poolSize)}
               </p>

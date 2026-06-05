@@ -38,23 +38,43 @@ import { isCardPoolEnabled } from "../store-config.js";
 
 const CATALOG_PAGE_LIMIT = 12;
 
-function CatalogLoadMorePlaceholder() {
+function catalogGridListClass(cardPool: boolean, extra = "") {
+  const base = cardPool
+    ? "m-0 grid list-none grid-cols-1 gap-5 p-0 md:grid-cols-3"
+    : "m-0 grid list-none grid-cols-2 gap-5 p-0 md:grid-cols-[repeat(auto-fill,minmax(240px,1fr))]";
+  return extra ? `${base} ${extra}` : base;
+}
+
+function CatalogLoadMorePlaceholder({ cardPool = false }: { cardPool?: boolean }) {
   return (
-    <ul
-      className="m-0 grid list-none grid-cols-2 gap-5 select-none p-0 md:grid-cols-[repeat(auto-fill,minmax(240px,1fr))]"
-      aria-hidden
-    >
+    <ul className={catalogGridListClass(cardPool, "select-none")} aria-hidden>
       {Array.from({ length: CATALOG_PAGE_LIMIT }, (_, i) => (
         <li
           key={i}
           className="flex flex-col overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--card)]"
         >
-          <div className="aspect-[3/4] animate-pulse bg-[var(--media-bg)]" />
+          <div
+            className={
+              cardPool
+                ? "aspect-[9/16] animate-pulse bg-[var(--media-bg)]"
+                : "aspect-[3/4] animate-pulse bg-[var(--media-bg)]"
+            }
+          />
           <div className="px-3 pb-[0.35rem] pt-[0.65rem]">
-            <div className="h-[0.8125rem] max-w-[90%] animate-pulse rounded-md bg-[var(--media-bg)]" />
-            <div className="mt-2 h-[0.9rem] w-16 animate-pulse rounded-md bg-[var(--media-bg)]" />
+            {!cardPool && (
+              <div className="h-[0.8125rem] max-w-[90%] animate-pulse rounded-md bg-[var(--media-bg)]" />
+            )}
+            <div
+              className={
+                cardPool
+                  ? "h-[0.9rem] w-16 animate-pulse rounded-md bg-[var(--media-bg)]"
+                  : "mt-2 h-[0.9rem] w-16 animate-pulse rounded-md bg-[var(--media-bg)]"
+              }
+            />
           </div>
-          <span className="mx-4 mb-4 mt-3 h-[2.35rem] animate-pulse rounded-lg bg-[var(--media-bg)]" />
+          {!cardPool && (
+            <span className="mx-4 mb-4 mt-3 h-[2.35rem] animate-pulse rounded-lg bg-[var(--media-bg)]" />
+          )}
         </li>
       ))}
     </ul>
@@ -82,6 +102,7 @@ export function CatalogPage() {
   const invalidTypedCatalog =
     Boolean(matchTyped && pathSegmentType) && pathTypeCode === "";
   const activeCatalogTypeCode = pathTypeCode || legacyQueryTypeCode;
+  const isCardPoolCatalog = activeCatalogTypeCode === "card_pool";
 
   useLayoutEffect(() => {
     if (!matchBase) return;
@@ -309,13 +330,15 @@ export function CatalogPage() {
 
   return (
     <div className="box-border w-full min-w-0 max-w-[68rem]">
-      <h1 className="m-0 mb-4 text-[1.75rem] font-bold">
-        {qFromUrl
-          ? zhHant.catalogSearchResultsTitle
-          : activeCatalogTypeCode
-            ? `${zhHant.catalogTitle} · ${displayProductType(activeCatalogTypeCode)}`
-            : zhHant.catalogTitle}
-      </h1>
+      {!isCardPoolCatalog && (
+        <h1 className="m-0 mb-4 text-[1.75rem] font-bold">
+          {qFromUrl
+            ? zhHant.catalogSearchResultsTitle
+            : activeCatalogTypeCode
+              ? `${zhHant.catalogTitle} · ${displayProductType(activeCatalogTypeCode)}`
+              : zhHant.catalogTitle}
+        </h1>
+      )}
 
       <div className="mb-5 rounded-xl border border-[var(--border)] bg-[var(--card)] px-[1.15rem] py-4">
         <div className="flex max-w-[38rem] flex-row gap-x-3 gap-y-3 flex-wrap min-[800px]:flex-nowrap">
@@ -408,8 +431,15 @@ export function CatalogPage() {
 
       {!loading && !err && (
         <>
-          <ul className="m-0 grid list-none grid-cols-2 gap-5 select-none p-0 md:grid-cols-[repeat(auto-fill,minmax(240px,1fr))] [&_a]:select-text">
-            {visibleItems.map((item) => (
+          <ul
+            className={catalogGridListClass(
+              isCardPoolCatalog,
+              "select-none [&_a]:select-text",
+            )}
+          >
+            {visibleItems.map((item) => {
+              const isCardPoolItem = item.productType === "card_pool";
+              return (
               <li
                 key={item.productId}
                 className="flex flex-col overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--card)]"
@@ -418,7 +448,13 @@ export function CatalogPage() {
                   href={`/item/${encodeURIComponent(item.slug)}`}
                   className="flex-1 text-inherit no-underline"
                 >
-                  <div className="relative aspect-[3/5] bg-[var(--media-bg)]">
+                  <div
+                    className={
+                      isCardPoolItem
+                        ? "relative aspect-[1050/1300] bg-[var(--media-bg)]"
+                        : "relative aspect-[3/5] bg-[var(--media-bg)]"
+                    }
+                  >
                     {item.soldOut && (
                       <span
                         className="absolute right-2 top-2 z-[1] rounded-md bg-[color-mix(in_srgb,var(--err)_88%,transparent)] px-[0.45rem] py-0.5 text-xs font-bold leading-snug text-[var(--card)]"
@@ -430,9 +466,13 @@ export function CatalogPage() {
                     {primaryImage(item) && (
                       <img
                         className={
-                          item.soldOut
-                            ? "block h-full w-full object-cover opacity-72 grayscale-[25%]"
-                            : "block h-full w-full object-cover"
+                          isCardPoolItem
+                            ? item.soldOut
+                              ? "block h-full w-full object-contain opacity-72 grayscale-[25%]"
+                              : "block h-full w-full object-contain"
+                            : item.soldOut
+                              ? "block h-full w-full object-cover opacity-72 grayscale-[25%]"
+                              : "block h-full w-full object-cover"
                         }
                         src={primaryImage(item) || ""}
                         alt=""
@@ -441,15 +481,32 @@ export function CatalogPage() {
                     )}
                   </div>
                   <div className="flex-1 px-3 pb-[0.35rem] pt-[0.65rem]">
-                    <h3 className="mb-1 line-clamp-2 select-text text-[0.8125rem] font-semibold leading-snug [-webkit-user-select:text] min-h-[36px]">
-                      {displayTitle(item)}
-                    </h3>
-                    <p className="m-0 select-text text-[0.9rem] font-bold text-[var(--accent)] [-webkit-user-select:text]">
-                      {formatPriceUsd(item.listPrice)}
-                    </p>
+                    {!isCardPoolItem && (
+                      <h3 className="mb-1 line-clamp-2 select-text text-[0.8125rem] font-semibold leading-snug [-webkit-user-select:text] min-h-[36px]">
+                        {displayTitle(item)}
+                      </h3>
+                    )}
+                    <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5 justify-between">
+                      <p
+                        className={
+                          "m-0 select-text font-bold text-[var(--accent)] [-webkit-user-select:text] " +
+                          (isCardPoolItem
+                            ? "text-[1.08rem] md:text-[1.19rem]"
+                            : "text-[0.9rem]")
+                        }
+                      >
+                        {formatPriceUsd(item.listPrice)}
+                      </p>
+                 
+                      {isCardPoolItem && item.pool != null && (
+                        <p className="m-0 select-text text-[0.8125rem] text-[var(--muted)] [-webkit-user-select:text]">
+                          {zhHant.catalogPoolSize(item.pool.poolSize)}
+                        </p>
+                      )}
+                    </div>
                   </div>
                 </Link>
-                {item.productType !== "card_pool" && (
+                {!isCardPoolItem && (
                   <button
                     type="button"
                     className="mx-4 mb-4 mt-3 cursor-pointer rounded-lg border border-[var(--accent)] bg-transparent px-[0.85rem] py-2 font-semibold text-[var(--accent)] hover:bg-[color-mix(in_srgb,var(--accent)_16%,transparent)] disabled:cursor-not-allowed disabled:opacity-50"
@@ -469,7 +526,8 @@ export function CatalogPage() {
                   </button>
                 )}
               </li>
-            ))}
+            );
+            })}
           </ul>
           {visibleItems.length === 0 && (
             <p className="text-[var(--muted)]">
@@ -496,7 +554,7 @@ export function CatalogPage() {
                   aria-busy="true"
                 >
                   <span className="sr-only">{zhHant.loadingPage}</span>
-                  <CatalogLoadMorePlaceholder />
+                  <CatalogLoadMorePlaceholder cardPool={isCardPoolCatalog} />
                 </div>
               )}
               {nextCursor && (
