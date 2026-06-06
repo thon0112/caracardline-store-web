@@ -185,7 +185,7 @@ export function OrderPage() {
       <h2 className="mb-[0.45rem] mt-[0.1rem] select-text text-[1.1rem] font-semibold [-webkit-user-select:text]">
         {zhHant.orderItems}
       </h2>
-      <ul className="m-0 list-none border-t border-[var(--border)] p-0">
+      <ul className="m-0 max-h-[500px] list-none overflow-y-auto border-t border-[var(--border)] p-0">
         {order.items.map((item, idx) => (
           <li
             key={`${item.productId}-${idx}`}

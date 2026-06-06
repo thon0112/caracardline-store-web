@@ -8,7 +8,7 @@ export const homeBannerSlides = [
     id: "slide-banner-6",
     src: "https://cdn.caracardline.com/assets/1776263425636-49754c0823dc4d2f-banner-6.webp",
     alt: "首頁主視覺一",
-    href: "https://caracardline.com/card-repair",
+    href: "/card-repair",
   },
   {
     id: "slide-banner-5",
