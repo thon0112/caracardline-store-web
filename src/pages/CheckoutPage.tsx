@@ -10,7 +10,9 @@ import {
   toastTextForBadRequest,
   zhHant,
 } from "../locale/zh-Hant.js";
+import { useDocumentMeta } from "../document-meta.js";
 import { PageLoadingSkeleton } from "../components/PageLoadingSkeleton.js";
+import { PAGE_META } from "../page-meta.js";
 import { SfOutletPicker } from "../components/SfOutletPicker.js";
 import { tryToastBadRequest } from "../notify-bad-request.js";
 import { sfOutletToShipAddress, type SfOutlet } from "../sf-outlet.js";
@@ -23,6 +25,7 @@ const SHIP_LOCALITY_HK = "香港";
 type ShipMode = "sf" | "manual";
 
 export function CheckoutPage() {
+  useDocumentMeta(PAGE_META.checkout);
   const { showToast } = useToast();
   const [, setLocation] = useLocation();
   const { user } = useAuth();

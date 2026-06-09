@@ -9,7 +9,9 @@ import {
   type MyOrderSummary,
 } from "../api.js";
 import { useAuth } from "../auth-context.js";
+import { useDocumentMeta } from "../document-meta.js";
 import { PageLoadingSkeleton } from "../components/PageLoadingSkeleton.js";
+import { PAGE_META } from "../page-meta.js";
 import { SfOutletPicker } from "../components/SfOutletPicker.js";
 import {
   displayOrderStatus,
@@ -42,6 +44,7 @@ function formatOrderWhen(iso: string): string {
 }
 
 export function AccountPage() {
+  useDocumentMeta(PAGE_META.account);
   const { showToast } = useToast();
   const {
     user,

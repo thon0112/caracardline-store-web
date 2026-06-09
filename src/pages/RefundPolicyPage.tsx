@@ -1,4 +1,7 @@
 import type { ReactNode } from "react";
+import { useDocumentMeta } from "../document-meta.js";
+import { zhHant } from "../locale/zh-Hant.js";
+import { PAGE_META } from "../page-meta.js";
 
 function PolicyLeadItem({
   lead,
@@ -16,11 +19,14 @@ function PolicyLeadItem({
 }
 
 export function RefundPolicyPage() {
+  useDocumentMeta(PAGE_META.refund);
   return (
     <div className="max-w-[46rem]">
-      <h1 className="m-0 mb-2 text-[1.75rem] font-bold">退款政策</h1>
+      <h1 className="m-0 mb-2 text-[1.75rem] font-bold">
+        {zhHant.refundPolicyTitle}
+      </h1>
       <p className="m-0 mb-6 max-w-[42rem] text-[var(--muted)]">
-        為保障雙方權益，請於購買前細閱以下退款與換貨相關說明；特定服務（例如代鑑、維修、回收）另有獨立約定者，以該次約定為準。
+        {zhHant.refundPolicyLede}
       </p>
 
       <section className="mb-[1.65rem] max-w-[42rem]" aria-labelledby="refund-s1">

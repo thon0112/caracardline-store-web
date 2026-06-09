@@ -1,7 +1,10 @@
 import OurService from "../components/OurService.js";
+import { useDocumentMeta } from "../document-meta.js";
 import { zhHant } from "../locale/zh-Hant.js";
+import { PAGE_META } from "../page-meta.js";
 
 export function AboutPage() {
+  useDocumentMeta(PAGE_META.about);
   return (
     <div className="max-w-[46rem]">
       <h1 className="m-0 mb-2 text-[1.75rem] font-bold">{zhHant.aboutTitle}</h1>

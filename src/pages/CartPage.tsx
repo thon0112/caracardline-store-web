@@ -12,7 +12,9 @@ import { cartHasTakenPoolNumbers, lineHasTakenPoolNumber } from "../cart-pool-co
 import { useCart } from "../cart-context.js";
 import { cn } from "../cn.js";
 import { formatPriceUsd, zhHant } from "../locale/zh-Hant.js";
+import { useDocumentMeta } from "../document-meta.js";
 import { PageLoadingSkeleton } from "../components/PageLoadingSkeleton.js";
+import { PAGE_META } from "../page-meta.js";
 import { tryToastBadRequest } from "../notify-bad-request.js";
 import { useToast } from "../toast-context.js";
 
@@ -118,6 +120,7 @@ function CartLineQtyField({
 }
 
 export function CartPage() {
+  useDocumentMeta(PAGE_META.cart);
   const { showToast } = useToast();
   const {
     cartId,

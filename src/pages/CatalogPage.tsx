@@ -31,7 +31,9 @@ import {
   type CatalogSortValue,
   zhHant,
 } from "../locale/zh-Hant.js";
+import { useDocumentMeta } from "../document-meta.js";
 import { PageLoadingSkeleton } from "../components/PageLoadingSkeleton.js";
+import { catalogPageMeta } from "../page-meta.js";
 import { tryToastBadRequest } from "../notify-bad-request.js";
 import { TOAST_DURATION_SHORT_MS, useToast } from "../toast-context.js";
 import { isCardPoolEnabled } from "../store-config.js";
@@ -126,6 +128,11 @@ export function CatalogPage() {
     () => normalizeCatalogAvailability(searchParams.get("availability")),
     [searchParams],
   );
+  const documentMeta = useMemo(
+    () => catalogPageMeta(qFromUrl, activeCatalogTypeCode),
+    [qFromUrl, activeCatalogTypeCode],
+  );
+  useDocumentMeta(documentMeta);
 
   const [searchDraft, setSearchDraft] = useState(qFromUrl);
 

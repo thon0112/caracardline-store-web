@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
+import { useDocumentMeta } from "../document-meta.js";
 import { zhHant } from "../locale/zh-Hant.js";
+import { PAGE_META } from "../page-meta.js";
 
 function DisclaimerLeadItem({
   lead,
@@ -17,6 +19,7 @@ function DisclaimerLeadItem({
 }
 
 export function DisclaimerPage() {
+  useDocumentMeta(PAGE_META.disclaimer);
   return (
     <div className="max-w-[46rem]">
       <h1 className="m-0 mb-2 text-[1.75rem] font-bold">{zhHant.disclaimerTitle}</h1>

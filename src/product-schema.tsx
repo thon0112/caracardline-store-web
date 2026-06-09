@@ -30,7 +30,7 @@ function schemaItemCondition(
   return "https://schema.org/UsedCondition";
 }
 
-function buildProductDescription(data: CatalogListItem): string {
+export function buildProductDescription(data: CatalogListItem): string {
   if (data.description?.trim()) return data.description.trim();
 
   const parts = [

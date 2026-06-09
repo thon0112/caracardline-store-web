@@ -2,21 +2,21 @@ import type { CatalogListItem } from "./api.js";
 import { collectProductImageUrls, displayTitle } from "./catalog-helpers.js";
 import { zhHant } from "./locale/zh-Hant.js";
 import { WHATSAPP_CHAT_URL } from "./components/WhatsAppFloat.js";
-import { BRAND_NAME, SITE_ORIGIN, type JsonLd } from "./site-seo.js";
+import {
+  BRAND_NAME,
+  DEFAULT_OG_IMAGE,
+  SITE_DESCRIPTION,
+  SITE_LOGO_URL,
+  SITE_ORIGIN,
+  SITE_TITLE,
+  type JsonLd,
+} from "./site-seo.js";
 
 const HOME_URL = `${SITE_ORIGIN}/`;
 const ORGANIZATION_ID = `${SITE_ORIGIN}/#organization`;
 const WEBSITE_ID = `${SITE_ORIGIN}/#website`;
 const WEBPAGE_ID = `${HOME_URL}#webpage`;
 const STORE_ID = `${SITE_ORIGIN}/#store`;
-
-const SITE_TITLE = "卡拉卡LINE | PTCG香港專賣店";
-const SITE_DESCRIPTION =
-  "卡拉卡Line提供精選 PTCG 熱門卡牌販售，更有專業卡牌維修技術與 PSA 代鑑代收服務";
-const SITE_OG_IMAGE =
-  "https://cdn.caracardline.com/assets/1777702272466-e6194867f588f029-og.webp";
-const SITE_LOGO_URL =
-  "https://cdn.caracardline.com/assets/logo-with-text.webp";
 
 const INSTAGRAM_URL = "https://www.instagram.com/cara.cardline/";
 const THREADS_URL = "https://www.threads.com/@cara.cardline";
@@ -32,7 +32,7 @@ function buildOrganizationJsonLd(): JsonLd {
     name: BRAND_NAME,
     url: SITE_ORIGIN,
     logo: SITE_LOGO_URL,
-    image: SITE_OG_IMAGE,
+    image: DEFAULT_OG_IMAGE,
     description: SITE_DESCRIPTION,
     sameAs: [INSTAGRAM_URL, THREADS_URL],
     contactPoint: {
@@ -73,7 +73,7 @@ function buildWebPageJsonLd(): JsonLd {
     description: SITE_DESCRIPTION,
     isPartOf: { "@id": WEBSITE_ID },
     about: { "@id": ORGANIZATION_ID },
-    primaryImageOfPage: SITE_OG_IMAGE,
+    primaryImageOfPage: DEFAULT_OG_IMAGE,
     inLanguage: "zh-Hant",
   };
 }
@@ -84,7 +84,7 @@ function buildOnlineStoreJsonLd(): JsonLd {
     "@id": STORE_ID,
     name: BRAND_NAME,
     url: SITE_ORIGIN,
-    image: SITE_OG_IMAGE,
+    image: DEFAULT_OG_IMAGE,
     description: SITE_DESCRIPTION,
     priceRange: "$$",
     areaServed: {

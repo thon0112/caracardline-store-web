@@ -1,4 +1,7 @@
 import type { ReactNode } from "react";
+import { useDocumentMeta } from "../document-meta.js";
+import { zhHant } from "../locale/zh-Hant.js";
+import { PAGE_META } from "../page-meta.js";
 
 function PolicyLeadItem({
   lead,
@@ -16,11 +19,14 @@ function PolicyLeadItem({
 }
 
 export function ShippingPolicyPage() {
+  useDocumentMeta(PAGE_META.shipping);
   return (
     <div className="max-w-[46rem]">
-      <h1 className="m-0 mb-2 text-[1.75rem] font-bold">運送政策</h1>
+      <h1 className="m-0 mb-2 text-[1.75rem] font-bold">
+        {zhHant.shippingPolicyTitle}
+      </h1>
       <p className="m-0 mb-6 max-w-[42rem] text-[var(--muted)]">
-        以下是我們的運送條款及細則：
+        {zhHant.shippingPolicyLede}
       </p>
 
       <section className="mb-[1.65rem] max-w-[42rem]" aria-labelledby="shipping-s1">

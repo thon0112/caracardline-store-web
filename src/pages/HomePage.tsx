@@ -20,7 +20,9 @@ import {
   zhHant,
 } from "../locale/zh-Hant.js";
 import { HomeBannerCarousel } from "../components/HomeBannerCarousel.js";
+import { useDocumentMeta } from "../document-meta.js";
 import { HomeJsonLd } from "../home-schema.js";
+import { PAGE_META } from "../page-meta.js";
 import { PageLoadingSkeleton } from "../components/PageLoadingSkeleton.js";
 import { tryToastBadRequest } from "../notify-bad-request.js";
 import { TOAST_DURATION_SHORT_MS, useToast } from "../toast-context.js";
@@ -55,6 +57,7 @@ function groupItems(items: CatalogListItem[]): Map<string, CatalogListItem[]> {
 }
 
 export function HomePage() {
+  useDocumentMeta(PAGE_META.home);
   const { showToast } = useToast();
   const [items, setItems] = useState<CatalogListItem[]>([]);
   const [loading, setLoading] = useState(true);

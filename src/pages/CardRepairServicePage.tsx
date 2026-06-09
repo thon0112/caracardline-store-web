@@ -3,7 +3,9 @@ import {
   CardRepairJsonLd,
   type CardRepairGalleryItem,
 } from "../card-repair-schema.js";
+import { useDocumentMeta } from "../document-meta.js";
 import { zhHant } from "../locale/zh-Hant.js";
+import { PAGE_META } from "../page-meta.js";
 
 type CardRepairGalleryEntry = CardRepairGalleryItem & {
   imagePosition?: "top" | "center" | "bottom";
@@ -136,6 +138,7 @@ function TwoUp({
 }
 
 export function CardRepairServicePage() {
+  useDocumentMeta(PAGE_META.cardRepair);
   return (
     <div>
       <CardRepairJsonLd gallery={CARD_REPAIR_GALLERY} />

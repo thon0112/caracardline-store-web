@@ -22,12 +22,22 @@ import { OtherServicesPage } from "./pages/OtherServicesPage.js";
 import { CardRepairServicePage } from "./pages/CardRepairServicePage.js";
 import { ShippingPolicyPage } from "./pages/ShippingPolicyPage.js";
 import { RefundPolicyPage } from "./pages/RefundPolicyPage.js";
+import { useDocumentMeta } from "./document-meta.js";
+import { PAGE_META } from "./page-meta.js";
+
+function NotFoundPage() {
+  useDocumentMeta(PAGE_META.notFound);
+  return <p className="text-[var(--muted)]">{zhHant.notFound}</p>;
+}
 
 function AppShell() {
   const [location] = useLocation();
 
   useEffect(() => {
-    trackPageView(location);
+    const id = requestAnimationFrame(() =>
+      trackPageView(location, document.title),
+    );
+    return () => cancelAnimationFrame(id);
   }, [location]);
 
   return (
@@ -50,9 +60,7 @@ function AppShell() {
           <Route path="/disclaimer" component={DisclaimerPage} />
           <Route path="/shipping" component={ShippingPolicyPage} />
           <Route path="/refund" component={RefundPolicyPage} />
-          <Route>
-            <p className="text-[var(--muted)]">{zhHant.notFound}</p>
-          </Route>
+          <Route component={NotFoundPage} />
         </Switch>
       </main>
       <SiteFooter />

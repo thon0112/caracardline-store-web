@@ -12,7 +12,9 @@ import {
   toastTextForBadRequest,
   zhHant,
 } from "../locale/zh-Hant.js";
+import { useDocumentMeta } from "../document-meta.js";
 import { PageLoadingSkeleton } from "../components/PageLoadingSkeleton.js";
+import { PAGE_META } from "../page-meta.js";
 import { formatZhHantDeadline } from "../format-zh-hant-deadline.js";
 import { tryToastBadRequest } from "../notify-bad-request.js";
 import { useToast } from "../toast-context.js";
@@ -48,6 +50,16 @@ export function OrderPage() {
   const { showToast } = useToast();
   const params = useParams<{ orderId: string }>();
   const orderId = params.orderId ?? "";
+  const documentMeta = useMemo(() => {
+    const trimmed = orderId.trim();
+    return {
+      ...PAGE_META.order,
+      canonicalPath: trimmed
+        ? `/order/${encodeURIComponent(trimmed)}`
+        : PAGE_META.order.canonicalPath,
+    };
+  }, [orderId]);
+  useDocumentMeta(documentMeta);
 
   const [order, setOrder] = useState<OrderDetailResponse | null>(null);
   const [loadErr, setLoadErr] = useState<string | null>(null);

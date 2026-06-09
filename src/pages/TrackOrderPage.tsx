@@ -1,7 +1,9 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { useLocation, useSearchParams } from "wouter";
 import { isApiError, lookupOrdersByEmail } from "../api.js";
+import { useDocumentMeta } from "../document-meta.js";
 import { toastTextForBadRequest, zhHant } from "../locale/zh-Hant.js";
+import { PAGE_META } from "../page-meta.js";
 import { useToast } from "../toast-context.js";
 
 function orderIdFromSearchParams(searchParams: URLSearchParams): string {
@@ -13,6 +15,7 @@ function orderIdFromSearchParams(searchParams: URLSearchParams): string {
 }
 
 export function TrackOrderPage() {
+  useDocumentMeta(PAGE_META.track);
   const [, setLocation] = useLocation();
   const [searchParams] = useSearchParams();
   const [orderId, setOrderId] = useState("");

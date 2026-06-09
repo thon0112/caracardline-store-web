@@ -18,6 +18,8 @@ import {
   normalizeCatalogTypeFilter,
   zhHant,
 } from "../locale/zh-Hant.js";
+import { useDocumentMeta } from "../document-meta.js";
+import { PAGE_META, productMeta } from "../page-meta.js";
 import { ProductJsonLd } from "../product-schema.js";
 import { PageLoadingSkeleton } from "../components/PageLoadingSkeleton.js";
 import { tryToastBadRequest } from "../notify-bad-request.js";
@@ -311,6 +313,12 @@ export function ProductPage() {
     localStorage.getItem("sf_cart_id"),
   );
   const { refreshCart, lines } = useCart();
+
+  const documentMeta = useMemo(
+    () => (data ? productMeta(data) : PAGE_META.productLoading),
+    [data],
+  );
+  useDocumentMeta(documentMeta);
 
   const poolNumbersInCart = useMemo(() => {
     if (!data || data.productType !== "card_pool" || !data.pool) {

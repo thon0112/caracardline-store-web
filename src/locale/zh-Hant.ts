@@ -39,6 +39,11 @@ export const zhHant = {
   footerContact: "聯絡我們",
   footerShipping: "運送政策",
   footerRefund: "退款政策",
+  shippingPolicyTitle: "運送政策",
+  shippingPolicyLede: "以下是我們的運送條款及細則：",
+  refundPolicyTitle: "退款政策",
+  refundPolicyLede:
+    "為保障雙方權益，請於購買前細閱以下退款與換貨相關說明；特定服務（例如代鑑、維修、回收）另有獨立約定者，以該次約定為準。",
   footerAbout: "關於我們",
   footerDisclaimer: "免責聲明",
   /** Floating WhatsApp — opens chat in a new tab */
