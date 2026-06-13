@@ -44,6 +44,8 @@ export type CatalogListItem = {
   title: string;
   description: string | null;
   listPrice: number;
+  /** Optional “was” price; storefront shows strikethrough when higher than `listPrice`. */
+  compareAtPrice?: number | null;
   /** Mirrors store-worker: not purchasable (listed after in-stock items). */
   soldOut: boolean;
   hideQuantity: boolean;

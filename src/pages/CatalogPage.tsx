@@ -23,7 +23,6 @@ import {
 import { useCart } from "../cart-context.js";
 import {
   displayProductType,
-  formatPriceUsd,
   normalizeCatalogAvailability,
   normalizeCatalogSort,
   normalizeCatalogTypeFilter,
@@ -33,6 +32,7 @@ import {
 } from "../locale/zh-Hant.js";
 import { useDocumentMeta } from "../document-meta.js";
 import { PageLoadingSkeleton } from "../components/PageLoadingSkeleton.js";
+import { ProductPrice } from "../components/ProductPrice.js";
 import { catalogPageMeta } from "../page-meta.js";
 import { tryToastBadRequest } from "../notify-bad-request.js";
 import { TOAST_DURATION_SHORT_MS, useToast } from "../toast-context.js";
@@ -494,17 +494,11 @@ export function CatalogPage() {
                       </h3>
                     )}
                     <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5 justify-between">
-                      <p
-                        className={
-                          "m-0 select-text font-bold text-[var(--accent)] [-webkit-user-select:text] " +
-                          (isCardPoolItem
-                            ? "text-[1.08rem] md:text-[1.19rem]"
-                            : "text-[0.9rem]")
-                        }
-                      >
-                        {formatPriceUsd(item.listPrice)}
-                      </p>
-                 
+                      <ProductPrice
+                        listPrice={item.listPrice}
+                        compareAtPrice={item.compareAtPrice}
+                        size={isCardPoolItem ? "pool" : "sm"}
+                      />
                       {isCardPoolItem && item.pool != null && (
                         <p className="m-0 select-text text-[0.8125rem] text-[var(--muted)] [-webkit-user-select:text]">
                           {zhHant.catalogPoolSize(item.pool.poolSize)}

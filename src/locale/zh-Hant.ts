@@ -208,6 +208,8 @@ export const zhHant = {
   errAddToCart: "加入購物車失敗",
 
   productFallback: "商品",
+  /** Screen reader label for compare-at (strikethrough) price */
+  compareAtPriceAria: "原價",
   productInvalid: "商品連結無效",
   productNotFound: "找不到商品或暫不提供",
   productBack: "返回",

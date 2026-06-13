@@ -37,6 +37,18 @@ export function displayTitle(item: CatalogListItem): string {
   return item.title || item.card?.name || zhHant.productFallback;
 }
 
+/** True when storefront should show a compare-at strikethrough beside list price. */
+export function shouldShowCompareAtPrice(
+  compareAtPrice: number | null | undefined,
+  listPrice: number,
+): compareAtPrice is number {
+  return (
+    compareAtPrice != null &&
+    Number.isFinite(compareAtPrice) &&
+    compareAtPrice > listPrice
+  );
+}
+
 /**
  * Category for rails and `/catalog/:type` — matches store-worker: a linked `card`
  * payload implies 單卡 even when `productType` was mis-set to e.g. `booster_box`.

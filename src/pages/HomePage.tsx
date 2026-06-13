@@ -15,11 +15,11 @@ import { useCart } from "../cart-context.js";
 import { cn } from "../cn.js";
 import {
   displayProductType,
-  formatPriceUsd,
   homeRailAriaLabel,
   zhHant,
 } from "../locale/zh-Hant.js";
 import { HomeBannerCarousel } from "../components/HomeBannerCarousel.js";
+import { ProductPrice } from "../components/ProductPrice.js";
 import { useDocumentMeta } from "../document-meta.js";
 import { HomeJsonLd } from "../home-schema.js";
 import { PAGE_META } from "../page-meta.js";
@@ -220,9 +220,11 @@ export function HomePage() {
                         <h3 className="mb-1 line-clamp-2 select-text text-[0.8125rem] font-semibold leading-snug [-webkit-user-select:text] min-h-[36px]">
                           {displayTitle(item)}
                         </h3>
-                        <p className="m-0 select-text text-[0.9rem] font-bold text-[var(--accent)] [-webkit-user-select:text]">
-                          {formatPriceUsd(item.listPrice)}
-                        </p>
+                        <ProductPrice
+                          listPrice={item.listPrice}
+                          compareAtPrice={item.compareAtPrice}
+                          size="sm"
+                        />
                       </div>
                     </Link>
                     <button

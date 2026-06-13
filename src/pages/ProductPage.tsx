@@ -7,14 +7,12 @@ import {
   createCart,
   fetchCatalogItem,
   isApiError,
-  type CatalogListItem,
 } from "../api.js";
 import { useCart } from "../cart-context.js";
 import { collectProductImageUrls } from "../catalog-helpers.js";
 import { cn } from "../cn.js";
 import {
   displayProductType,
-  formatPriceUsd,
   normalizeCatalogTypeFilter,
   zhHant,
 } from "../locale/zh-Hant.js";
@@ -22,6 +20,7 @@ import { useDocumentMeta } from "../document-meta.js";
 import { PAGE_META, productMeta } from "../page-meta.js";
 import { ProductJsonLd } from "../product-schema.js";
 import { PageLoadingSkeleton } from "../components/PageLoadingSkeleton.js";
+import { ProductPrice } from "../components/ProductPrice.js";
 import { tryToastBadRequest } from "../notify-bad-request.js";
 import { TOAST_DURATION_SHORT_MS, useToast } from "../toast-context.js";
 import { isCardPoolEnabled } from "../store-config.js";
@@ -34,10 +33,12 @@ function ProductImageGallery({
   urls,
   soldOut,
   imageAlt,
+  type,
 }: {
   urls: string[];
   soldOut: boolean;
   imageAlt: string;
+  type?: string;
 }) {
   const [active, setActive] = useState(0);
   const [emblaRef, emblaApi] = useEmblaCarousel({
@@ -158,12 +159,21 @@ function ProductImageGallery({
           onClick={() => openLightbox()}
         >
           <div className="relative isolate flex min-h-[280px] items-center justify-center md:min-h-[320px]">
-            <img
-              src={src}
-              alt={imageAlt}
-              draggable={false}
-              className="mx-auto block max-h-[500px] min-h-[260px] w-full max-w-full select-none object-contain md:min-h-[300px]"
-            />
+            {type === "booster_box" ? (
+              <img
+                src={src}
+                alt={imageAlt}
+                draggable={false}
+                className="mx-auto block max-h-[500px] min-h-[260px] w-full max-w-full select-none object-contain md:min-h-[300px] scale-[1.33]"
+              />
+            ) : (
+              <img
+                src={src}
+                alt={imageAlt}
+                draggable={false}
+                className="mx-auto block max-h-[500px] min-h-[260px] w-full max-w-full select-none object-contain md:min-h-[300px]"
+              />
+            )}
           </div>
         </button>
 
@@ -301,9 +311,9 @@ export function ProductPage() {
   const { showToast } = useToast();
   const params = useParams();
   const slug = params.slug;
-  const [data, setData] = useState<
-    Awaited<ReturnType<typeof fetchCatalogItem>> | null
-  >(null);
+  const [data, setData] = useState<Awaited<
+    ReturnType<typeof fetchCatalogItem>
+  > | null>(null);
   const [err, setErr] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [adding, setAdding] = useState(false);
@@ -445,8 +455,7 @@ export function ProductPage() {
       }
 
       if (stoppedOnConflict || added.length < toAdd.length) {
-        const seg =
-          (slug && slug.trim()) || data.slug || data.productId;
+        const seg = (slug && slug.trim()) || data.slug || data.productId;
         try {
           const row = await fetchCatalogItem(seg);
           setData(row);
@@ -532,6 +541,7 @@ export function ProductPage() {
             </span>
           )}
           <ProductImageGallery
+            type={data.productType}
             urls={collectProductImageUrls(data)}
             soldOut={data.soldOut}
             imageAlt={data.title}
@@ -541,18 +551,24 @@ export function ProductPage() {
           <h1 className="m-0 mb-2 text-[1.75rem] font-bold">{data.title}</h1>
           {subtitle && <p className="text-[var(--muted)]">{subtitle}</p>}
           {data.description && (
-            <p className="m-0 mb-6 mt-3 max-w-[42rem] whitespace-pre-line">{data.description}</p>
+            <p className="m-0 mb-6 mt-3 max-w-[42rem] whitespace-pre-line">
+              {data.description}
+            </p>
           )}
           {data.psaId && (
             <p className="text-sm text-[var(--muted)]">
-              {zhHant.productPsaId}：<code className="rounded bg-[var(--media-bg)] px-[0.35em] py-[0.1em] text-[0.9em]">
+              {zhHant.productPsaId}：
+              <code className="rounded bg-[var(--media-bg)] px-[0.35em] py-[0.1em] text-[0.9em]">
                 {data.psaId}
               </code>
             </p>
           )}
-          <p className="my-4 text-2xl font-bold text-[var(--accent)]">
-            {formatPriceUsd(data.listPrice)}
-          </p>
+          <ProductPrice
+            className="my-4"
+            size="lg"
+            listPrice={data.listPrice}
+            compareAtPrice={data.compareAtPrice}
+          />
           {isCardPool && (
             <section className="mb-4 rounded-xl border border-[var(--border)] bg-[var(--card)] p-4">
               <p className="m-0 mb-3 text-xs text-[var(--muted)]">
