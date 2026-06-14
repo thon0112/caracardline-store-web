@@ -453,14 +453,15 @@ export type DefaultShippingPatch = {
   defaultShipCountry: string;
 };
 
-/** GET `/api/me` — returns null when not signed in. */
+/** GET `/api/me` — 200 with `null` when not signed in (legacy workers may still 401). */
 export async function fetchSessionUser(): Promise<SessionUser | null> {
   const url = apiPath("/api/me");
   logApi("GET", url);
   const res = await fetchApi(url);
   if (res.status === 401) return null;
   await throwIfNotOk(res);
-  return res.json() as Promise<SessionUser>;
+  const data = (await res.json()) as SessionUser | null;
+  return data ?? null;
 }
 
 /** PATCH `/api/me/default-shipping` — returns updated profile. */
