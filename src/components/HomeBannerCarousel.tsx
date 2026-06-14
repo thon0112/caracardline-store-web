@@ -175,7 +175,7 @@ export function HomeBannerCarousel() {
                   type="button"
                   role="tab"
                   aria-selected={i === selectedIndex}
-                  className="block h-[1rem] w-[20px] cursor-pointer"
+                  className="block h-[20px] w-[20px] cursor-pointer"
                   aria-label={`${zhHant.homeBannerSlide} ${i + 1}：${b.alt}`}
                   onClick={() => {
                     if (!emblaApi) return;
