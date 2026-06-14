@@ -165,7 +165,7 @@ export function HomeBannerCarousel() {
               onClick={() => goBanner(1)}
             />
             <div
-              className="absolute bottom-[0.85rem] left-0 right-0 z-[3] flex justify-center gap-[0.45rem]"
+              className="absolute bottom-[0.85rem] left-0 right-0 z-[3] flex justify-center gap-[8px]"
               role="tablist"
               aria-label={zhHant.homeBannerDots}
             >
@@ -175,10 +175,7 @@ export function HomeBannerCarousel() {
                   type="button"
                   role="tab"
                   aria-selected={i === selectedIndex}
-                  className={cn(
-                    "h-[1rem] w-[1rem] cursor-pointer rounded-full border-none bg-[rgba(28,24,21,0.22)] p-2 transition-[width,background-color] duration-150",
-                    i === selectedIndex && "w-[1.35rem] bg-[var(--accent)]",
-                  )}
+                  className="block h-[1rem] w-[20px] cursor-pointer"
                   aria-label={`${zhHant.homeBannerSlide} ${i + 1}：${b.alt}`}
                   onClick={() => {
                     if (!emblaApi) return;
@@ -186,7 +183,12 @@ export function HomeBannerCarousel() {
                     const block = Math.floor(raw / baseSlideCount) * baseSlideCount;
                     emblaApi.scrollTo(block + i);
                   }}
-                />
+                >
+                  <span aria-hidden="true" className={cn(
+                    "block h-[1rem] w-[1rem] rounded-full bg-[rgba(28,24,21,0.22)] transition-[width,background-color] duration-150 mx-auto",
+                    i === selectedIndex && "w-[1.35rem] bg-[var(--accent)]",
+                  )}></span>
+                </button>
               ))}
             </div>
           </>
