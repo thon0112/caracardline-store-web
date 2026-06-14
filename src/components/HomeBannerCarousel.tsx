@@ -129,6 +129,7 @@ export function HomeBannerCarousel() {
                   key={`${b.id}__${i}`}
                   className="relative m-0 h-full min-w-0 w-full shrink-0 grow-0 basis-full overflow-hidden md:me-3 md:h-full md:w-auto md:flex-none md:basis-auto md:aspect-video"
                   aria-hidden={logical !== selectedIndex}
+                  inert={logical !== selectedIndex ? "" : undefined}
                 >
                   {isExternalHref(b.href) ? (
                     <a
@@ -175,7 +176,7 @@ export function HomeBannerCarousel() {
                   role="tab"
                   aria-selected={i === selectedIndex}
                   className={cn(
-                    "h-[0.45rem] w-[0.45rem] cursor-pointer rounded-full border-none bg-[rgba(28,24,21,0.22)] p-0 transition-[width,background-color] duration-150",
+                    "h-[1rem] w-[1rem] cursor-pointer rounded-full border-none bg-[rgba(28,24,21,0.22)] p-0 transition-[width,background-color] duration-150",
                     i === selectedIndex && "w-[1.35rem] bg-[var(--accent)]",
                   )}
                   aria-label={`${zhHant.homeBannerSlide} ${i + 1}：${b.alt}`}

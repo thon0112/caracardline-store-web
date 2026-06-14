@@ -347,9 +347,9 @@ export function SiteHeader() {
           menuOpen ? "z-[101] translate-x-0" : "",
         )}
         role="dialog"
-        aria-modal="true"
+        aria-modal={menuOpen}
         aria-label={zhHant.navDrawerAria}
-        aria-hidden={!menuOpen}
+        inert={!menuOpen ? "" : undefined}
       >
         <div className="mb-1 flex w-full items-center gap-3 border-b border-[var(--border)] px-[0.65rem] pb-[0.85rem]">
           <span className="min-w-0 flex-1 text-[0.8125rem] font-bold uppercase tracking-[0.06em] text-[var(--muted)]">
