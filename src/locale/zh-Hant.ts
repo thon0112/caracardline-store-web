@@ -193,6 +193,7 @@ export const zhHant = {
   loadMore: "載入更多",
   addToCart: "加入購物車",
   soldOutBadge: "售罄",
+  newBadge: "新品",
   soldOutAddDisabled: "此商品已售罄。",
   /** Shown briefly after a product is added from listing or detail. */
   addToCartSuccess: "已成功加入購物車。",

@@ -45,6 +45,9 @@ function homeGroupLabelFromItem(item: CatalogListItem): string {
   return t.length > 0 ? t : zhHant.homeGroupOther;
 }
 
+/** Hardcoded — first N 單卡 listings on the homepage show a 新品 badge. */
+const HOME_NEW_BADGE_CARD_LIMIT = 5;
+
 function groupItems(items: CatalogListItem[]): Map<string, CatalogListItem[]> {
   const m = new Map<string, CatalogListItem[]>();
   for (const item of items) {
@@ -101,6 +104,16 @@ export function HomePage() {
     () => items.filter((item) => !item.soldOut),
     [items],
   );
+
+  const newBadgeProductIds = useMemo(() => {
+    const ids = new Set<string>();
+    for (const item of availableItems) {
+      if (storefrontListingCategory(item) !== "card") continue;
+      ids.add(item.productId);
+      if (ids.size >= HOME_NEW_BADGE_CARD_LIMIT) break;
+    }
+    return ids;
+  }, [availableItems]);
 
   const grouped = useMemo(() => {
     const m = groupItems(availableItems);
@@ -196,6 +209,14 @@ export function HomePage() {
                       className="flex min-h-0 flex-1 cursor-pointer select-none flex-col text-inherit no-underline caret-transparent [-webkit-user-select:none]"
                     >
                       <div className="relative aspect-[3/5] shrink-0 bg-[var(--media-bg)]">
+                        {newBadgeProductIds.has(item.productId) && (
+                          <span
+                            className="absolute left-[0.35rem] top-[0.35rem] z-[1] rounded-[5px] bg-[color-mix(in_srgb,var(--accent)_92%,transparent)] px-[0.35rem] py-[0.15rem] text-[1rem] font-bold leading-snug text-[var(--card)]"
+                            aria-hidden
+                          >
+                            {zhHant.newBadge}
+                          </span>
+                        )}
                         {item.soldOut && (
                           <span
                             className="absolute right-[0.35rem] top-[0.35rem] z-[1] rounded-[5px] bg-[color-mix(in_srgb,var(--err)_88%,transparent)] px-[0.35rem] py-[0.15rem] text-[0.6875rem] font-bold leading-snug text-[var(--card)]"
