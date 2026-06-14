@@ -18,17 +18,14 @@ function SkeletonLine({ className }: { className?: string }) {
   );
 }
 
-function HomeSkeleton() {
+export function HomeCatalogSkeleton() {
   return (
-    <div className="-mt-1">
-      <div className="mb-6 box-border w-screen max-w-[100vw] [margin-left:calc(50%-50vw)]" aria-hidden>
-        <div className="aspect-video w-full animate-pulse rounded-none border border-[var(--border)] bg-[var(--media-bg)] md:h-[350px] md:rounded-[14px]" />
-      </div>
+    <>
       {[0, 1].map((i) => (
         <section key={i} className="mb-8" aria-hidden>
           <div className="mb-3 flex items-baseline justify-between gap-4">
-            <SkeletonLine className="h-[1.1rem] w-28" />
-            <SkeletonLine className="h-[0.85rem] w-16" />
+            <SkeletonLine className="h-[1.2rem] w-28" />
+            <SkeletonLine className="h-[1rem] w-16" />
           </div>
           <div className="-mx-6 overflow-hidden px-6">
             <ul className="m-0 flex w-max list-none gap-[0.85rem] p-0 pb-2">
@@ -37,9 +34,9 @@ function HomeSkeleton() {
                   key={j}
                   className="flex w-[min(42vw,11rem)] max-w-[11rem] shrink-0 flex-col overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--card)]"
                 >
-                  <div className="aspect-square animate-pulse bg-[var(--media-bg)]" />
+                  <div className="aspect-[3/5] animate-pulse bg-[var(--media-bg)]" />
                   <div className="px-3 pb-2 pt-[0.65rem]">
-                    <SkeletonLine className="h-[0.65rem] w-[85%]" />
+                    <SkeletonLine className="h-[1.65rem] w-[85%]" />
                     <SkeletonLine className="mt-[0.35rem] h-3 w-14" />
                   </div>
                   <span className="mx-[0.65rem] mb-[0.65rem] mt-0 h-[1.85rem] animate-pulse rounded-lg bg-[var(--media-bg)]" />
@@ -49,6 +46,17 @@ function HomeSkeleton() {
           </div>
         </section>
       ))}
+    </>
+  );
+}
+
+function HomeSkeleton() {
+  return (
+    <div className="-mt-1">
+      <div className="mb-6 box-border w-screen max-w-[100vw] [margin-left:calc(50%-50vw)]" aria-hidden>
+        <div className="aspect-video w-full animate-pulse rounded-none border border-[var(--border)] bg-[var(--media-bg)] md:h-[350px] md:rounded-[14px]" />
+      </div>
+      <HomeCatalogSkeleton />
     </div>
   );
 }

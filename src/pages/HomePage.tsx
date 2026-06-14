@@ -24,7 +24,7 @@ import { useDocumentMeta } from "../document-meta.js";
 import { HomeJsonLd } from "../home-schema.js";
 import { PAGE_META } from "../page-meta.js";
 import { SITE_TITLE } from "../site-seo.js";
-import { PageLoadingSkeleton } from "../components/PageLoadingSkeleton.js";
+import { HomeCatalogSkeleton } from "../components/PageLoadingSkeleton.js";
 import { tryToastBadRequest } from "../notify-bad-request.js";
 import { TOAST_DURATION_SHORT_MS, useToast } from "../toast-context.js";
 
@@ -163,114 +163,120 @@ export function HomePage() {
     [cartId, refreshCart, showToast],
   );
 
-  if (loading) return <PageLoadingSkeleton variant="home" />;
-  if (err) return <p className="text-[var(--err)]">{err}</p>;
-
   return (
     <div className="-mt-1">
       <h1 className="sr-only">{SITE_TITLE}</h1>
-      <HomeJsonLd items={availableItems} />
       <HomeBannerCarousel />
 
-      {availableItems.length === 0 ? (
-        <p className="text-[var(--muted)]">{zhHant.noProducts}</p>
+      {loading ? (
+        <HomeCatalogSkeleton />
+      ) : err ? (
+        <p className="text-[var(--err)]">{err}</p>
       ) : (
-        grouped.map(({ groupKey, label, catalogHref, row }, gi) => (
-          <section
-            key={`${gi}-${groupKey}`}
-            className="mb-8 select-none [-webkit-user-select:none]"
-            aria-labelledby={`home-grp-${gi}`}
-          >
-            <div className="mb-3 flex cursor-default items-baseline justify-between gap-4 caret-transparent">
-              <h2
-                className="m-0 select-text text-[1.15rem] font-bold [-webkit-user-select:text]"
-                id={`home-grp-${gi}`}
+        <>
+          <HomeJsonLd items={availableItems} />
+
+          {availableItems.length === 0 ? (
+            <p className="text-[var(--muted)]">{zhHant.noProducts}</p>
+          ) : (
+            grouped.map(({ groupKey, label, catalogHref, row }, gi) => (
+              <section
+                key={`${gi}-${groupKey}`}
+                className="mb-8 select-none [-webkit-user-select:none]"
+                aria-labelledby={`home-grp-${gi}`}
               >
-                {label}
-              </h2>
-              <Link
-                href={catalogHref}
-                className="shrink-0 cursor-pointer select-none text-sm font-semibold text-[var(--accent)] no-underline caret-transparent hover:underline"
-              >
-                {zhHant.homeViewAll}
-              </Link>
-            </div>
-            <div
-              className="-mx-6 cursor-default select-none overflow-x-auto overflow-y-hidden px-6 pb-1 caret-transparent outline-none [-webkit-overflow-scrolling:touch] [-webkit-user-select:none] [scrollbar-width:thin] [scroll-snap-type:x_mandatory] focus-visible:rounded-[10px] focus-visible:shadow-[inset_0_0_0_2px_color-mix(in_srgb,var(--accent)_42%,transparent)]"
-              tabIndex={0}
-              aria-label={homeRailAriaLabel(label)}
-            >
-              <ul className="m-0 flex w-max list-none select-none gap-[0.85rem] p-0 pb-[0.35rem] caret-transparent [-webkit-user-select:none] scroll-ml-0">
-                {row.slice(0, 6).map((item) => (
-                  <li
-                    key={item.productId}
-                    className="flex max-w-[11rem] min-w-0 shrink-0 basis-[min(41vw,11rem)] select-none flex-col overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--card)] caret-transparent [-webkit-user-select:none]"
+                <div className="mb-3 flex cursor-default items-baseline justify-between gap-4 caret-transparent">
+                  <h2
+                    className="m-0 select-text text-[1.15rem] font-bold [-webkit-user-select:text]"
+                    id={`home-grp-${gi}`}
                   >
-                    <Link
-                      href={`/item/${encodeURIComponent(item.slug)}`}
-                      className="flex min-h-0 flex-1 cursor-pointer select-none flex-col text-inherit no-underline caret-transparent [-webkit-user-select:none]"
-                    >
-                      <div className="relative aspect-[3/5] shrink-0 bg-[var(--media-bg)]">
-                        {newBadgeProductIds.has(item.productId) && (
-                          <span
-                            className="absolute left-[0.35rem] top-[0.35rem] z-[1] rounded-[5px] bg-[color-mix(in_srgb,var(--accent)_92%,transparent)] px-[0.35rem] py-[0.15rem] text-[1rem] font-bold leading-snug text-[var(--card)]"
-                            aria-hidden
-                          >
-                            {zhHant.newBadge}
-                          </span>
-                        )}
-                        {item.soldOut && (
-                          <span
-                            className="absolute right-[0.35rem] top-[0.35rem] z-[1] rounded-[5px] bg-[color-mix(in_srgb,var(--err)_88%,transparent)] px-[0.35rem] py-[0.15rem] text-[0.6875rem] font-bold leading-snug text-[var(--card)]"
-                            aria-hidden
-                          >
-                            {zhHant.soldOutBadge}
-                          </span>
-                        )}
-                        {primaryImage(item) ? (
-                          <img
-                            className={cn(
-                              "block h-full w-full object-cover",
-                              item.soldOut && "opacity-72 grayscale-[25%]",
+                    {label}
+                  </h2>
+                  <Link
+                    href={catalogHref}
+                    className="shrink-0 cursor-pointer select-none text-sm font-semibold text-[var(--accent)] no-underline caret-transparent hover:underline"
+                  >
+                    {zhHant.homeViewAll}
+                  </Link>
+                </div>
+                <div
+                  className="-mx-6 cursor-default select-none overflow-x-auto overflow-y-hidden px-6 pb-1 caret-transparent outline-none [-webkit-overflow-scrolling:touch] [-webkit-user-select:none] [scrollbar-width:thin] [scroll-snap-type:x_mandatory] focus-visible:rounded-[10px] focus-visible:shadow-[inset_0_0_0_2px_color-mix(in_srgb,var(--accent)_42%,transparent)]"
+                  tabIndex={0}
+                  aria-label={homeRailAriaLabel(label)}
+                >
+                  <ul className="m-0 flex w-max list-none select-none gap-[0.85rem] p-0 pb-[0.35rem] caret-transparent [-webkit-user-select:none] scroll-ml-0">
+                    {row.slice(0, 6).map((item) => (
+                      <li
+                        key={item.productId}
+                        className="flex max-w-[11rem] min-w-0 shrink-0 basis-[min(41vw,11rem)] select-none flex-col overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--card)] caret-transparent [-webkit-user-select:none]"
+                      >
+                        <Link
+                          href={`/item/${encodeURIComponent(item.slug)}`}
+                          className="flex min-h-0 flex-1 cursor-pointer select-none flex-col text-inherit no-underline caret-transparent [-webkit-user-select:none]"
+                        >
+                          <div className="relative aspect-[3/5] shrink-0 bg-[var(--media-bg)]">
+                            {newBadgeProductIds.has(item.productId) && (
+                              <span
+                                className="absolute left-[0.35rem] top-[0.35rem] z-[1] rounded-[5px] bg-[color-mix(in_srgb,var(--accent)_92%,transparent)] px-[0.35rem] py-[0.15rem] text-[1rem] font-bold leading-snug text-[var(--card)]"
+                                aria-hidden
+                              >
+                                {zhHant.newBadge}
+                              </span>
                             )}
-                            src={primaryImage(item) || ""}
-                            alt={displayTitle(item)}
-                            loading="lazy"
-                          />
-                        ) : null}
-                      </div>
-                      <div className="flex-1 px-3 pb-[0.35rem] pt-[0.65rem]">
-                        <h3 className="mb-1 line-clamp-2 select-text text-[0.8125rem] font-semibold leading-snug [-webkit-user-select:text] min-h-[36px]">
-                          {displayTitle(item)}
-                        </h3>
-                        <ProductPrice
-                          listPrice={item.listPrice}
-                          compareAtPrice={item.compareAtPrice}
-                          size="sm"
-                        />
-                      </div>
-                    </Link>
-                    <button
-                      type="button"
-                      className="mx-[0.65rem] mb-[0.65rem] mt-0 cursor-pointer rounded-lg border border-[var(--accent)] bg-transparent px-[0.55rem] py-[0.4rem] text-[0.8125rem] font-semibold text-[var(--accent)] hover:bg-[color-mix(in_srgb,var(--accent)_16%,transparent)] disabled:cursor-not-allowed disabled:opacity-50"
-                      disabled={adding === item.productId || item.soldOut}
-                      title={
-                        item.soldOut ? zhHant.soldOutAddDisabled : undefined
-                      }
-                      onClick={() => addToCart(item)}
-                    >
-                      {adding === item.productId
-                        ? zhHant.adding
-                        : item.soldOut
-                          ? zhHant.soldOutBadge
-                          : zhHant.addToCart}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </section>
-        ))
+                            {item.soldOut && (
+                              <span
+                                className="absolute right-[0.35rem] top-[0.35rem] z-[1] rounded-[5px] bg-[color-mix(in_srgb,var(--err)_88%,transparent)] px-[0.35rem] py-[0.15rem] text-[0.6875rem] font-bold leading-snug text-[var(--card)]"
+                                aria-hidden
+                              >
+                                {zhHant.soldOutBadge}
+                              </span>
+                            )}
+                            {primaryImage(item) ? (
+                              <img
+                                className={cn(
+                                  "block h-full w-full object-cover",
+                                  item.soldOut && "opacity-72 grayscale-[25%]",
+                                )}
+                                src={primaryImage(item) || ""}
+                                alt={displayTitle(item)}
+                                loading="lazy"
+                              />
+                            ) : null}
+                          </div>
+                          <div className="flex-1 px-3 pb-[0.35rem] pt-[0.65rem]">
+                            <h3 className="mb-1 line-clamp-2 select-text text-[0.8125rem] font-semibold leading-snug [-webkit-user-select:text] min-h-[36px]">
+                              {displayTitle(item)}
+                            </h3>
+                            <ProductPrice
+                              listPrice={item.listPrice}
+                              compareAtPrice={item.compareAtPrice}
+                              size="sm"
+                            />
+                          </div>
+                        </Link>
+                        <button
+                          type="button"
+                          className="mx-[0.65rem] mb-[0.65rem] mt-0 cursor-pointer rounded-lg border border-[var(--accent)] bg-transparent px-[0.55rem] py-[0.4rem] text-[0.8125rem] font-semibold text-[var(--accent)] hover:bg-[color-mix(in_srgb,var(--accent)_16%,transparent)] disabled:cursor-not-allowed disabled:opacity-50"
+                          disabled={adding === item.productId || item.soldOut}
+                          title={
+                            item.soldOut ? zhHant.soldOutAddDisabled : undefined
+                          }
+                          onClick={() => addToCart(item)}
+                        >
+                          {adding === item.productId
+                            ? zhHant.adding
+                            : item.soldOut
+                              ? zhHant.soldOutBadge
+                              : zhHant.addToCart}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </section>
+            ))
+          )}
+        </>
       )}
     </div>
   );
