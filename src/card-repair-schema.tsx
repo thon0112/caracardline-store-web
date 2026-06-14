@@ -1,6 +1,8 @@
 import { WHATSAPP_CHAT_URL } from "./components/WhatsAppFloat.js";
 import { zhHant } from "./locale/zh-Hant.js";
 import { BRAND_NAME, SITE_ORIGIN, type JsonLd } from "./site-seo.js";
+import { buildMerchantReturnPolicy } from "./merchant-return-policy.js";
+import { buildOfferShippingDetails } from "./offer-shipping-details.js";
 
 const CARD_REPAIR_PATH = "/card-repair";
 const CARD_REPAIR_URL = `${SITE_ORIGIN}${CARD_REPAIR_PATH}`;
@@ -108,6 +110,8 @@ export function buildCardRepairJsonLd(
         priceCurrency: "HKD",
       },
       availability: "https://schema.org/InStock",
+      hasMerchantReturnPolicy: buildMerchantReturnPolicy(),
+      shippingDetails: buildOfferShippingDetails(),
     },
     availableChannel: {
       "@type": "ServiceChannel",

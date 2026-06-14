@@ -1,7 +1,7 @@
 import type { CatalogListItem } from "./api.js";
-import { collectProductImageUrls, displayTitle } from "./catalog-helpers.js";
 import { zhHant } from "./locale/zh-Hant.js";
 import { WHATSAPP_CHAT_URL } from "./components/WhatsAppFloat.js";
+import { buildCatalogProductJsonLd } from "./catalog-product-schema.js";
 import {
   BRAND_NAME,
   DEFAULT_OG_IMAGE,
@@ -11,6 +11,7 @@ import {
   SITE_TITLE,
   type JsonLd,
 } from "./site-seo.js";
+import { buildMerchantReturnPolicy } from "./merchant-return-policy.js";
 
 const HOME_URL = `${SITE_ORIGIN}/`;
 const ORGANIZATION_ID = `${SITE_ORIGIN}/#organization`;
@@ -20,10 +21,6 @@ const STORE_ID = `${SITE_ORIGIN}/#store`;
 
 const INSTAGRAM_URL = "https://www.instagram.com/cara.cardline/";
 const THREADS_URL = "https://www.threads.com/@cara.cardline";
-
-function productPageUrl(slug: string): string {
-  return `${SITE_ORIGIN}/item/${encodeURIComponent(slug.trim())}`;
-}
 
 function buildOrganizationJsonLd(): JsonLd {
   return {
@@ -41,6 +38,7 @@ function buildOrganizationJsonLd(): JsonLd {
       availableLanguage: ["zh-Hant"],
       url: WHATSAPP_CHAT_URL,
     },
+    hasMerchantReturnPolicy: buildMerchantReturnPolicy(),
   };
 }
 
@@ -101,26 +99,7 @@ function buildOnlineStoreJsonLd(): JsonLd {
 }
 
 function buildFeaturedProductJsonLd(item: CatalogListItem): JsonLd {
-  const url = productPageUrl(item.slug);
-  const images = collectProductImageUrls(item);
-
-  return {
-    "@type": "Product",
-    name: displayTitle(item),
-    url,
-    sku: item.productId,
-    image: images[0],
-    offers: {
-      "@type": "Offer",
-      url,
-      priceCurrency: "HKD",
-      price: item.listPrice.toFixed(2),
-      availability: item.soldOut
-        ? "https://schema.org/OutOfStock"
-        : "https://schema.org/InStock",
-      seller: { "@id": ORGANIZATION_ID },
-    },
-  };
+  return buildCatalogProductJsonLd(item, { sellerId: ORGANIZATION_ID });
 }
 
 function buildFeaturedItemListJsonLd(

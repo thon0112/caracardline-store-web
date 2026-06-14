@@ -26,6 +26,7 @@ import {
   displayProductType,
   zhHant,
 } from "../locale/zh-Hant.js";
+import { BRAND_NAME } from "../site-seo.js";
 import { WHATSAPP_CHAT_URL } from "./WhatsAppFloat.js";
 
 const INSTAGRAM_URL = "https://www.instagram.com/cara.cardline/";
@@ -140,12 +141,11 @@ export function SiteHeader() {
             className={cn(
               "inline-flex min-w-0 cursor-pointer items-center gap-[0.65rem] select-none font-bold tracking-[0.04em] text-[var(--fg)] no-underline caret-transparent",
             )}
-            aria-label={zhHant.navHome}
           >
             <img
               className="block h-auto w-[145px] md:w-[170px] shrink object-contain"
               src="https://cdn.caracardline.com/assets/logo-with-text.webp"
-              alt=""
+              alt={BRAND_NAME}
               width={1200}
               height={360}
               decoding="async"

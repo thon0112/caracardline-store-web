@@ -41,7 +41,7 @@ export const PAGE_META = {
   },
   about: {
     title: formatPageTitle("關於我們"),
-    description: "關於我們：卡拉卡Line是一家專業的卡牌修復、卡牌回收、卡牌買賣、代鑑代收等。",
+    description: "關於我們：卡拉卡LINE是一家專業的卡牌修復、卡牌回收、卡牌買賣、代鑑代收等。",
     canonicalPath: "/about",
   },
   services: {

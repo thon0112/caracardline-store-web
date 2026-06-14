@@ -337,15 +337,13 @@ export function CatalogPage() {
 
   return (
     <div className="box-border w-full min-w-0 max-w-[68rem]">
-      {!isCardPoolCatalog && (
-        <h1 className="m-0 mb-4 text-[1.75rem] font-bold">
-          {qFromUrl
-            ? zhHant.catalogSearchResultsTitle
-            : activeCatalogTypeCode
-              ? `${zhHant.catalogTitle} · ${displayProductType(activeCatalogTypeCode)}`
-              : zhHant.catalogTitle}
-        </h1>
-      )}
+      <h1 className="m-0 mb-4 text-[1.75rem] font-bold">
+        {qFromUrl
+          ? zhHant.catalogSearchResultsTitle
+          : activeCatalogTypeCode
+            ? `${zhHant.catalogTitle} · ${displayProductType(activeCatalogTypeCode)}`
+            : zhHant.catalogTitle}
+      </h1>
 
       <div className="mb-5 rounded-xl border border-[var(--border)] bg-[var(--card)] px-[1.15rem] py-4">
         <div className="flex max-w-[38rem] flex-row gap-x-3 gap-y-3 flex-wrap min-[800px]:flex-nowrap">
@@ -482,7 +480,7 @@ export function CatalogPage() {
                               : "block h-full w-full object-cover"
                         }
                         src={primaryImage(item) || ""}
-                        alt=""
+                        alt={displayTitle(item)}
                         loading="lazy"
                       />
                     )}

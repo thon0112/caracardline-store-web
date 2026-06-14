@@ -23,6 +23,7 @@ import { ProductPrice } from "../components/ProductPrice.js";
 import { useDocumentMeta } from "../document-meta.js";
 import { HomeJsonLd } from "../home-schema.js";
 import { PAGE_META } from "../page-meta.js";
+import { SITE_TITLE } from "../site-seo.js";
 import { PageLoadingSkeleton } from "../components/PageLoadingSkeleton.js";
 import { tryToastBadRequest } from "../notify-bad-request.js";
 import { TOAST_DURATION_SHORT_MS, useToast } from "../toast-context.js";
@@ -167,6 +168,7 @@ export function HomePage() {
 
   return (
     <div className="-mt-1">
+      <h1 className="sr-only">{SITE_TITLE}</h1>
       <HomeJsonLd items={availableItems} />
       <HomeBannerCarousel />
 
@@ -232,7 +234,7 @@ export function HomePage() {
                               item.soldOut && "opacity-72 grayscale-[25%]",
                             )}
                             src={primaryImage(item) || ""}
-                            alt=""
+                            alt={displayTitle(item)}
                             loading="lazy"
                           />
                         ) : null}
