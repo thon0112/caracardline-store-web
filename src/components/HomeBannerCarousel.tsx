@@ -176,7 +176,7 @@ export function HomeBannerCarousel() {
                   role="tab"
                   aria-selected={i === selectedIndex}
                   className={cn(
-                    "h-[1rem] w-[1rem] cursor-pointer rounded-full border-none bg-[rgba(28,24,21,0.22)] p-0 transition-[width,background-color] duration-150",
+                    "h-[1rem] w-[1rem] cursor-pointer rounded-full border-none bg-[rgba(28,24,21,0.22)] p-2 transition-[width,background-color] duration-150",
                     i === selectedIndex && "w-[1.35rem] bg-[var(--accent)]",
                   )}
                   aria-label={`${zhHant.homeBannerSlide} ${i + 1}：${b.alt}`}
