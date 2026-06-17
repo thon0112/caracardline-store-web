@@ -89,3 +89,26 @@ body {
     transform: translateY(0);
   }
 }
+
+@keyframes pool-pick-pop {
+  0% {
+    transform: scale(0.9);
+  }
+  45% {
+    transform: scale(1.08);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes pool-pick-ring {
+  0% {
+    opacity: 0.7;
+    transform: scale(0.85);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.35);
+  }
+}

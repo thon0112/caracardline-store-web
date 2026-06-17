@@ -570,7 +570,10 @@ export function ProductPage() {
             compareAtPrice={data.compareAtPrice}
           />
           {isCardPool && (
-            <section className="mb-4 rounded-xl border border-[var(--border)] bg-[var(--card)] p-4">
+            <section
+              data-testid="card-pool"
+              className="mb-4 rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-[0_10px_28px_rgba(28,24,21,0.06)]"
+            >
               <p className="m-0 mb-3 text-xs text-[var(--muted)]">
                 {zhHant.productPoolPickHint(data.pool!.poolSize)}
               </p>
@@ -593,17 +596,30 @@ export function ProductPage() {
                       }
                       onClick={() => togglePoolNumber(n)}
                       className={cn(
-                        "cursor-pointer rounded-md border px-2 py-1.5 text-sm font-semibold transition-colors",
+                        "group relative cursor-pointer overflow-hidden rounded-lg border px-2 py-1.5 text-sm font-semibold transition-[background-color,border-color,box-shadow] duration-200 ease-out hover:-translate-y-[1px] hover:shadow-[0_12px_26px_rgba(28,24,21,0.10)] motion-reduce:transition-none motion-reduce:hover:translate-y-0",
                         sold
                           ? "cursor-not-allowed border-[var(--border)] bg-[color-mix(in_srgb,var(--muted)_15%,var(--card))] text-[var(--muted)] line-through opacity-70"
                           : inCart
                             ? "border-[var(--accent)] bg-[color-mix(in_srgb,var(--accent)_22%,var(--card))] text-[var(--accent)] ring-2 ring-[color-mix(in_srgb,var(--accent)_45%,transparent)]"
                             : selected
-                              ? "border-[var(--accent)] bg-[color-mix(in_srgb,var(--accent)_15%,var(--card))] text-[var(--accent)]"
+                              ? "animate-[pool-pick-pop_0.34s_cubic-bezier(0.34,1.4,0.64,1)] border-[var(--accent)] bg-[var(--accent)] text-white shadow-[0_8px_20px_rgba(154,85,48,0.28)] motion-reduce:animate-none"
                               : "border-[var(--border)] bg-transparent text-[var(--fg)] hover:border-[var(--accent)]",
                       )}
                     >
-                      {n}
+                      {selected && !sold && !inCart ? (
+                        <span
+                          aria-hidden
+                          className="pointer-events-none absolute inset-0 rounded-[inherit] animate-[pool-pick-ring_0.45s_ease-out] motion-reduce:animate-none"
+                        />
+                      ) : null}
+                      <span
+                        className={cn(
+                          "pointer-events-none relative inline-flex flex-col items-center leading-none transition-transform duration-200 motion-reduce:transition-none",
+                          selected && !sold && !inCart && "scale-105 motion-reduce:scale-100",
+                        )}
+                      >
+                        <span>{n}</span>
+                      </span>
                     </button>
                   );
                 })}
