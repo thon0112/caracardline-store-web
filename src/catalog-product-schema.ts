@@ -11,6 +11,10 @@ import {
 import { BRAND_NAME, SITE_ORIGIN, type JsonLd } from "./site-seo.js";
 import { buildMerchantReturnPolicy } from "./merchant-return-policy.js";
 import { buildOfferShippingDetails } from "./offer-shipping-details.js";
+import {
+  looksLikeProductDescriptionHtml,
+  plainTextFromProductDescription,
+} from "./product-description.js";
 
 /** Manufacturer brand for PTCG / Pokemon products (Google global identifier). */
 const PTCG_MANUFACTURER_BRAND = "Pokemon";
@@ -48,7 +52,15 @@ export function schemaItemCondition(
 }
 
 export function buildProductDescription(data: CatalogListItem): string {
-  if (data.description?.trim()) return data.description.trim();
+  if (data.description?.trim()) {
+    const raw = data.description.trim();
+    if (looksLikeProductDescriptionHtml(raw)) {
+      const plain = plainTextFromProductDescription(raw);
+      if (plain) return plain;
+    } else {
+      return raw;
+    }
+  }
 
   const parts = [
     displayTitle(data),

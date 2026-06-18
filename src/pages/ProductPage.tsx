@@ -20,6 +20,7 @@ import { useDocumentMeta } from "../document-meta.js";
 import { PAGE_META, productMeta } from "../page-meta.js";
 import { ProductJsonLd } from "../product-schema.js";
 import { PageLoadingSkeleton } from "../components/PageLoadingSkeleton.js";
+import { ProductDescription } from "../components/ProductDescription.js";
 import { ProductPrice } from "../components/ProductPrice.js";
 import { tryToastBadRequest } from "../notify-bad-request.js";
 import { TOAST_DURATION_SHORT_MS, useToast } from "../toast-context.js";
@@ -511,7 +512,9 @@ export function ProductPage() {
     data.card?.collection,
     data.card?.rare,
     data.condition && `${data.condition}`,
-    displayProductType(data.productType),
+    data.productType !== "card_pool"
+      ? displayProductType(data.productType)
+      : null,
   ]
     .filter(Boolean)
     .join(" · ");
@@ -530,7 +533,7 @@ export function ProductPage() {
       >
         ← {zhHant.productBackCatalog}
       </Link>
-      <div className="grid select-none gap-8 caret-transparent [-webkit-user-select:none] max-[720px]:grid-cols-1 md:grid-cols-3 [&_code]:select-text [&_h1]:select-text [&_p]:select-text">
+      <div className="grid select-none gap-8 caret-transparent [-webkit-user-select:none] max-[720px]:grid-cols-1 md:grid-cols-3 [&_.product-description]:select-text [&_code]:select-text [&_h1]:select-text [&_p]:select-text">
         <div className="relative md:col-span-1">
           {data.soldOut && (
             <span
@@ -550,11 +553,7 @@ export function ProductPage() {
         <div className="md:col-span-2">
           <h1 className="m-0 mb-2 text-[1.75rem] font-bold">{data.title}</h1>
           {subtitle && <p className="text-[var(--muted)]">{subtitle}</p>}
-          {data.description && (
-            <p className="m-0 mb-6 mt-3 max-w-[42rem] whitespace-pre-line">
-              {data.description}
-            </p>
-          )}
+          {data.description && <ProductDescription text={data.description} />}
           {data.psaId && (
             <p className="text-sm text-[var(--muted)]">
               {zhHant.productPsaId}：
