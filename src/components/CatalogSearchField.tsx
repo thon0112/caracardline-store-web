@@ -91,7 +91,7 @@ export function CatalogSearchField({
             "placeholder:text-[color-mix(in_srgb,var(--muted)_85%,transparent)]",
             "[&::-webkit-search-cancel-button]:hidden [&::-webkit-search-cancel-button]:appearance-none",
             "[&::-webkit-search-decoration]:hidden",
-            compact ? "text-[0.9375rem]" : "text-base",
+            "text-base",
           )}
           value={value}
           onChange={(e) => onChange(e.target.value)}
