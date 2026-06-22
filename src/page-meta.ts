@@ -125,8 +125,8 @@ export function catalogPageMeta(
 export function catalogSearchMeta(query: string): DocumentMeta {
   const q = query.trim();
   return {
-    title: formatPageTitle(`PLACEHOLDER: ${q}`),
-    description: `PLACEHOLDER: ${q}`,
+    title: formatPageTitle(zhHant.catalogSearchMetaTitle(q)),
+    description: zhHant.catalogSearchMetaDescription(q),
     canonicalPath: `/catalog?q=${encodeURIComponent(q)}`,
   };
 }

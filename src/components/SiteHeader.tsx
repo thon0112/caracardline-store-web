@@ -4,7 +4,6 @@ import {
   faBars,
   faBriefcase,
   faCartShopping,
-  faFileLines,
   faHouse,
   faScrewdriverWrench,
   faTableCells,
@@ -12,7 +11,6 @@ import {
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import {
-  faInstagram,
   faThreads,
   faWhatsapp,
 } from "@fortawesome/free-brands-svg-icons";
@@ -28,8 +26,12 @@ import {
 } from "../locale/zh-Hant.js";
 import { BRAND_NAME } from "../site-seo.js";
 import { WHATSAPP_CHAT_URL } from "./WhatsAppFloat.js";
+import {
+  HeaderSearchDesktop,
+  HeaderSearchMobile,
+  HeaderSearchProvider,
+} from "./HeaderSearch.js";
 
-const INSTAGRAM_URL = "https://www.instagram.com/cara.cardline/";
 const THREADS_URL = "https://www.threads.com/@cara.cardline";
 
 function HeaderIcon({
@@ -62,6 +64,8 @@ export function SiteHeader() {
   const drawerId = useId();
   const catalogNavRef = useRef<HTMLDivElement>(null);
   const [catalogSubmenuDismissed, setCatalogSubmenuDismissed] = useState(false);
+  const servicesNavRef = useRef<HTMLDivElement>(null);
+  const [servicesSubmenuDismissed, setServicesSubmenuDismissed] = useState(false);
 
   const closeMenu = useCallback(() => setMenuOpen(false), []);
   const toggleMenu = useCallback(() => setMenuOpen((o) => !o), []);
@@ -73,6 +77,19 @@ export function SiteHeader() {
   const dismissCatalogSubmenu = useCallback(() => {
     setCatalogSubmenuDismissed(true);
     const root = catalogNavRef.current;
+    const ae = document.activeElement;
+    if (root && ae instanceof HTMLElement && root.contains(ae)) {
+      ae.blur();
+    }
+  }, []);
+
+  const clearServicesSubmenuDismissed = useCallback(() => {
+    setServicesSubmenuDismissed(false);
+  }, []);
+
+  const dismissServicesSubmenu = useCallback(() => {
+    setServicesSubmenuDismissed(true);
+    const root = servicesNavRef.current;
     const ae = document.activeElement;
     if (root && ae instanceof HTMLElement && root.contains(ae)) {
       ae.blur();
@@ -120,7 +137,8 @@ export function SiteHeader() {
         "sticky top-0 left-0 right-0 z-50 mb-4 select-none border-b border-[var(--border)] bg-[var(--bg)] pb-2 pt-[calc(0.5rem+env(safe-area-inset-top,0px))]",
       )}
     >
-      <div className="relative z-[2] flex min-h-10 cursor-default items-center justify-between gap-4 max-[767px]:justify-start">
+      <HeaderSearchProvider>
+      <div className="relative z-[2] flex min-h-10 w-full cursor-default items-center gap-3 max-[767px]:justify-start md:gap-4">
         <button
           type="button"
           className={cn(
@@ -152,13 +170,15 @@ export function SiteHeader() {
             />
           </Link>
         </div>
-        <Link
-          href="/cart"
-          className={cn(
-            "relative ml-auto hidden h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-[10px] border border-[var(--border)] bg-[var(--card)] p-0 leading-none text-[var(--fg)] no-underline select-none caret-transparent max-[767px]:inline-flex",
-            borderHover,
-            "hover:text-[var(--accent)]",
-          )}
+        <div className="ml-auto flex items-center gap-1 md:hidden">
+          <HeaderSearchMobile />
+          <Link
+            href="/cart"
+            className={cn(
+              "relative inline-flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-[10px] border border-[var(--border)] bg-[var(--card)] p-0 leading-none text-[var(--fg)] no-underline select-none caret-transparent",
+              borderHover,
+              "hover:text-[var(--accent)]",
+            )}
           aria-label={
             cartItemCount > 0
               ? `${zhHant.navCart}，${
@@ -178,11 +198,14 @@ export function SiteHeader() {
               {cartItemCount}
             </span>
           ) : null}
-        </Link>
-        <nav
-          className="hidden min-h-10 items-center gap-3 md:flex"
-          aria-label={zhHant.navSiteAria}
-        >
+          </Link>
+        </div>
+        <div className="ml-auto hidden min-h-10 items-center gap-3 md:flex">
+          <HeaderSearchDesktop />
+          <nav
+            className="flex min-h-10 items-center gap-3"
+            aria-label={zhHant.navSiteAria}
+          >
           <div
             ref={catalogNavRef}
             data-dismissed={catalogSubmenuDismissed ? "true" : undefined}
@@ -230,35 +253,45 @@ export function SiteHeader() {
           >
             {zhHant.navCardRepair}
           </Link>
-          <Link
-            href="/services"
-            className="inline-flex select-none items-center gap-1 whitespace-nowrap font-semibold leading-tight text-[var(--fg)] no-underline caret-transparent hover:text-[var(--accent)]"
+          <div
+            ref={servicesNavRef}
+            data-dismissed={servicesSubmenuDismissed ? "true" : undefined}
+            className="group/services relative inline-flex items-stretch self-stretch"
+            onMouseLeave={clearServicesSubmenuDismissed}
           >
-            {zhHant.navOtherServices}
-          </Link>
-          <Link
-            href="/track"
-            className="inline-flex select-none items-center gap-1 whitespace-nowrap font-semibold leading-tight text-[var(--fg)] no-underline caret-transparent hover:text-[var(--accent)]"
-          >
-            {zhHant.navTrackOrder}
-          </Link>
-          <a
-            href={INSTAGRAM_URL}
-            className={cn(
-              "inline-flex select-none items-center gap-1 rounded-[10px] p-[0.35rem] font-semibold leading-none text-[var(--fg)] no-underline caret-transparent hover:bg-[rgba(28,24,21,0.05)] hover:text-[var(--accent)]",
-            )}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={zhHant.navInstagramAria}
-            title={zhHant.navInstagram}
-          >
-            <span
-              className="inline-flex items-center justify-center"
-              aria-hidden
+            <Link
+              href="/services"
+              className="inline-flex h-full select-none items-center self-center gap-1 whitespace-nowrap font-semibold leading-tight text-[var(--fg)] no-underline caret-transparent hover:text-[var(--accent)]"
+              aria-haspopup="true"
+              onMouseEnter={clearServicesSubmenuDismissed}
+              onFocus={clearServicesSubmenuDismissed}
             >
-              <HeaderIcon icon={faInstagram} size={22} />
-            </span>
-          </a>
+              {zhHant.navOtherServices}
+            </Link>
+            <div
+              className={cn(
+                "pointer-events-none invisible absolute left-1/2 top-[100%] z-[60] min-w-[11.5rem] -translate-x-1/2 rounded-xl border border-[var(--border)] bg-[var(--card)] py-[0.35rem] opacity-0 shadow-[0_10px_28px_rgba(28,24,21,0.12)] transition-[opacity,visibility] duration-150 ease-out before:pointer-events-none before:absolute before:bottom-full before:left-0 before:right-0 before:h-[0.45rem] before:content-['']",
+                "group-hover/services:pointer-events-auto group-hover/services:visible group-hover/services:opacity-100",
+                "group-focus-within/services:pointer-events-auto group-focus-within/services:visible group-focus-within/services:opacity-100",
+                "group-data-[dismissed=true]/services:pointer-events-none group-data-[dismissed=true]/services:invisible group-data-[dismissed=true]/services:opacity-0",
+                "motion-reduce:transition-none",
+              )}
+              role="group"
+              aria-label={zhHant.navServicesSubAria}
+            >
+              <ul className="m-0 list-none p-0">
+                <li className="m-0 p-0">
+                  <Link
+                    href="/track"
+                    className="flex whitespace-nowrap px-4 py-[0.55rem] text-[0.9375rem] font-semibold leading-snug text-[var(--muted)] no-underline hover:bg-[rgba(28,24,21,0.05)] hover:text-[var(--accent)]"
+                    onClick={dismissServicesSubmenu}
+                  >
+                    {zhHant.navTrackOrder}
+                  </Link>
+                </li>
+              </ul>
+            </div>
+          </div>
           {showGoogleLogin ? (
             <button
               type="button"
@@ -324,7 +357,8 @@ export function SiteHeader() {
               </span>
             ) : null}
           </Link>
-        </nav>
+          </nav>
+        </div>
       </div>
 
       <button
@@ -425,32 +459,35 @@ export function SiteHeader() {
             </span>
             <span className="min-w-0 flex-1">{zhHant.navCardRepair}</span>
           </Link>
-          <Link
-            href="/services"
-            className="group/drawer flex cursor-pointer items-center gap-[0.65rem] rounded-[10px] px-[0.85rem] py-3 text-base font-semibold text-[var(--fg)] no-underline hover:bg-[rgba(28,24,21,0.05)] hover:text-[var(--accent)]"
-            onClick={closeMenu}
-          >
-            <span
-              className="inline-flex shrink-0 text-[var(--muted)] group-hover/drawer:text-[var(--accent)]"
-              aria-hidden
+          <div className="flex flex-col gap-[0.05rem]">
+            <Link
+              href="/services"
+              className="group/drawer flex cursor-pointer items-center gap-[0.65rem] rounded-[10px] px-[0.85rem] py-3 text-base font-semibold text-[var(--fg)] no-underline hover:bg-[rgba(28,24,21,0.05)] hover:text-[var(--accent)]"
+              onClick={closeMenu}
             >
-              <HeaderIcon icon={faBriefcase} size={20} />
-            </span>
-            <span className="min-w-0 flex-1">{zhHant.navOtherServices}</span>
-          </Link>
-          <Link
-            href="/track"
-            className="group/drawer flex cursor-pointer items-center gap-[0.65rem] rounded-[10px] px-[0.85rem] py-3 text-base font-semibold text-[var(--fg)] no-underline hover:bg-[rgba(28,24,21,0.05)] hover:text-[var(--accent)]"
-            onClick={closeMenu}
-          >
-            <span
-              className="inline-flex shrink-0 text-[var(--muted)] group-hover/drawer:text-[var(--accent)]"
-              aria-hidden
+              <span
+                className="inline-flex shrink-0 text-[var(--muted)] group-hover/drawer:text-[var(--accent)]"
+                aria-hidden
+              >
+                <HeaderIcon icon={faBriefcase} size={20} />
+              </span>
+              <span className="min-w-0 flex-1">{zhHant.navOtherServices}</span>
+            </Link>
+            <ul
+              className="m-0 mb-[0.1rem] list-none p-0"
+              aria-label={zhHant.navServicesSubAria}
             >
-              <HeaderIcon icon={faFileLines} size={20} />
-            </span>
-            <span className="min-w-0 flex-1">{zhHant.navTrackOrder}</span>
-          </Link>
+              <li className="m-0 p-0">
+                <Link
+                  href="/track"
+                  className="flex cursor-pointer items-center rounded-[10px] py-[0.55rem] pl-[2.55rem] pr-[0.85rem] text-[0.9375rem] font-semibold leading-snug text-[var(--muted)] no-underline hover:bg-[rgba(28,24,21,0.05)] hover:text-[var(--accent)]"
+                  onClick={closeMenu}
+                >
+                  {zhHant.navTrackOrder}
+                </Link>
+              </li>
+            </ul>
+          </div>
           {showGoogleLogin ? (
             <button
               type="button"
@@ -513,23 +550,7 @@ export function SiteHeader() {
             {zhHant.footerContact}
           </p>
           <div className="flex flex-wrap items-center gap-[0.35rem]">
-            <a
-              href={INSTAGRAM_URL}
-              className="inline-flex cursor-pointer items-center justify-center rounded-[10px] p-[0.65rem] leading-none text-[var(--muted)] no-underline select-none caret-transparent hover:bg-[rgba(28,24,21,0.05)] hover:text-[var(--accent)]"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={zhHant.navInstagramAria}
-              title={zhHant.navInstagram}
-              onClick={closeMenu}
-            >
-              <span
-                className="inline-flex items-center justify-center"
-                aria-hidden
-              >
-                <HeaderIcon icon={faInstagram} size={22} />
-              </span>
-            </a>
-            <a
+<a
               href={WHATSAPP_CHAT_URL}
               className="inline-flex cursor-pointer items-center justify-center rounded-[10px] p-[0.65rem] leading-none text-[var(--muted)] no-underline select-none caret-transparent hover:bg-[rgba(28,24,21,0.05)] hover:text-[#25d366]"
               target="_blank"
@@ -564,6 +585,7 @@ export function SiteHeader() {
           </div>
         </div>
       </div>
+      </HeaderSearchProvider>
     </header>
   );
 }

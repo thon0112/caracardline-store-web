@@ -33,6 +33,8 @@ export const zhHant = {
   navMenuClose: "關閉選單",
   navDrawerAria: "網站選單",
   navDrawerClose: "關閉選單",
+  navSearchOpen: "開啟搜尋",
+  navSearchClose: "關閉搜尋",
   notFound: "找不到頁面。",
   footerCopyright: (year: number) => `© ${year} Caracardline。保留所有權利。`,
   footerNavAria: "頁尾連結",
@@ -159,6 +161,11 @@ export const zhHant = {
   catalogSearchClear: "清除",
   /** Catalog page `<h1>` when `?q=` is set */
   catalogSearchResultsTitle: "搜尋結果",
+  catalogActiveSearch: (q: string) => `搜尋「${q}」`,
+  catalogSearchSortDisabledHint: "搜尋結果依上架時間排序",
+  catalogSearchMetaTitle: (q: string) => `搜尋「${q}」`,
+  catalogSearchMetaDescription: (q: string) =>
+    `在卡拉卡LINE 搜尋「${q}」相關的 PTCG 卡牌、原盒及周邊商品。`,
   catalogNoSearchResults: (q: string) => `沒有符合「${q}」的商品。`,
   catalogFilterType: "商品類型",
   catalogFilterTypeAll: "全部",

@@ -37,6 +37,10 @@ import { catalogPageMeta } from "../page-meta.js";
 import { tryToastBadRequest } from "../notify-bad-request.js";
 import { TOAST_DURATION_SHORT_MS, useToast } from "../toast-context.js";
 import { isCardPoolEnabled } from "../store-config.js";
+import {
+  catalogSearchParamsFromSubmit,
+  normalizeCatalogSearchQ,
+} from "../catalog-search.js";
 
 const CATALOG_PAGE_LIMIT = 12;
 
@@ -119,11 +123,10 @@ export function CatalogPage() {
     () => normalizeCatalogSort(searchParams.get("sort")),
     [searchParams],
   );
-  const qFromUrl = useMemo(() => {
-    const raw = searchParams.get("q");
-    if (typeof raw !== "string") return "";
-    return raw.trim().slice(0, 200);
-  }, [searchParams]);
+  const qFromUrl = useMemo(
+    () => normalizeCatalogSearchQ(searchParams.get("q")),
+    [searchParams],
+  );
   const availabilityFilter = useMemo(
     () => normalizeCatalogAvailability(searchParams.get("availability")),
     [searchParams],
@@ -133,8 +136,6 @@ export function CatalogPage() {
     [qFromUrl, activeCatalogTypeCode],
   );
   useDocumentMeta(documentMeta);
-
-  const [searchDraft, setSearchDraft] = useState(qFromUrl);
 
   const [items, setItems] = useState<CatalogListItem[]>([]);
   const [nextCursor, setNextCursor] = useState<string | null>(null);
@@ -173,22 +174,8 @@ export function CatalogPage() {
     setSearchParams(p, { replace: true });
   }
 
-  useEffect(() => {
-    setSearchDraft(qFromUrl);
-  }, [qFromUrl]);
-
-  function applySearchFromDraft() {
-    const p = new URLSearchParams(searchParams.toString());
-    const t = searchDraft.trim().slice(0, 200);
-    if (t === "") p.delete("q");
-    else p.set("q", t);
-    setSearchParams(p, { replace: true });
-  }
-
   function clearSearch() {
-    setSearchDraft("");
-    const p = new URLSearchParams(searchParams.toString());
-    p.delete("q");
+    const p = catalogSearchParamsFromSubmit("", searchParams);
     setSearchParams(p, { replace: true });
   }
 
@@ -345,45 +332,24 @@ export function CatalogPage() {
             : zhHant.catalogTitle}
       </h1>
 
-      <div className="mb-5 rounded-xl border border-[var(--border)] bg-[var(--card)] px-[1.15rem] py-4">
-        <div className="flex max-w-[38rem] flex-row gap-x-3 gap-y-3 flex-wrap min-[800px]:flex-nowrap">
-          <form
-            className="min-w-full md:min-w-[350px]"
-            role="search"
-            onSubmit={(e) => {
-              e.preventDefault();
-              applySearchFromDraft();
-            }}
+      {qFromUrl ? (
+        <div className="mb-4 flex flex-wrap items-center gap-x-3 gap-y-1">
+          <p className="m-0 text-sm text-[var(--muted)]">
+            {zhHant.catalogActiveSearch(qFromUrl)}
+          </p>
+          <button
+            type="button"
+            className="cursor-pointer border-0 bg-transparent p-0 text-sm font-semibold text-[var(--accent)] underline-offset-2 hover:underline"
+            onClick={clearSearch}
           >
-            <label
-              className="mb-[0.35rem] block text-sm font-semibold"
-              htmlFor="catalog-search-q"
-            >
-              {zhHant.catalogSearchLabel}
-            </label>
-            <div className="flex gap-1">
-              <input
-                id="catalog-search-q"
-                type="search"
-                enterKeyHint="search"
-                autoComplete="off"
-                maxLength={200}
-                placeholder={zhHant.catalogSearchPlaceholder}
-                className="min-h-[2.5rem] min-w-0 flex-1 rounded-lg border border-[var(--border)] bg-[var(--card)] px-[0.65rem] py-2"
-                value={searchDraft}
-                onChange={(e) => setSearchDraft(e.target.value)}
-              />
-              <div className="flex shrink-0 gap-2">
-                <button
-                  type="submit"
-                  className="min-h-[2.5rem] cursor-pointer rounded-lg border border-[var(--accent)] bg-[var(--accent-fill)] px-[0.85rem] py-2 font-semibold text-[var(--on-accent-fill)] hover:opacity-90"
-                >
-                  {zhHant.catalogSearchSubmit}
-                </button>
-              </div>
-            </div>
-          </form>
-          <div className="md:min-w-[200px] max-w-[calc(60%-6px)]">
+            {zhHant.catalogSearchClear}
+          </button>
+        </div>
+      ) : null}
+
+      <div className="mb-5 rounded-xl border border-[var(--border)] bg-[var(--card)] px-[1.15rem] py-4">
+        <div className="flex max-w-[32rem] flex-row gap-x-3 gap-y-3 flex-wrap sm:flex-nowrap">
+          <div className="min-w-[min(100%,12rem)] flex-1 sm:min-w-[200px]">
             <label
               className="mb-[0.35rem] block text-sm font-semibold"
               htmlFor="catalog-sort"
@@ -391,9 +357,15 @@ export function CatalogPage() {
               {zhHant.catalogSort}
             </label>
             <select
-              className="w-full rounded-lg border border-[var(--border)] bg-[var(--card)] px-[0.65rem] py-2"
+              className="w-full rounded-lg border border-[var(--border)] bg-[var(--card)] px-[0.65rem] py-2 disabled:cursor-not-allowed disabled:opacity-55"
               id="catalog-sort"
               value={sortFilter}
+              disabled={qFromUrl.length > 0}
+              title={
+                qFromUrl.length > 0
+                  ? zhHant.catalogSearchSortDisabledHint
+                  : undefined
+              }
               onChange={(e) => setSortQuery(e.target.value as CatalogSortValue)}
             >
               <option value="date_asc">{zhHant.catalogSortDateAsc}</option>
@@ -402,7 +374,7 @@ export function CatalogPage() {
               <option value="price_desc">{zhHant.catalogSortPriceDesc}</option>
             </select>
           </div>
-          <div className="md:min-w-[200px] max-w-[calc(40%-6px)]">
+          <div className="min-w-[min(100%,12rem)] flex-1 sm:min-w-[200px]">
             <label
               className="mb-[0.35rem] block text-sm font-semibold"
               htmlFor="catalog-filter-availability"

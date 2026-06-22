@@ -68,3 +68,9 @@ export function trackPageView(path: string, title?: string): void {
 
   pendingPageViews.push({ path, title });
 }
+
+export function trackSearch(searchTerm: string): void {
+  const term = searchTerm.trim();
+  if (!term || !measurementId()) return;
+  window.gtag?.("event", "search", { search_term: term });
+}
