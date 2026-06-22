@@ -156,7 +156,7 @@ export const zhHant = {
   catalogTitle: "商品目錄",
   /** Catalog — keyword search (title, SKU, card name, etc.) */
   catalogSearchLabel: "關鍵字搜尋",
-  catalogSearchPlaceholder: "輸入商品名稱、系列",
+  catalogSearchPlaceholder: "輸入名稱、編號、系列（中英文均可）",
   catalogSearchSubmit: "搜尋",
   catalogSearchClear: "清除",
   /** Catalog page `<h1>` when `?q=` is set */

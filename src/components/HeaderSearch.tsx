@@ -233,7 +233,8 @@ export function HeaderSearchDesktop() {
 
   return (
     <div
-      className="hidden w-[15rem] shrink-0 md:block"
+      className="hidden w-[15rem] shrink-0 md:block xl:w-[20rem]"
+ 
       role="search"
       aria-label={zhHant.catalogSearchLabel}
     >
