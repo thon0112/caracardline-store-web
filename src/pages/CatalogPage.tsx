@@ -429,7 +429,7 @@ export function CatalogPage() {
                     className={
                       isCardPoolItem
                         ? "relative aspect-[1050/1300] bg-[var(--media-bg)]"
-                        : "relative aspect-[3/5] bg-[var(--media-bg)]"
+                        : "relative aspect-[3/5] bg-white"
                     }
                   >
                     {item.soldOut && (
