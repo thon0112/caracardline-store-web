@@ -9,6 +9,7 @@ import {
   type CartLine,
 } from "../api.js";
 import { cartHasTakenPoolNumbers, lineHasTakenPoolNumber } from "../cart-pool-conflict.js";
+import { catalogMaxPurchaseQty } from "../catalog-helpers.js";
 import { useCart } from "../cart-context.js";
 import { cn } from "../cn.js";
 import { formatPriceUsd, zhHant } from "../locale/zh-Hant.js";
@@ -28,15 +29,6 @@ function primaryImage(item: CartCatalogItem): string | null {
 
 function displayTitle(item: CartCatalogItem): string {
   return item.title || item.card?.name || zhHant.productFallback;
-}
-
-function maxLineQty(catalog: CartCatalogItem, lineQuantity: number): number {
-  if (catalog.productType === "card_pool") return 1;
-  if (catalog.soldOut) return Math.max(1, lineQuantity);
-  const stockCap = catalog.hideQuantity
-    ? 99
-    : Math.min(99, catalog.availableQuantity ?? 99);
-  return Math.max(1, stockCap);
 }
 
 const cartPageRoot =
@@ -141,7 +133,7 @@ export function CartPage() {
 
   async function setQuantity(line: CartLine, next: number): Promise<boolean> {
     if (!cartId) return false;
-    const max = maxLineQty(line.catalog, line.quantity);
+    const max = catalogMaxPurchaseQty(line.catalog, line.quantity);
     const q = Math.min(max, Math.max(1, next));
     if (q === line.quantity) return true;
     setActionErr(null);
@@ -295,7 +287,7 @@ export function CartPage() {
       <ul className="m-0 mt-4 list-none p-0">
         {lines.map((line) => {
           const img = primaryImage(line.catalog);
-          const max = maxLineQty(line.catalog, line.quantity);
+          const max = catalogMaxPurchaseQty(line.catalog, line.quantity);
           const busy = busyLineId === line.lineId;
           const lineTotal = line.quantity * line.catalog.listPrice;
           const soldOut = line.catalog.soldOut;

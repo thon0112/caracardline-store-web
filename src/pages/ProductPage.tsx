@@ -9,7 +9,7 @@ import {
   isApiError,
 } from "../api.js";
 import { useCart } from "../cart-context.js";
-import { collectProductImageUrls } from "../catalog-helpers.js";
+import { collectProductImageUrls, catalogMaxPurchaseQty, showProductQtySelector } from "../catalog-helpers.js";
 import { cn } from "../cn.js";
 import {
   displayProductType,
@@ -252,12 +252,14 @@ function ProductImageGallery({
               className="relative flex max-h-[100dvh] max-w-[min(100vw,1600px)] flex-col items-center justify-center"
               onClick={(e) => e.stopPropagation()}
             >
-              <img
-                src={lightboxSrc}
-                alt={imageAlt}
-                className="max-h-[85dvh] w-auto max-w-full object-contain"
-                draggable={false}
-              />
+              <div className="rounded-lg bg-white p-2 shadow-lg md:p-4">
+                <img
+                  src={lightboxSrc}
+                  alt={imageAlt}
+                  className="max-h-[85dvh] w-auto max-w-full object-contain"
+                  draggable={false}
+                />
+              </div>
               {n > 1 && (
                 <p className="mt-3 text-center text-sm text-white/80">
                   {lightboxIndex + 1} / {n}
@@ -308,6 +310,98 @@ function ProductImageGallery({
   );
 }
 
+function digitsOnly(raw: string): string {
+  return raw.replace(/\D/g, "");
+}
+
+function ProductQtySelector({
+  value,
+  max,
+  disabled,
+  onChange,
+}: {
+  value: number;
+  max: number;
+  disabled?: boolean;
+  onChange: (next: number) => void;
+}) {
+  const [draft, setDraft] = useState(() => String(value));
+  const [focused, setFocused] = useState(false);
+
+  useEffect(() => {
+    if (!focused) {
+      setDraft(String(value));
+    }
+  }, [value, focused]);
+
+  function commitDraft(raw: string) {
+    const digits = digitsOnly(raw);
+    if (digits === "") {
+      setDraft(String(value));
+      return;
+    }
+    const parsed = Number.parseInt(digits, 10);
+    if (!Number.isFinite(parsed)) {
+      setDraft(String(value));
+      return;
+    }
+    const q = Math.min(max, Math.max(1, parsed));
+    onChange(q);
+    setDraft(String(q));
+  }
+
+  return (
+    <div
+      className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-2"
+      data-testid="product-qty-selector"
+    >
+      <span className="text-sm font-semibold">{zhHant.catalogAddQtyLabel}</span>
+      <div className="flex items-center gap-2">
+        <button
+          type="button"
+          className="h-8 w-8 cursor-pointer rounded-md border border-[var(--border)] bg-[var(--card)] p-0 text-base font-semibold leading-none text-[var(--fg)] hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-40"
+          disabled={disabled || value <= 1}
+          aria-label={zhHant.cartDecreaseAria}
+          onClick={() => onChange(Math.max(1, value - 1))}
+        >
+          −
+        </button>
+        <input
+          type="text"
+          inputMode="numeric"
+          autoComplete="off"
+          aria-label={zhHant.cartQtyAria}
+          disabled={disabled}
+          value={draft}
+          onFocus={() => setFocused(true)}
+          onBlur={(e) => {
+            setFocused(false);
+            commitDraft(e.currentTarget.value);
+          }}
+          onChange={(e) => {
+            let next = digitsOnly(e.target.value);
+            if (next.length > 2) next = next.slice(0, 2);
+            setDraft(next);
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") (e.currentTarget as HTMLInputElement).blur();
+          }}
+          className="qty-input h-8 w-10 rounded-md border border-[var(--border)] bg-[var(--card)] px-0.5 text-center text-base font-semibold tabular-nums text-[var(--fg)] outline-none select-text [-webkit-user-select:text] caret-auto focus:border-[var(--accent)] focus:ring-1 focus:ring-[color-mix(in_srgb,var(--accent)_45%,transparent)] disabled:cursor-not-allowed disabled:opacity-40"
+        />
+        <button
+          type="button"
+          className="h-8 w-8 cursor-pointer rounded-md border border-[var(--border)] bg-[var(--card)] p-0 text-base font-semibold leading-none text-[var(--fg)] hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-40"
+          disabled={disabled || value >= max}
+          aria-label={zhHant.cartIncreaseAria}
+          onClick={() => onChange(Math.min(max, value + 1))}
+        >
+          +
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export function ProductPage() {
   const { showToast } = useToast();
   const params = useParams();
@@ -320,6 +414,7 @@ export function ProductPage() {
   const [adding, setAdding] = useState(false);
   /** Sorted unique pool numbers (multi-select). */
   const [selectedPoolNumbers, setSelectedPoolNumbers] = useState<number[]>([]);
+  const [quantity, setQuantity] = useState(1);
   const [cartId, setCartId] = useState<string | null>(() =>
     localStorage.getItem("sf_cart_id"),
   );
@@ -358,6 +453,7 @@ export function ProductPage() {
         if (!cancelled) {
           setData(row);
           setSelectedPoolNumbers([]);
+          setQuantity(1);
           setErr(null);
         }
       } catch (e) {
@@ -403,9 +499,10 @@ export function ProductPage() {
       setAdding(true);
       const cid = await ensureCart();
       if (!isCardPool) {
+        const qty = showProductQtySelector(data) ? quantity : 1;
         await addCartItem(cid, {
           productId: data.productId,
-          quantity: 1,
+          quantity: qty,
         });
         await refreshCart();
         showToast(zhHant.addToCartSuccess, TOAST_DURATION_SHORT_MS);
@@ -519,6 +616,8 @@ export function ProductPage() {
     .filter(Boolean)
     .join(" · ");
   const isCardPool = data.productType === "card_pool" && data.pool != null;
+  const showQtySelector = showProductQtySelector(data);
+  const maxPurchaseQty = catalogMaxPurchaseQty(data, quantity);
   const soldNumbers = new Set(data.pool?.soldNumbers ?? []);
   const allNumbers = isCardPool
     ? Array.from({ length: data.pool!.poolSize }, (_, i) => i + 1)
@@ -634,6 +733,14 @@ export function ProductPage() {
           )}
           {data.soldOut && (
             <p className="mt-2 text-[var(--muted)]">{zhHant.productSoldOut}</p>
+          )}
+          {showQtySelector && (
+            <ProductQtySelector
+              value={quantity}
+              max={maxPurchaseQty}
+              disabled={adding}
+              onChange={setQuantity}
+            />
           )}
           <button
             type="button"
