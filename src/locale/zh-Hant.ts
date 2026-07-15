@@ -205,7 +205,7 @@ export const zhHant = {
   /** Shown instead of list price when product uses ask-for-price. */
   askForPriceLabel: "售價請查詢",
   /** Button replacing add-to-cart for ask-for-price products. */
-  askForPriceCta: "WhatsApp 查詢價錢",
+  askForPriceCta: "WhatsApp 查詢",
   /** Shown briefly after a product is added from listing or detail. */
   addToCartSuccess: "已成功加入購物車。",
   /** Catalog — modal before POST; choose qty then confirm. */
