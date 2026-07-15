@@ -48,6 +48,8 @@ export type CatalogListItem = {
   compareAtPrice?: number | null;
   /** Mirrors store-worker: not purchasable (listed after in-stock items). */
   soldOut: boolean;
+  /** Hide price and block add-to-cart; WhatsApp inquiry instead. */
+  askForPrice?: boolean;
   hideQuantity: boolean;
   /** Omitted when `hideQuantity` is true. */
   availableQuantity?: number;

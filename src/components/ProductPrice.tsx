@@ -22,12 +22,22 @@ const compareClass: Record<ProductPriceSize, string> = {
 export function ProductPrice({
   listPrice,
   compareAtPrice,
+  askForPrice = false,
   size = "md",
   className,
 }: Pick<CatalogListItem, "listPrice" | "compareAtPrice"> & {
+  askForPrice?: boolean;
   size?: ProductPriceSize;
   className?: string;
 }) {
+  if (askForPrice) {
+    return (
+      <div className={cn(className)}>
+        <span className={saleClass[size]}>{zhHant.askForPriceLabel}</span>
+      </div>
+    );
+  }
+
   const showCompareAt = shouldShowCompareAtPrice(compareAtPrice, listPrice);
 
   return (

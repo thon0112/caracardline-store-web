@@ -20,6 +20,7 @@ import { useDocumentMeta } from "../document-meta.js";
 import { PAGE_META, productMeta } from "../page-meta.js";
 import { ProductJsonLd } from "../product-schema.js";
 import { PageLoadingSkeleton } from "../components/PageLoadingSkeleton.js";
+import { AskForPriceWhatsAppButton } from "../components/AskForPriceWhatsAppButton.js";
 import { ProductDescription } from "../components/ProductDescription.js";
 import { ProductPrice } from "../components/ProductPrice.js";
 import { tryToastBadRequest } from "../notify-bad-request.js";
@@ -490,6 +491,7 @@ export function ProductPage() {
 
   async function addToCart() {
     if (!data) return;
+    if (data.askForPrice) return;
     const isCardPool = data.productType === "card_pool" && data.pool != null;
     if (isCardPool && selectedPoolNumbers.length === 0) {
       showToast(zhHant.productPoolSelectRequired, TOAST_DURATION_SHORT_MS);
@@ -666,8 +668,9 @@ export function ProductPage() {
             size="lg"
             listPrice={data.listPrice}
             compareAtPrice={data.compareAtPrice}
+            askForPrice={data.askForPrice === true}
           />
-          {isCardPool && (
+          {isCardPool && !data.askForPrice && (
             <section
               data-testid="card-pool"
               className="mb-4 rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-[0_10px_28px_rgba(28,24,21,0.06)]"
@@ -731,10 +734,10 @@ export function ProductPage() {
               )}
             </section>
           )}
-          {data.soldOut && (
+          {data.soldOut && !data.askForPrice && (
             <p className="mt-2 text-[var(--muted)]">{zhHant.productSoldOut}</p>
           )}
-          {showQtySelector && (
+          {showQtySelector && !data.askForPrice && (
             <ProductQtySelector
               value={quantity}
               max={maxPurchaseQty}
@@ -742,6 +745,13 @@ export function ProductPage() {
               onChange={setQuantity}
             />
           )}
+          {data.askForPrice ? (
+            <AskForPriceWhatsAppButton
+              title={data.title}
+              slug={data.slug}
+              className="mb-4 mt-3"
+            />
+          ) : (
           <button
             type="button"
             className="mb-4 mt-3 cursor-pointer rounded-lg border border-[var(--accent)] bg-transparent px-[0.85rem] py-2 font-semibold text-[var(--accent)] hover:bg-[color-mix(in_srgb,var(--accent)_16%,transparent)] disabled:cursor-not-allowed disabled:opacity-50"
@@ -761,6 +771,7 @@ export function ProductPage() {
                   ? zhHant.productPoolAddToCartMany(selectedPoolNumbers.length)
                   : zhHant.addToCart}
           </button>
+          )}
         </div>
       </div>
     </article>

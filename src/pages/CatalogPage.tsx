@@ -32,6 +32,7 @@ import {
 } from "../locale/zh-Hant.js";
 import { useDocumentMeta } from "../document-meta.js";
 import { PageLoadingSkeleton } from "../components/PageLoadingSkeleton.js";
+import { AskForPriceWhatsAppButton } from "../components/AskForPriceWhatsAppButton.js";
 import { ProductPrice } from "../components/ProductPrice.js";
 import { catalogPageMeta } from "../page-meta.js";
 import { tryToastBadRequest } from "../notify-bad-request.js";
@@ -299,6 +300,7 @@ export function CatalogPage() {
   }
 
   async function addToCart(item: CatalogListItem) {
+    if (item.askForPrice) return;
     try {
       setAdding(item.productId);
       const id = await ensureCart();
@@ -467,6 +469,7 @@ export function CatalogPage() {
                       <ProductPrice
                         listPrice={item.listPrice}
                         compareAtPrice={item.compareAtPrice}
+                        askForPrice={item.askForPrice === true}
                         size={isCardPoolItem ? "pool" : "sm"}
                       />
                       {isCardPoolItem && item.pool != null && (
@@ -477,7 +480,14 @@ export function CatalogPage() {
                     </div>
                   </div>
                 </Link>
-                {!isCardPoolItem && (
+                {!isCardPoolItem &&
+                  (item.askForPrice ? (
+                    <AskForPriceWhatsAppButton
+                      title={displayTitle(item)}
+                      slug={item.slug}
+                      className="mx-4 mb-4 mt-3"
+                    />
+                  ) : (
                   <button
                     type="button"
                     className="mx-4 mb-4 mt-3 cursor-pointer rounded-lg border border-[var(--accent)] bg-transparent px-[0.85rem] py-2 font-semibold text-[var(--accent)] hover:bg-[color-mix(in_srgb,var(--accent)_16%,transparent)] disabled:cursor-not-allowed disabled:opacity-50"
@@ -495,7 +505,7 @@ export function CatalogPage() {
                         ? zhHant.soldOutBadge
                         : zhHant.addToCart}
                   </button>
-                )}
+                  ))}
               </li>
             );
             })}

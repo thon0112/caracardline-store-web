@@ -1,6 +1,19 @@
 import { zhHant } from "../locale/zh-Hant.js";
+import { SITE_ORIGIN } from "../site-seo.js";
 
 export const WHATSAPP_CHAT_URL = "https://wa.me/85255053984";
+
+/** Prefills a product price inquiry with title + product page URL. */
+export function buildAskForPriceWhatsAppUrl(
+  title: string,
+  slug: string,
+): string {
+  const productUrl = `${SITE_ORIGIN}/item/${encodeURIComponent(slug.trim())}`;
+  const text = encodeURIComponent(
+    `你好，想查詢以下商品價錢：\n${title.trim()}\n${productUrl}`,
+  );
+  return `${WHATSAPP_CHAT_URL}?text=${text}`;
+}
 
 function IconWhatsApp({ size = 33.6 }: { size?: number }) {
   return (

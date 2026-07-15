@@ -19,6 +19,7 @@ import {
   zhHant,
 } from "../locale/zh-Hant.js";
 import { HomeBannerCarousel } from "../components/HomeBannerCarousel.js";
+import { AskForPriceWhatsAppButton } from "../components/AskForPriceWhatsAppButton.js";
 import { ProductPrice } from "../components/ProductPrice.js";
 import { useDocumentMeta } from "../document-meta.js";
 import { HomeJsonLd } from "../home-schema.js";
@@ -146,6 +147,7 @@ export function HomePage() {
 
   const addToCart = useCallback(
     async (item: CatalogListItem) => {
+      if (item.askForPrice) return;
       try {
         setAdding(item.productId);
         const id = await ensureCart();
@@ -250,10 +252,18 @@ export function HomePage() {
                             <ProductPrice
                               listPrice={item.listPrice}
                               compareAtPrice={item.compareAtPrice}
+                              askForPrice={item.askForPrice === true}
                               size="sm"
                             />
                           </div>
                         </Link>
+                        {item.askForPrice ? (
+                          <AskForPriceWhatsAppButton
+                            title={displayTitle(item)}
+                            slug={item.slug}
+                            className="mx-[0.65rem] mb-[0.65rem] mt-0 px-[0.55rem] py-[0.4rem] text-[0.8125rem]"
+                          />
+                        ) : (
                         <button
                           type="button"
                           className="mx-[0.65rem] mb-[0.65rem] mt-0 cursor-pointer rounded-lg border border-[var(--accent)] bg-transparent px-[0.55rem] py-[0.4rem] text-[0.8125rem] font-semibold text-[var(--accent)] hover:bg-[color-mix(in_srgb,var(--accent)_16%,transparent)] disabled:cursor-not-allowed disabled:opacity-50"
@@ -269,6 +279,7 @@ export function HomePage() {
                               ? zhHant.soldOutBadge
                               : zhHant.addToCart}
                         </button>
+                        )}
                       </li>
                     ))}
                   </ul>

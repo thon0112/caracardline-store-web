@@ -125,12 +125,13 @@ export function buildProductOfferJsonLd(
   options?: { sellerId?: string },
 ): JsonLd {
   const url = productPageUrl(data.slug);
+  const askForPrice = data.askForPrice === true;
 
   return {
     "@type": "Offer",
     url,
     priceCurrency: "HKD",
-    price: data.listPrice.toFixed(2),
+    ...(askForPrice ? {} : { price: data.listPrice.toFixed(2) }),
     availability: data.soldOut
       ? "https://schema.org/OutOfStock"
       : "https://schema.org/InStock",

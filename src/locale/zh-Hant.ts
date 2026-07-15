@@ -202,6 +202,10 @@ export const zhHant = {
   soldOutBadge: "售罄",
   newBadge: "新品",
   soldOutAddDisabled: "此商品已售罄。",
+  /** Shown instead of list price when product uses ask-for-price. */
+  askForPriceLabel: "售價請查詢",
+  /** Button replacing add-to-cart for ask-for-price products. */
+  askForPriceCta: "WhatsApp 查詢價錢",
   /** Shown briefly after a product is added from listing or detail. */
   addToCartSuccess: "已成功加入購物車。",
   /** Catalog — modal before POST; choose qty then confirm. */
