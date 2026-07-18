@@ -36,7 +36,7 @@ export const PAGE_META = {
     canonicalPath: "/catalog/accessory",
   },
   catalogCardPool: {
-    title: formatPageTitle("卡拉福袋"),
+    title: formatPageTitle("卡拉卡池 & 卡拉福袋"),
     canonicalPath: "/catalog/card_pool",
   },
   about: {

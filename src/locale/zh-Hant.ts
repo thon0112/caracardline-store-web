@@ -142,7 +142,7 @@ export const zhHant = {
   cardRepairTitle: "專業卡牌修復服務",
   cardRepairLede:
     "以下展示部分修復前後對比案例（Before / After）。每張卡的受損程度與材質不同，實際效果以評估為準；如需報價與流程，請 WhatsApp 聯絡我們。",
-  cardRepairCtaWhatsApp: "WhatsApp 查詢",
+  cardRepairCtaWhatsApp: "WhatsApp查詢",
   cardRepairCtaHint: "（建議附上卡牌正反面清晰照片）",
   cardRepairBefore: "修復前",
   cardRepairAfter: "修復後",
@@ -205,7 +205,7 @@ export const zhHant = {
   /** Shown instead of list price when product uses ask-for-price. */
   askForPriceLabel: "售價請查詢",
   /** Button replacing add-to-cart for ask-for-price products. */
-  askForPriceCta: "WhatsApp 查詢",
+  askForPriceCta: "WhatsApp查詢",
   /** Shown briefly after a product is added from listing or detail. */
   addToCartSuccess: "已成功加入購物車。",
   /** Catalog — modal before POST; choose qty then confirm. */
@@ -450,7 +450,7 @@ const PRODUCT_TYPE_LABELS: Record<string, string> = {
   booster_box: "PTCG 原盒",
   card: "單卡",
   accessory: "周邊",
-  card_pool: "卡拉福袋",
+  card_pool: "卡拉卡池 & 卡拉福袋",
 };
 
 /** Ordered for hamburger nav and `/catalog/:type` paths. */
