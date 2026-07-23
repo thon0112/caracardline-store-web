@@ -310,7 +310,9 @@ export function OrderPage() {
         <p className="m-0 mb-[0.4rem] select-text leading-snug [-webkit-user-select:text]">
           <strong>{zhHant.orderStatus}</strong> {statusLabel}
         </p>
-        {deadline && showFpsBlock && order.reservationExpiresAt && (
+        {deadline &&
+          order.status === "awaiting_payment" &&
+          order.reservationExpiresAt && (
           <div
             role="status"
             className="mb-[0.75rem] max-w-full select-text overflow-hidden rounded-lg border border-[#b6effb] bg-[#cff4fc] px-[1rem] py-[0.85rem] text-[#055160] shadow-[0_0.125rem_0.25rem_rgba(5,81,96,0.075)] [-webkit-user-select:text] md:px-[1.15rem] md:py-[0.95rem]"
