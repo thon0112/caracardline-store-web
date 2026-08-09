@@ -9,7 +9,12 @@ import {
   isApiError,
 } from "../api.js";
 import { useCart } from "../cart-context.js";
-import { collectProductImageUrls, catalogMaxPurchaseQty, showProductQtySelector } from "../catalog-helpers.js";
+import {
+  catalogMaxPurchaseQty,
+  collectProductImageUrls,
+  isCatalogItemReleased,
+  showProductQtySelector,
+} from "../catalog-helpers.js";
 import { cn } from "../cn.js";
 import {
   displayProductType,
@@ -23,9 +28,11 @@ import { PageLoadingSkeleton } from "../components/PageLoadingSkeleton.js";
 import { AskForPriceWhatsAppButton } from "../components/AskForPriceWhatsAppButton.js";
 import { ProductDescription } from "../components/ProductDescription.js";
 import { ProductPrice } from "../components/ProductPrice.js";
+import { ReleaseCountdown } from "../components/ReleaseCountdown.js";
 import { tryToastBadRequest } from "../notify-bad-request.js";
 import { TOAST_DURATION_SHORT_MS, useToast } from "../toast-context.js";
 import { isCardPoolEnabled } from "../store-config.js";
+import { useCountdown } from "../use-countdown.js";
 
 function isProductSlugParam(raw: string | undefined): raw is string {
   return typeof raw === "string" && raw.trim().length > 0;
@@ -492,6 +499,10 @@ export function ProductPage() {
   async function addToCart() {
     if (!data) return;
     if (data.askForPrice) return;
+    if (!isCatalogItemReleased(data)) {
+      showToast(zhHant.apiErrorItemNotYetReleased, TOAST_DURATION_SHORT_MS);
+      return;
+    }
     const isCardPool = data.productType === "card_pool" && data.pool != null;
     if (isCardPool && selectedPoolNumbers.length === 0) {
       showToast(zhHant.productPoolSelectRequired, TOAST_DURATION_SHORT_MS);
@@ -617,7 +628,52 @@ export function ProductPage() {
   ]
     .filter(Boolean)
     .join(" · ");
+  return (
+    <ProductPageBody
+      data={data}
+      catalogListHref={catalogListHref}
+      subtitle={subtitle}
+      adding={adding}
+      quantity={quantity}
+      setQuantity={setQuantity}
+      selectedPoolNumbers={selectedPoolNumbers}
+      poolNumbersInCart={poolNumbersInCart}
+      togglePoolNumber={togglePoolNumber}
+      addToCart={addToCart}
+    />
+  );
+}
+
+function ProductPageBody({
+  data,
+  catalogListHref,
+  subtitle,
+  adding,
+  quantity,
+  setQuantity,
+  selectedPoolNumbers,
+  poolNumbersInCart,
+  togglePoolNumber,
+  addToCart,
+}: {
+  data: NonNullable<Awaited<ReturnType<typeof fetchCatalogItem>>>;
+  catalogListHref: string;
+  subtitle: string;
+  adding: boolean;
+  quantity: number;
+  setQuantity: (n: number) => void;
+  selectedPoolNumbers: number[];
+  poolNumbersInCart: Set<number>;
+  togglePoolNumber: (n: number) => void;
+  addToCart: () => void;
+}) {
   const isCardPool = data.productType === "card_pool" && data.pool != null;
+  const releaseAt =
+    isCardPool && typeof data.releaseAt === "string" && data.releaseAt.length > 0
+      ? data.releaseAt
+      : null;
+  const releaseCountdown = useCountdown(releaseAt);
+  const notYetReleased = releaseAt != null && !releaseCountdown.done;
   const showQtySelector = showProductQtySelector(data);
   const maxPurchaseQty = catalogMaxPurchaseQty(data, quantity);
   const soldNumbers = new Set(data.pool?.soldNumbers ?? []);
@@ -670,7 +726,10 @@ export function ProductPage() {
             compareAtPrice={data.compareAtPrice}
             askForPrice={data.askForPrice === true}
           />
-          {isCardPool && !data.askForPrice && (
+          {releaseAt ? (
+            <ReleaseCountdown releaseAt={releaseAt} variant="prominent" />
+          ) : null}
+          {isCardPool && !data.askForPrice && !notYetReleased && (
             <section
               data-testid="card-pool"
               className="mb-4 rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-[0_10px_28px_rgba(28,24,21,0.06)]"
@@ -734,10 +793,10 @@ export function ProductPage() {
               )}
             </section>
           )}
-          {data.soldOut && !data.askForPrice && (
+          {data.soldOut && !data.askForPrice && !notYetReleased && (
             <p className="mt-2 text-[var(--muted)]">{zhHant.productSoldOut}</p>
           )}
-          {showQtySelector && !data.askForPrice && (
+          {showQtySelector && !data.askForPrice && !notYetReleased && (
             <ProductQtySelector
               value={quantity}
               max={maxPurchaseQty}
@@ -751,7 +810,7 @@ export function ProductPage() {
               slug={data.slug}
               className="mb-4 mt-3"
             />
-          ) : (
+          ) : notYetReleased ? null : (
           <button
             type="button"
             className="mb-4 mt-3 cursor-pointer rounded-lg border border-[var(--accent)] bg-transparent px-[0.85rem] py-2 font-semibold text-[var(--accent)] hover:bg-[color-mix(in_srgb,var(--accent)_16%,transparent)] disabled:cursor-not-allowed disabled:opacity-50"

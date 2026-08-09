@@ -15,7 +15,6 @@ import {
   type CatalogListItem,
 } from "../api.js";
 import {
-  displayListingProductType,
   displayTitle,
   primaryImage,
   storefrontListingCategory,
@@ -34,6 +33,10 @@ import { useDocumentMeta } from "../document-meta.js";
 import { PageLoadingSkeleton } from "../components/PageLoadingSkeleton.js";
 import { AskForPriceWhatsAppButton } from "../components/AskForPriceWhatsAppButton.js";
 import { ProductPrice } from "../components/ProductPrice.js";
+import {
+  ReleaseCountdown,
+  ReleaseSoonBadge,
+} from "../components/ReleaseCountdown.js";
 import { catalogPageMeta } from "../page-meta.js";
 import { tryToastBadRequest } from "../notify-bad-request.js";
 import { TOAST_DURATION_SHORT_MS, useToast } from "../toast-context.js";
@@ -418,6 +421,12 @@ export function CatalogPage() {
           >
             {visibleItems.map((item) => {
               const isCardPoolItem = item.productType === "card_pool";
+              const releaseAt =
+                isCardPoolItem &&
+                typeof item.releaseAt === "string" &&
+                item.releaseAt.length > 0
+                  ? item.releaseAt
+                  : null;
               return (
               <li
                 key={item.productId}
@@ -442,6 +451,9 @@ export function CatalogPage() {
                         {zhHant.soldOutBadge}
                       </span>
                     )}
+                    {releaseAt && !item.soldOut ? (
+                      <ReleaseSoonBadge releaseAt={releaseAt} />
+                    ) : null}
                     {primaryImage(item) && (
                       <img
                         className={
@@ -478,6 +490,9 @@ export function CatalogPage() {
                         </p>
                       )}
                     </div>
+                    {releaseAt ? (
+                      <ReleaseCountdown releaseAt={releaseAt} />
+                    ) : null}
                   </div>
                 </Link>
                 {!isCardPoolItem &&

@@ -69,6 +69,15 @@ export type CatalogListItem = {
     poolSize: number;
     soldNumbers: number[];
   } | null;
+  /**
+   * ISO scheduled release for `card_pool` (`metadata.releaseAt`), else null/omitted.
+   * Purchase blocked until this time; UI may show a countdown.
+   */
+  releaseAt?: string | null;
+  /**
+   * From `metadata.hideInList`. List/search omit these; detail may still return true.
+   */
+  hideInList?: boolean;
 };
 
 /** Cart line payload mirrors `GET /api/carts/:id` catalog entries. */

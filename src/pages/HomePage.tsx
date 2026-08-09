@@ -8,6 +8,7 @@ import {
 } from "../api.js";
 import {
   displayTitle,
+  isCatalogItemReleased,
   primaryImage,
   storefrontListingCategory,
 } from "../catalog-helpers.js";
@@ -21,6 +22,11 @@ import {
 import { HomeBannerCarousel } from "../components/HomeBannerCarousel.js";
 import { AskForPriceWhatsAppButton } from "../components/AskForPriceWhatsAppButton.js";
 import { ProductPrice } from "../components/ProductPrice.js";
+import {
+  ReleaseCountdown,
+  ReleaseSoonBadge,
+} from "../components/ReleaseCountdown.js";
+import { useCountdown } from "../use-countdown.js";
 import { useDocumentMeta } from "../document-meta.js";
 import { HomeJsonLd } from "../home-schema.js";
 import { PAGE_META } from "../page-meta.js";
@@ -148,6 +154,10 @@ export function HomePage() {
   const addToCart = useCallback(
     async (item: CatalogListItem) => {
       if (item.askForPrice) return;
+      if (!isCatalogItemReleased(item)) {
+        showToast(zhHant.apiErrorItemNotYetReleased, TOAST_DURATION_SHORT_MS);
+        return;
+      }
       try {
         setAdding(item.productId);
         const id = await ensureCart();
@@ -208,79 +218,13 @@ export function HomePage() {
                 >
                   <ul className="m-0 flex w-max list-none select-none gap-[0.85rem] p-0 pb-[0.35rem] caret-transparent [-webkit-user-select:none] scroll-ml-0">
                     {row.slice(0, 6).map((item) => (
-                      <li
+                      <HomeRailCard
                         key={item.productId}
-                        className="flex max-w-[11rem] min-w-0 shrink-0 basis-[min(41vw,11rem)] select-none flex-col overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--card)] caret-transparent [-webkit-user-select:none]"
-                      >
-                        <Link
-                          href={`/item/${encodeURIComponent(item.slug)}`}
-                          className="flex min-h-0 flex-1 cursor-pointer select-none flex-col text-inherit no-underline caret-transparent [-webkit-user-select:none]"
-                        >
-                          <div className="relative aspect-[3/5] shrink-0 bg-white">
-                            {newBadgeProductIds.has(item.productId) && (
-                              <span
-                                className="absolute left-[0.35rem] top-[0.35rem] z-[1] rounded-[5px] bg-[color-mix(in_srgb,var(--accent)_92%,transparent)] px-[0.35rem] py-[0.15rem] text-[1rem] font-bold leading-snug text-[var(--card)]"
-                                aria-hidden
-                              >
-                                {zhHant.newBadge}
-                              </span>
-                            )}
-                            {item.soldOut && (
-                              <span
-                                className="absolute right-[0.35rem] top-[0.35rem] z-[1] rounded-[5px] bg-[color-mix(in_srgb,var(--err)_88%,transparent)] px-[0.35rem] py-[0.15rem] text-[0.6875rem] font-bold leading-snug text-[var(--card)]"
-                                aria-hidden
-                              >
-                                {zhHant.soldOutBadge}
-                              </span>
-                            )}
-                            {primaryImage(item) ? (
-                              <img
-                                className={cn(
-                                  "block h-full w-full object-cover",
-                                  item.soldOut && "opacity-72 grayscale-[25%]",
-                                )}
-                                src={primaryImage(item) || ""}
-                                alt={displayTitle(item)}
-                                loading="lazy"
-                              />
-                            ) : null}
-                          </div>
-                          <div className="flex-1 px-3 pb-[0.35rem] pt-[0.65rem]">
-                            <h3 className="mb-1 line-clamp-2 select-text text-[0.8125rem] font-semibold leading-snug [-webkit-user-select:text] min-h-[36px]">
-                              {displayTitle(item)}
-                            </h3>
-                            <ProductPrice
-                              listPrice={item.listPrice}
-                              compareAtPrice={item.compareAtPrice}
-                              askForPrice={item.askForPrice === true}
-                              size="sm"
-                            />
-                          </div>
-                        </Link>
-                        {item.askForPrice ? (
-                          <AskForPriceWhatsAppButton
-                            title={displayTitle(item)}
-                            slug={item.slug}
-                            className="mx-[0.65rem] mb-[0.65rem] mt-0 px-[0.55rem] py-[0.4rem] text-[0.8125rem]"
-                          />
-                        ) : (
-                        <button
-                          type="button"
-                          className="mx-[0.65rem] mb-[0.65rem] mt-0 cursor-pointer rounded-lg border border-[var(--accent)] bg-transparent px-[0.55rem] py-[0.4rem] text-[0.8125rem] font-semibold text-[var(--accent)] hover:bg-[color-mix(in_srgb,var(--accent)_16%,transparent)] disabled:cursor-not-allowed disabled:opacity-50"
-                          disabled={adding === item.productId || item.soldOut}
-                          title={
-                            item.soldOut ? zhHant.soldOutAddDisabled : undefined
-                          }
-                          onClick={() => addToCart(item)}
-                        >
-                          {adding === item.productId
-                            ? zhHant.adding
-                            : item.soldOut
-                              ? zhHant.soldOutBadge
-                              : zhHant.addToCart}
-                        </button>
-                        )}
-                      </li>
+                        item={item}
+                        showNewBadge={newBadgeProductIds.has(item.productId)}
+                        adding={adding === item.productId}
+                        onAdd={() => addToCart(item)}
+                      />
                     ))}
                   </ul>
                 </div>
@@ -290,5 +234,104 @@ export function HomePage() {
         </>
       )}
     </div>
+  );
+}
+
+function HomeRailCard({
+  item,
+  showNewBadge,
+  adding,
+  onAdd,
+}: {
+  item: CatalogListItem;
+  showNewBadge: boolean;
+  adding: boolean;
+  onAdd: () => void;
+}) {
+  const releaseAt =
+    item.productType === "card_pool" &&
+    typeof item.releaseAt === "string" &&
+    item.releaseAt.length > 0
+      ? item.releaseAt
+      : null;
+  const releaseCountdown = useCountdown(releaseAt);
+  const notYetReleased = releaseAt != null && !releaseCountdown.done;
+
+  return (
+    <li className="flex max-w-[11rem] min-w-0 shrink-0 basis-[min(41vw,11rem)] select-none flex-col overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--card)] caret-transparent [-webkit-user-select:none]">
+      <Link
+        href={`/item/${encodeURIComponent(item.slug)}`}
+        className="flex min-h-0 flex-1 cursor-pointer select-none flex-col text-inherit no-underline caret-transparent [-webkit-user-select:none]"
+      >
+        <div className="relative aspect-[3/5] shrink-0 bg-white">
+          {showNewBadge && !notYetReleased && (
+            <span
+              className="absolute left-[0.35rem] top-[0.35rem] z-[1] rounded-[5px] bg-[color-mix(in_srgb,var(--accent)_92%,transparent)] px-[0.35rem] py-[0.15rem] text-[1rem] font-bold leading-snug text-[var(--card)]"
+              aria-hidden
+            >
+              {zhHant.newBadge}
+            </span>
+          )}
+          {releaseAt && !item.soldOut ? (
+            <ReleaseSoonBadge
+              releaseAt={releaseAt}
+              className="left-[0.35rem] top-[0.35rem] rounded-[5px] px-[0.35rem] py-[0.15rem] text-[0.6875rem]"
+            />
+          ) : null}
+          {item.soldOut && (
+            <span
+              className="absolute right-[0.35rem] top-[0.35rem] z-[1] rounded-[5px] bg-[color-mix(in_srgb,var(--err)_88%,transparent)] px-[0.35rem] py-[0.15rem] text-[0.6875rem] font-bold leading-snug text-[var(--card)]"
+              aria-hidden
+            >
+              {zhHant.soldOutBadge}
+            </span>
+          )}
+          {primaryImage(item) ? (
+            <img
+              className={cn(
+                "block h-full w-full object-cover",
+                item.soldOut && "opacity-72 grayscale-[25%]",
+              )}
+              src={primaryImage(item) || ""}
+              alt={displayTitle(item)}
+              loading="lazy"
+            />
+          ) : null}
+        </div>
+        <div className="flex-1 px-3 pb-[0.35rem] pt-[0.65rem]">
+          <h3 className="mb-1 line-clamp-2 select-text text-[0.8125rem] font-semibold leading-snug [-webkit-user-select:text] min-h-[36px]">
+            {displayTitle(item)}
+          </h3>
+          <ProductPrice
+            listPrice={item.listPrice}
+            compareAtPrice={item.compareAtPrice}
+            askForPrice={item.askForPrice === true}
+            size="sm"
+          />
+          {releaseAt ? <ReleaseCountdown releaseAt={releaseAt} /> : null}
+        </div>
+      </Link>
+      {item.askForPrice ? (
+        <AskForPriceWhatsAppButton
+          title={displayTitle(item)}
+          slug={item.slug}
+          className="mx-[0.65rem] mb-[0.65rem] mt-0 px-[0.55rem] py-[0.4rem] text-[0.8125rem]"
+        />
+      ) : notYetReleased ? null : (
+        <button
+          type="button"
+          className="mx-[0.65rem] mb-[0.65rem] mt-0 cursor-pointer rounded-lg border border-[var(--accent)] bg-transparent px-[0.55rem] py-[0.4rem] text-[0.8125rem] font-semibold text-[var(--accent)] hover:bg-[color-mix(in_srgb,var(--accent)_16%,transparent)] disabled:cursor-not-allowed disabled:opacity-50"
+          disabled={adding || item.soldOut}
+          title={item.soldOut ? zhHant.soldOutAddDisabled : undefined}
+          onClick={onAdd}
+        >
+          {adding
+            ? zhHant.adding
+            : item.soldOut
+              ? zhHant.soldOutBadge
+              : zhHant.addToCart}
+        </button>
+      )}
+    </li>
   );
 }

@@ -76,6 +76,18 @@ export function isCardPoolProduct(item: CatalogListItem): boolean {
   return item.productType === "card_pool" && item.pool != null;
 }
 
+/** Client-side release check; server still enforces on cart/order. */
+export function isCatalogItemReleased(
+  item: Pick<CatalogListItem, "releaseAt">,
+  nowMs: number = Date.now(),
+): boolean {
+  const raw = item.releaseAt;
+  if (raw == null || raw === "") return true;
+  const t = Date.parse(raw);
+  if (Number.isNaN(t)) return true;
+  return nowMs >= t;
+}
+
 /** Max purchasable qty for a catalog row (1–99); singles and card pools cap at 1. */
 export function catalogMaxPurchaseQty(
   item: CatalogListItem,

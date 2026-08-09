@@ -184,6 +184,11 @@ export const zhHant = {
   catalogSortPriceDesc: "價格（高→低）",
   /** Catalog card_pool listing — total pool numbers */
   catalogPoolSize: (poolSize: number) => `共 ${poolSize} 口`,
+  /** Scheduled release countdown (card_pool) */
+  releaseCountdownLabel: "距離開賣",
+  releaseCountdownAria: (clock: string) => `距離開賣倒數 ${clock}`,
+  productNotYetReleased: "尚未開賣，開賣後即可選號加入購物車。",
+  productNotYetReleasedShort: "尚未開賣",
   /** Drawer: sub-list under 商品目錄 */
   navCatalogSubAria: "商品分類",
 
@@ -297,6 +302,7 @@ export const zhHant = {
   apiBadRequestGeneric: "請求無法完成，請稍後再試。",
   apiBadRequestInvalidBody: "送出的資料格式不正確。",
   apiErrorItemUnavailable: "此商品暫無法加入購物車。",
+  apiErrorItemNotYetReleased: "此商品尚未開賣，請稍後再試。",
   apiErrorInsufficientQty: "庫存不足，無法使用此數量。",
   apiErrorPoolNumberRequired: "請先選擇福袋號碼。",
   apiErrorPoolNumberRange: "所選福袋號碼超出可選範圍。",
@@ -556,6 +562,8 @@ export function toastTextForBadRequest(message: string): string {
   switch (m) {
     case "item unavailable":
       return zhHant.apiErrorItemUnavailable;
+    case "item not yet released":
+      return zhHant.apiErrorItemNotYetReleased;
     case "insufficient quantity":
       return zhHant.apiErrorInsufficientQty;
     case "pool number is required":
