@@ -719,13 +719,19 @@ function ProductPageBody({
               </code>
             </p>
           )}
-          <ProductPrice
-            className="my-4"
-            size="lg"
-            listPrice={data.listPrice}
-            compareAtPrice={data.compareAtPrice}
-            askForPrice={data.askForPrice === true}
-          />
+          <div className="my-4 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+            <ProductPrice
+              size="lg"
+              listPrice={data.listPrice}
+              compareAtPrice={data.compareAtPrice}
+              askForPrice={data.askForPrice === true}
+            />
+            {isCardPool && data.pool != null ? (
+              <p className="m-0 select-text text-base text-[var(--muted)] [-webkit-user-select:text]">
+                {zhHant.catalogPoolSize(data.pool.poolSize)}
+              </p>
+            ) : null}
+          </div>
           {releaseAt ? (
             <ReleaseCountdown releaseAt={releaseAt} variant="prominent" />
           ) : null}
