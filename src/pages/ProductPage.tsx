@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { faDice } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import useEmblaCarousel from "embla-carousel-react";
 import { Link, useParams } from "wouter";
 import {
@@ -12,6 +14,7 @@ import { useCart } from "../cart-context.js";
 import {
   catalogMaxPurchaseQty,
   collectProductImageUrls,
+  displayTitle,
   isCatalogItemReleased,
   showProductQtySelector,
 } from "../catalog-helpers.js";
@@ -26,6 +29,10 @@ import { PAGE_META, productMeta } from "../page-meta.js";
 import { ProductJsonLd } from "../product-schema.js";
 import { PageLoadingSkeleton } from "../components/PageLoadingSkeleton.js";
 import { AskForPriceWhatsAppButton } from "../components/AskForPriceWhatsAppButton.js";
+import {
+  availablePoolNumbers,
+  PoolRandomPickDialog,
+} from "../components/PoolRandomPickDialog.js";
 import { ProductDescription } from "../components/ProductDescription.js";
 import { ProductPrice } from "../components/ProductPrice.js";
 import { ReleaseCountdown } from "../components/ReleaseCountdown.js";
@@ -148,7 +155,7 @@ function ProductImageGallery({
 
   if (n === 0) {
     return (
-      <div className="aspect-[3/4] max-h-[500px] w-full rounded-xl border border-dashed border-[var(--border)] bg-[var(--card)]" />
+      <div className="aspect-[3/4] max-h-[500px] w-full rounded-lg border border-dashed border-[var(--border)] bg-[var(--card)]" />
     );
   }
 
@@ -157,7 +164,7 @@ function ProductImageGallery({
       className="flex flex-col gap-2"
       aria-label={zhHant.productImageGalleryAria}
     >
-      <div className="relative overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--card)]">
+      <div className="relative overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--media-bg)]">
         <button
           type="button"
           className={cn(
@@ -260,7 +267,7 @@ function ProductImageGallery({
               className="relative flex max-h-[100dvh] max-w-[min(100vw,1600px)] flex-col items-center justify-center"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="rounded-lg bg-white p-2 shadow-lg md:p-4">
+              <div className="rounded-lg bg-[var(--media-bg)] p-2 shadow-lg md:p-4">
                 <img
                   src={lightboxSrc}
                   alt={imageAlt}
@@ -496,17 +503,18 @@ export function ProductPage() {
     });
   }
 
-  async function addToCart() {
-    if (!data) return;
-    if (data.askForPrice) return;
+  async function addToCart(opts?: { poolNumbers?: number[] }): Promise<boolean> {
+    if (!data) return false;
+    if (data.askForPrice) return false;
     if (!isCatalogItemReleased(data)) {
       showToast(zhHant.apiErrorItemNotYetReleased, TOAST_DURATION_SHORT_MS);
-      return;
+      return false;
     }
     const isCardPool = data.productType === "card_pool" && data.pool != null;
-    if (isCardPool && selectedPoolNumbers.length === 0) {
+    const poolSelection = opts?.poolNumbers ?? selectedPoolNumbers;
+    if (isCardPool && poolSelection.length === 0) {
       showToast(zhHant.productPoolSelectRequired, TOAST_DURATION_SHORT_MS);
-      return;
+      return false;
     }
     try {
       setAdding(true);
@@ -519,10 +527,10 @@ export function ProductPage() {
         });
         await refreshCart();
         showToast(zhHant.addToCartSuccess, TOAST_DURATION_SHORT_MS);
-        return;
+        return true;
       }
 
-      const toAdd = [...selectedPoolNumbers];
+      const toAdd = [...poolSelection];
       const added: number[] = [];
       let stoppedOnConflict = false;
       for (const poolNumber of toAdd) {
@@ -554,8 +562,14 @@ export function ProductPage() {
             : zhHant.addToCartSuccess,
           TOAST_DURATION_SHORT_MS,
         );
-        setSelectedPoolNumbers([]);
-      } else if (added.length > 0) {
+        setSelectedPoolNumbers((prev) =>
+          opts?.poolNumbers
+            ? prev.filter((n) => !added.includes(n))
+            : [],
+        );
+        return true;
+      }
+      if (added.length > 0) {
         showToast(
           zhHant.productPoolAddPartialSuccess(added.length, toAdd.length),
           TOAST_DURATION_SHORT_MS,
@@ -574,10 +588,12 @@ export function ProductPage() {
           /* ignore refresh failure */
         }
       }
+      return false;
     } catch (e) {
       if (!tryToastBadRequest(e, showToast)) {
         setErr(e instanceof Error ? e.message : zhHant.errAddFailed);
       }
+      return false;
     } finally {
       setAdding(false);
     }
@@ -640,7 +656,82 @@ export function ProductPage() {
       poolNumbersInCart={poolNumbersInCart}
       togglePoolNumber={togglePoolNumber}
       addToCart={addToCart}
+      showToast={showToast}
     />
+  );
+}
+
+/** Official PSA cert page. Only digit strings of 8 or more. */
+function psaCertUrl(raw: string): string | null {
+  const digits = raw.trim().replace(/[\s\-_]/g, "");
+  if (!/^\d{8,}$/.test(digits)) return null;
+  return `https://www.psacard.com/cert/${digits}`;
+}
+
+function CardSpecStrip({
+  data,
+}: {
+  data: NonNullable<Awaited<ReturnType<typeof fetchCatalogItem>>>;
+}) {
+  const facts: {
+    label: string;
+    value: string;
+    href?: string;
+    emphasize?: boolean;
+  }[] = [];
+  const collection = data.card?.collection?.trim();
+  const rare = data.card?.rare?.trim();
+  const condition = data.condition?.trim();
+  const psaId = data.psaId?.trim();
+  if (collection) facts.push({ label: zhHant.productSpecCollection, value: collection });
+  if (rare) facts.push({ label: zhHant.productSpecRare, value: rare });
+  if (condition) facts.push({ label: zhHant.productSpecCondition, value: condition });
+  if (psaId) {
+    const href = psaCertUrl(psaId);
+    facts.push({
+      label: zhHant.productPsaId,
+      value: psaId,
+      href: href ?? undefined,
+      emphasize: true,
+    });
+  }
+  if (facts.length === 0) return null;
+
+  return (
+    <dl className="m-0 mb-4 mt-3 flex flex-wrap gap-2">
+      {facts.map((fact) => (
+        <div
+          key={fact.label}
+          className={cn(
+            "min-w-[6.75rem] flex-1 rounded-md border border-[rgba(197,164,109,0.32)] bg-[var(--card)] px-3 py-2",
+            fact.label === zhHant.productSpecCollection && "min-w-[min(100%,14rem)] flex-[1_1_14rem]",
+          )}
+        >
+          <dt className="m-0 text-[0.65rem] font-medium tracking-[0.14em] text-[var(--accent)]">
+            {fact.label}
+          </dt>
+          <dd
+            className={cn(
+              "m-0 mt-1 select-text text-sm font-semibold leading-snug text-[var(--fg)] [-webkit-user-select:text]",
+              fact.emphasize && "font-mono tracking-[0.04em] text-[1rem]",
+            )}
+          >
+            {fact.href ? (
+              <a
+                href={fact.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="cursor-pointer text-[var(--accent)] underline decoration-[rgba(197,164,109,0.55)] underline-offset-[3px] hover:decoration-[var(--accent)]"
+              >
+                {fact.value}
+              </a>
+            ) : (
+              fact.value
+            )}
+          </dd>
+        </div>
+      ))}
+    </dl>
   );
 }
 
@@ -655,6 +746,7 @@ function ProductPageBody({
   poolNumbersInCart,
   togglePoolNumber,
   addToCart,
+  showToast,
 }: {
   data: NonNullable<Awaited<ReturnType<typeof fetchCatalogItem>>>;
   catalogListHref: string;
@@ -665,8 +757,10 @@ function ProductPageBody({
   selectedPoolNumbers: number[];
   poolNumbersInCart: Set<number>;
   togglePoolNumber: (n: number) => void;
-  addToCart: () => void;
+  addToCart: (opts?: { poolNumbers?: number[] }) => Promise<boolean>;
+  showToast: (message: string, durationMs?: number) => void;
 }) {
+  const [randomPickOpen, setRandomPickOpen] = useState(false);
   const isCardPool = data.productType === "card_pool" && data.pool != null;
   const releaseAt =
     isCardPool && typeof data.releaseAt === "string" && data.releaseAt.length > 0
@@ -675,11 +769,19 @@ function ProductPageBody({
   const releaseCountdown = useCountdown(releaseAt);
   const notYetReleased = releaseAt != null && !releaseCountdown.done;
   const showQtySelector = showProductQtySelector(data);
+  const psaHref = data.psaId ? psaCertUrl(data.psaId) : null;
   const maxPurchaseQty = catalogMaxPurchaseQty(data, quantity);
   const soldNumbers = new Set(data.pool?.soldNumbers ?? []);
   const allNumbers = isCardPool
     ? Array.from({ length: data.pool!.poolSize }, (_, i) => i + 1)
     : [];
+  const randomAvailableCount = isCardPool
+    ? availablePoolNumbers(
+        data.pool!.poolSize,
+        soldNumbers,
+        poolNumbersInCart,
+      ).length
+    : 0;
 
   return (
     <article className="select-none [-webkit-user-select:none]">
@@ -694,7 +796,7 @@ function ProductPageBody({
         <div className="relative md:col-span-1">
           {data.soldOut && (
             <span
-              className="pointer-events-none absolute right-[0.65rem] top-[0.65rem] z-[2] rounded-lg bg-[color-mix(in_srgb,var(--err)_88%,transparent)] px-2 py-1 text-[0.8125rem] font-bold leading-snug text-[var(--card)]"
+              className="pointer-events-none absolute right-[0.65rem] top-[0.65rem] z-[2] rounded-md bg-[color-mix(in_srgb,var(--err)_88%,transparent)] px-2 py-1 text-[0.8125rem] font-bold leading-snug text-[#F5F1E9]"
               aria-hidden
             >
               {zhHant.soldOutBadge}
@@ -704,41 +806,121 @@ function ProductPageBody({
             type={data.productType}
             urls={collectProductImageUrls(data)}
             soldOut={data.soldOut}
-            imageAlt={data.title}
+            imageAlt={displayTitle(data)}
           />
         </div>
         <div className="md:col-span-2">
-          <h1 className="m-0 mb-2 text-[1.75rem] font-bold">{data.title}</h1>
-          {subtitle && <p className="text-[var(--muted)]">{subtitle}</p>}
+          <h1 className="m-0 mb-2 font-sans text-[1.65rem] font-semibold leading-tight tracking-normal text-[var(--fg)] md:text-[2rem]">{displayTitle(data)}</h1>
+          {data.productType === "card" ? (
+            <CardSpecStrip data={data} />
+          ) : (
+            subtitle && <p className="text-[var(--muted)]">{subtitle}</p>
+          )}
           {data.description && <ProductDescription text={data.description} />}
-          {data.psaId && (
+          {data.productType !== "card" && data.psaId && (
             <p className="text-sm text-[var(--muted)]">
               {zhHant.productPsaId}：
-              <code className="rounded bg-[var(--media-bg)] px-[0.35em] py-[0.1em] text-[0.9em]">
-                {data.psaId}
-              </code>
+              {psaHref ? (
+                <a
+                  href={psaHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="cursor-pointer font-mono text-[var(--accent)] underline decoration-[rgba(197,164,109,0.55)] underline-offset-[3px] hover:decoration-[var(--accent)]"
+                >
+                  {data.psaId}
+                </a>
+              ) : (
+                <code className="rounded bg-[var(--media-bg)] px-[0.35em] py-[0.1em] text-[0.9em]">
+                  {data.psaId}
+                </code>
+              )}
             </p>
           )}
-          <div className="my-4 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-            <ProductPrice
-              size="lg"
-              listPrice={data.listPrice}
-              compareAtPrice={data.compareAtPrice}
-              askForPrice={data.askForPrice === true}
-            />
-            {isCardPool && data.pool != null ? (
-              <p className="m-0 select-text text-base text-[var(--muted)] [-webkit-user-select:text]">
-                {zhHant.catalogPoolSize(data.pool.poolSize)}
-              </p>
-            ) : null}
-          </div>
+          {isCardPool && data.pool != null ? (
+            <div className="relative my-4 overflow-hidden rounded-lg border border-[rgba(197,164,109,0.4)] bg-[#F3EEE4] p-3.5 shadow-[0_18px_40px_rgba(0,0,0,0.28)] sm:p-4">
+              <div
+                aria-hidden
+                className="pointer-events-none absolute inset-x-6 top-0 h-px bg-[linear-gradient(90deg,transparent,rgba(176,141,87,0.55),transparent)]"
+              />
+              <div className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-x-3 gap-y-3 md:flex md:justify-between md:gap-4">
+                <div className="min-w-0">
+                  {!data.askForPrice ? (
+                    <p className="m-0 text-[0.68rem] font-semibold tracking-[0.2em] text-[#6f675c]">
+                      {zhHant.productPoolPriceLabel}
+                    </p>
+                  ) : null}
+                  <div className="mt-1.5 flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                    <ProductPrice
+                      size="lg"
+                      className={
+                        "[&>span:first-child]:text-[1.65rem] [&>span:first-child]:font-bold [&>span:first-child]:leading-none [&>span:first-child]:tracking-[-0.03em] [&>span:first-child]:text-[#222222] sm:[&>span:first-child]:text-[1.9rem] md:[&>span:first-child]:text-[2.25rem] [&>span:nth-child(2)]:text-[#6f675c]"
+                      }
+                      listPrice={data.listPrice}
+                      compareAtPrice={data.compareAtPrice}
+                      askForPrice={data.askForPrice === true}
+                    />
+                  </div>
+                </div>
+
+                <div className="contents md:flex md:items-stretch md:gap-2.5">
+                  <div className="rounded-lg border border-[rgba(197,164,109,0.35)] bg-white/60 px-3 py-2 text-right md:min-w-[5.5rem] md:self-end md:text-center">
+                    <p className="m-0 text-[0.62rem] font-semibold tracking-[0.18em] text-[#6f675c]">
+                      {zhHant.productPoolTotalLabel}
+                    </p>
+                    <p className="m-0 mt-1 select-text text-[1.35rem] font-bold leading-none tabular-nums tracking-tight text-[#222222] [-webkit-user-select:text] sm:text-[1.55rem] md:text-[1.75rem]">
+                      {String(data.pool.poolSize).padStart(2, "0")}
+                      <span className="ml-1 text-sm font-medium text-[#6f675c]">
+                        口
+                      </span>
+                    </p>
+                  </div>
+
+                  {!data.askForPrice && !notYetReleased ? (
+                    <button
+                      type="button"
+                      data-testid="pool-random-pick"
+                      disabled={data.soldOut || randomAvailableCount === 0}
+                      title={
+                        randomAvailableCount === 0
+                          ? zhHant.productPoolRandomUnavailable
+                          : undefined
+                      }
+                      className="col-span-2 inline-flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-lg border border-[var(--accent)] bg-[var(--accent)] px-3.5 py-2.5 text-sm font-semibold tracking-[0.12em] text-[#222222] hover:bg-[#d4b57d] disabled:cursor-not-allowed disabled:opacity-45 md:w-auto md:px-4 md:py-2 md:text-xs"
+                      onClick={() => {
+                        if (randomAvailableCount === 0) {
+                          showToast(
+                            zhHant.productPoolRandomUnavailable,
+                            TOAST_DURATION_SHORT_MS,
+                          );
+                          return;
+                        }
+                        setRandomPickOpen(true);
+                      }}
+                    >
+                      <FontAwesomeIcon icon={faDice} className="h-3.5 w-3.5" />
+                      {zhHant.productPoolRandomPick}
+                    </button>
+                  ) : null}
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="my-4 flex flex-wrap items-center gap-x-3 gap-y-2">
+              <ProductPrice
+                size="lg"
+                listPrice={data.listPrice}
+                compareAtPrice={data.compareAtPrice}
+                askForPrice={data.askForPrice === true}
+              />
+            </div>
+          )}
           {releaseAt ? (
             <ReleaseCountdown releaseAt={releaseAt} variant="prominent" />
           ) : null}
           {isCardPool && !data.askForPrice && !notYetReleased && (
             <section
               data-testid="card-pool"
-              className="mb-4 rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-[0_10px_28px_rgba(28,24,21,0.06)]"
+              className="mb-4 rounded-lg border border-[var(--border)] bg-[var(--card)] p-4 shadow-[0_10px_28px_rgba(28,24,21,0.06)]"
             >
               <p className="m-0 mb-3 text-xs text-[var(--muted)]">
                 {zhHant.productPoolPickHint(data.pool!.poolSize)}
@@ -762,13 +944,13 @@ function ProductPageBody({
                       }
                       onClick={() => togglePoolNumber(n)}
                       className={cn(
-                        "group relative cursor-pointer overflow-hidden rounded-lg border px-2 py-1.5 text-sm font-semibold transition-[background-color,border-color,box-shadow] duration-200 ease-out hover:-translate-y-[1px] hover:shadow-[0_12px_26px_rgba(28,24,21,0.10)] motion-reduce:transition-none motion-reduce:hover:translate-y-0",
+                        "group relative flex min-h-11 cursor-pointer items-center justify-center overflow-hidden rounded-lg border px-2 py-2.5 text-base font-semibold transition-[background-color,border-color,box-shadow] duration-200 ease-out hover:-translate-y-[1px] hover:shadow-[0_12px_26px_rgba(28,24,21,0.10)] md:min-h-9 md:py-1.5 md:text-sm motion-reduce:transition-none motion-reduce:hover:translate-y-0",
                         sold
                           ? "cursor-not-allowed border-[var(--border)] bg-[color-mix(in_srgb,var(--muted)_15%,var(--card))] text-[var(--muted)] line-through opacity-70"
                           : inCart
                             ? "border-[var(--accent)] bg-[color-mix(in_srgb,var(--accent)_22%,var(--card))] text-[var(--accent)] ring-2 ring-[color-mix(in_srgb,var(--accent)_45%,transparent)]"
                             : selected
-                              ? "animate-[pool-pick-pop_0.34s_cubic-bezier(0.34,1.4,0.64,1)] border-[var(--accent)] bg-[var(--accent)] text-white shadow-[0_8px_20px_rgba(154,85,48,0.28)] motion-reduce:animate-none"
+                              ? "animate-[pool-pick-pop_0.34s_cubic-bezier(0.34,1.4,0.64,1)] border-[var(--accent)] bg-[var(--accent)] text-[#222222] shadow-[0_8px_20px_rgba(197,164,109,0.35)] motion-reduce:animate-none"
                               : "border-[var(--border)] bg-transparent text-[var(--fg)] hover:border-[var(--accent)]",
                       )}
                     >
@@ -780,11 +962,11 @@ function ProductPageBody({
                       ) : null}
                       <span
                         className={cn(
-                          "pointer-events-none relative inline-flex flex-col items-center leading-none transition-transform duration-200 motion-reduce:transition-none",
+                          "pointer-events-none relative inline-flex flex-col items-center leading-none tabular-nums transition-transform duration-200 motion-reduce:transition-none",
                           selected && !sold && !inCart && "scale-105 motion-reduce:scale-100",
                         )}
                       >
-                        <span>{n}</span>
+                        <span>{String(n).padStart(2, "0")}</span>
                       </span>
                     </button>
                   );
@@ -812,21 +994,23 @@ function ProductPageBody({
           )}
           {data.askForPrice ? (
             <AskForPriceWhatsAppButton
-              title={data.title}
+              title={displayTitle(data)}
               slug={data.slug}
               className="mb-4 mt-3"
             />
           ) : notYetReleased ? null : (
           <button
             type="button"
-            className="mb-4 mt-3 cursor-pointer rounded-lg border border-[var(--accent)] bg-transparent px-[0.85rem] py-2 font-semibold text-[var(--accent)] hover:bg-[color-mix(in_srgb,var(--accent)_16%,transparent)] disabled:cursor-not-allowed disabled:opacity-50"
+            className="mb-4 mt-3 inline-flex w-full cursor-pointer items-center justify-center rounded-lg border border-[var(--accent)] bg-[var(--accent)] px-4 py-3.5 text-base font-semibold tracking-[0.14em] text-[#222222] hover:bg-[#d4b57d] disabled:cursor-not-allowed disabled:opacity-50 md:w-auto md:min-w-[12rem]"
             disabled={
               adding ||
               data.soldOut ||
               (isCardPool && selectedPoolNumbers.length === 0)
             }
             title={data.soldOut ? zhHant.soldOutAddDisabled : undefined}
-            onClick={addToCart}
+            onClick={() => {
+              void addToCart();
+            }}
           >
             {adding
               ? zhHant.adding
@@ -839,6 +1023,21 @@ function ProductPageBody({
           )}
         </div>
       </div>
+
+      {isCardPool && data.pool != null ? (
+        <PoolRandomPickDialog
+          open={randomPickOpen}
+          poolSize={data.pool.poolSize}
+          soldNumbers={soldNumbers}
+          inCartNumbers={poolNumbersInCart}
+          adding={adding}
+          onClose={() => setRandomPickOpen(false)}
+          onAddToCart={async (poolNumber) => {
+            const ok = await addToCart({ poolNumbers: [poolNumber] });
+            if (ok) setRandomPickOpen(false);
+          }}
+        />
+      ) : null}
     </article>
   );
 }

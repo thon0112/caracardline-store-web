@@ -134,15 +134,15 @@ export function SiteHeader() {
   return (
     <header
       className={cn(
-        "sticky top-0 left-0 right-0 z-50 mb-4 select-none border-b border-[var(--border)] bg-[var(--bg)] pb-2 pt-[calc(0.5rem+env(safe-area-inset-top,0px))]",
+        "sticky top-0 left-0 right-0 z-50 select-none border-b border-[rgba(197,164,109,0.32)] bg-[#111111] pb-3 pt-[calc(0.7rem+env(safe-area-inset-top,0px))]",
       )}
     >
       <HeaderSearchProvider>
-      <div className="relative z-[2] flex min-h-10 w-full cursor-default items-center gap-3 max-[767px]:justify-start md:gap-4">
+      <div className="shell relative z-[2] flex min-h-11 w-full cursor-default items-center gap-3 bg-[#111111] max-[767px]:justify-start md:gap-5">
         <button
           type="button"
           className={cn(
-            "hidden h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-[10px] border border-[var(--border)] bg-[var(--card)] p-0 font-inherit text-[var(--fg)] max-[767px]:inline-flex",
+            "hidden h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-md border border-[var(--border)] bg-[var(--card)] p-0 font-inherit text-[var(--fg)] max-[767px]:inline-flex",
             borderHover,
             "hover:text-[var(--accent)]",
           )}
@@ -160,14 +160,16 @@ export function SiteHeader() {
               "inline-flex min-w-0 cursor-pointer items-center gap-[0.65rem] select-none font-bold tracking-[0.04em] text-[var(--fg)] no-underline caret-transparent",
             )}
           >
-            <img
-              className="block h-auto w-[145px] md:w-[170px] shrink object-contain"
-              src="https://cdn.caracardline.com/assets/logo-with-text.webp"
-              alt={BRAND_NAME}
-              width={1200}
-              height={360}
-              decoding="async"
-            />
+            <span className="inline-block h-[41px] w-[150px] overflow-hidden mix-blend-lighten md:h-[46px] md:w-[168px]">
+              <img
+                className="pointer-events-none block h-auto w-full -mt-[14.5%]"
+                src="https://cdn.caracardline.com/assets/logo-with-text-white.webp"
+                alt={BRAND_NAME}
+                width={1600}
+                height={900}
+                decoding="async"
+              />
+            </span>
           </Link>
         </div>
         <div className="ml-auto flex items-center gap-1 md:hidden">
@@ -175,7 +177,7 @@ export function SiteHeader() {
           <Link
             href="/cart"
             className={cn(
-              "relative inline-flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-[10px] border border-[var(--border)] bg-[var(--card)] p-0 leading-none text-[var(--fg)] no-underline select-none caret-transparent",
+              "relative inline-flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-md border border-[var(--border)] bg-[var(--card)] p-0 leading-none text-[var(--fg)] no-underline select-none caret-transparent",
               borderHover,
               "hover:text-[var(--accent)]",
             )}
@@ -214,7 +216,7 @@ export function SiteHeader() {
           >
             <Link
               href="/catalog"
-              className="inline-flex h-full select-none items-center self-center gap-1 whitespace-nowrap font-semibold leading-tight text-[var(--fg)] no-underline caret-transparent hover:text-[var(--accent)]"
+              className="inline-flex h-full select-none items-center self-center gap-1 whitespace-nowrap text-[0.8125rem] font-medium leading-tight tracking-[0.06em] text-[var(--fg)] no-underline caret-transparent transition-colors duration-200 hover:text-[var(--accent)]"
               aria-haspopup="true"
               onMouseEnter={clearCatalogSubmenuDismissed}
               onFocus={clearCatalogSubmenuDismissed}
@@ -223,7 +225,7 @@ export function SiteHeader() {
             </Link>
             <div
               className={cn(
-                "pointer-events-none invisible absolute left-1/2 top-[100%] z-[60] min-w-[11.5rem] -translate-x-1/2 rounded-xl border border-[var(--border)] bg-[var(--card)] py-[0.35rem] opacity-0 shadow-[0_10px_28px_rgba(28,24,21,0.12)] transition-[opacity,visibility] duration-150 ease-out before:pointer-events-none before:absolute before:bottom-full before:left-0 before:right-0 before:h-[0.45rem] before:content-['']",
+                "pointer-events-none invisible absolute left-1/2 top-[100%] z-[60] min-w-[11.5rem] -translate-x-1/2 rounded-md border border-[rgba(197,164,109,0.28)] bg-[#1a1a1a] py-[0.35rem] opacity-0 shadow-[0_16px_40px_rgba(0,0,0,0.45)] transition-[opacity,visibility] duration-150 ease-out before:pointer-events-none before:absolute before:bottom-full before:left-0 before:right-0 before:h-[0.45rem] before:content-['']",
                 "group-hover/catalog:pointer-events-auto group-hover/catalog:visible group-hover/catalog:opacity-100",
                 "group-focus-within/catalog:pointer-events-auto group-focus-within/catalog:visible group-focus-within/catalog:opacity-100",
                 "group-data-[dismissed=true]/catalog:pointer-events-none group-data-[dismissed=true]/catalog:invisible group-data-[dismissed=true]/catalog:opacity-0",
@@ -237,7 +239,7 @@ export function SiteHeader() {
                   <li key={code} className="m-0 p-0">
                     <Link
                       href={`/catalog/${encodeURIComponent(code)}`}
-                      className="flex whitespace-nowrap px-4 py-[0.55rem] text-[0.9375rem] font-semibold leading-snug text-[var(--muted)] no-underline hover:bg-[rgba(28,24,21,0.05)] hover:text-[var(--accent)]"
+                      className="flex whitespace-nowrap px-4 py-[0.55rem] text-[0.9375rem] font-semibold leading-snug text-[var(--muted)] no-underline hover:bg-[rgba(245,241,233,0.07)] hover:text-[var(--accent)]"
                       onClick={dismissCatalogSubmenu}
                     >
                       {displayProductType(code)}
@@ -249,7 +251,7 @@ export function SiteHeader() {
           </div>
           <Link
             href="/card-repair"
-            className="inline-flex select-none items-center gap-1 whitespace-nowrap font-semibold leading-tight text-[var(--fg)] no-underline caret-transparent hover:text-[var(--accent)]"
+            className="inline-flex select-none items-center gap-1 whitespace-nowrap text-[0.8125rem] font-medium leading-tight tracking-[0.06em] text-[var(--fg)] no-underline caret-transparent transition-colors duration-200 hover:text-[var(--accent)]"
           >
             {zhHant.navCardRepair}
           </Link>
@@ -261,7 +263,7 @@ export function SiteHeader() {
           >
             <Link
               href="/services"
-              className="inline-flex h-full select-none items-center self-center gap-1 whitespace-nowrap font-semibold leading-tight text-[var(--fg)] no-underline caret-transparent hover:text-[var(--accent)]"
+              className="inline-flex h-full select-none items-center self-center gap-1 whitespace-nowrap text-[0.8125rem] font-medium leading-tight tracking-[0.06em] text-[var(--fg)] no-underline caret-transparent transition-colors duration-200 hover:text-[var(--accent)]"
               aria-haspopup="true"
               onMouseEnter={clearServicesSubmenuDismissed}
               onFocus={clearServicesSubmenuDismissed}
@@ -270,7 +272,7 @@ export function SiteHeader() {
             </Link>
             <div
               className={cn(
-                "pointer-events-none invisible absolute left-1/2 top-[100%] z-[60] min-w-[11.5rem] -translate-x-1/2 rounded-xl border border-[var(--border)] bg-[var(--card)] py-[0.35rem] opacity-0 shadow-[0_10px_28px_rgba(28,24,21,0.12)] transition-[opacity,visibility] duration-150 ease-out before:pointer-events-none before:absolute before:bottom-full before:left-0 before:right-0 before:h-[0.45rem] before:content-['']",
+                "pointer-events-none invisible absolute left-1/2 top-[100%] z-[60] min-w-[11.5rem] -translate-x-1/2 rounded-md border border-[rgba(197,164,109,0.28)] bg-[#1a1a1a] py-[0.35rem] opacity-0 shadow-[0_16px_40px_rgba(0,0,0,0.45)] transition-[opacity,visibility] duration-150 ease-out before:pointer-events-none before:absolute before:bottom-full before:left-0 before:right-0 before:h-[0.45rem] before:content-['']",
                 "group-hover/services:pointer-events-auto group-hover/services:visible group-hover/services:opacity-100",
                 "group-focus-within/services:pointer-events-auto group-focus-within/services:visible group-focus-within/services:opacity-100",
                 "group-data-[dismissed=true]/services:pointer-events-none group-data-[dismissed=true]/services:invisible group-data-[dismissed=true]/services:opacity-0",
@@ -283,7 +285,7 @@ export function SiteHeader() {
                 <li className="m-0 p-0">
                   <Link
                     href="/track"
-                    className="flex whitespace-nowrap px-4 py-[0.55rem] text-[0.9375rem] font-semibold leading-snug text-[var(--muted)] no-underline hover:bg-[rgba(28,24,21,0.05)] hover:text-[var(--accent)]"
+                    className="flex whitespace-nowrap px-4 py-[0.55rem] text-[0.9375rem] font-semibold leading-snug text-[var(--muted)] no-underline hover:bg-[rgba(245,241,233,0.07)] hover:text-[var(--accent)]"
                     onClick={dismissServicesSubmenu}
                   >
                     {zhHant.navTrackOrder}
@@ -296,8 +298,8 @@ export function SiteHeader() {
             <button
               type="button"
               className={cn(
-                "inline-flex cursor-pointer select-none items-center justify-center rounded-[10px] p-[0.35rem] text-[var(--fg)]",
-                "hover:bg-[rgba(28,24,21,0.05)] hover:text-[var(--accent)]",
+                "inline-flex cursor-pointer select-none items-center justify-center rounded-md p-[0.35rem] text-[var(--fg)]",
+                "hover:bg-[rgba(245,241,233,0.07)] hover:text-[var(--accent)]",
               )}
               onClick={() => startGoogleLogin("/account")}
               aria-label={profileActionLabel}
@@ -314,8 +316,8 @@ export function SiteHeader() {
             <Link
               href="/account"
               className={cn(
-                "inline-flex select-none items-center justify-center rounded-[10px] p-[0.35rem] text-[var(--fg)] no-underline caret-transparent",
-                "hover:bg-[rgba(28,24,21,0.05)] hover:text-[var(--accent)]",
+                "inline-flex select-none items-center justify-center rounded-md p-[0.35rem] text-[var(--fg)] no-underline caret-transparent",
+                "hover:bg-[rgba(245,241,233,0.07)] hover:text-[var(--accent)]",
               )}
               aria-label={profileActionLabel}
               title={profileActionLabel}
@@ -331,8 +333,8 @@ export function SiteHeader() {
           <Link
             href="/cart"
             className={cn(
-              "relative inline-flex select-none items-center justify-center rounded-[10px] p-[0.35rem] text-[var(--fg)] no-underline caret-transparent",
-              "hover:bg-[rgba(28,24,21,0.05)] hover:text-[var(--accent)]",
+              "relative inline-flex select-none items-center justify-center rounded-md p-[0.35rem] text-[var(--fg)] no-underline caret-transparent",
+              "hover:bg-[rgba(245,241,233,0.07)] hover:text-[var(--accent)]",
             )}
             aria-label={
               cartItemCount > 0
@@ -364,7 +366,7 @@ export function SiteHeader() {
       <button
         type="button"
         className={cn(
-          "fixed inset-0 z-[1] m-0 cursor-pointer appearance-none border-none bg-[rgba(28,24,21,0.35)] p-0 text-[length:0] text-transparent opacity-0 transition-opacity duration-[220ms] ease-out motion-reduce:transition-none md:hidden",
+          "fixed inset-0 z-[1] m-0 cursor-pointer appearance-none border-none bg-black/65 p-0 text-[length:0] text-transparent opacity-0 transition-opacity duration-[220ms] ease-out motion-reduce:transition-none md:hidden",
           menuOpen
             ? "pointer-events-auto z-[100] opacity-100"
             : "pointer-events-none",
@@ -377,7 +379,7 @@ export function SiteHeader() {
       <div
         id={drawerId}
         className={cn(
-          "fixed bottom-0 left-0 top-0 z-[1] flex w-[min(17.5rem,86vw)] max-w-full -translate-x-[102%] flex-col border-r border-[var(--border)] bg-[var(--card)] py-[0.85rem] pl-[max(0.85rem,env(safe-area-inset-left,0px))] pr-0 pt-[max(0.85rem,env(safe-area-inset-top,0px))] shadow-[8px_0_32px_rgba(28,24,21,0.12)] transition-transform duration-[260ms] motion-reduce:transition-none md:hidden",
+          "fixed bottom-0 left-0 top-0 z-[1] flex w-[min(17.5rem,86vw)] max-w-full -translate-x-[102%] flex-col border-r border-[rgba(197,164,109,0.28)] bg-[#161616] py-[0.85rem] pl-[max(0.85rem,env(safe-area-inset-left,0px))] pr-0 pt-[max(0.85rem,env(safe-area-inset-top,0px))] shadow-[8px_0_32px_rgba(0,0,0,0.45)] transition-transform duration-[260ms] motion-reduce:transition-none md:hidden",
           menuOpen ? "z-[101] translate-x-0" : "",
         )}
         role="dialog"
@@ -391,7 +393,7 @@ export function SiteHeader() {
           </span>
           <button
             type="button"
-            className="ml-auto inline-flex h-[2.35rem] w-[2.35rem] shrink-0 cursor-pointer items-center justify-center rounded-lg border-none bg-transparent p-0 font-inherit leading-none text-[var(--muted)] hover:bg-[rgba(28,24,21,0.06)] hover:text-[var(--fg)]"
+            className="ml-auto inline-flex h-[2.35rem] w-[2.35rem] shrink-0 cursor-pointer items-center justify-center rounded-lg border-none bg-transparent p-0 font-inherit leading-none text-[var(--muted)] hover:bg-[rgba(245,241,233,0.08)] hover:text-[var(--fg)]"
             aria-label={zhHant.navDrawerClose}
             onClick={closeMenu}
           >
@@ -404,7 +406,7 @@ export function SiteHeader() {
         >
           <Link
             href="/"
-            className="group/drawer flex cursor-pointer items-center gap-[0.65rem] rounded-[10px] px-[0.85rem] py-3 text-base font-semibold text-[var(--fg)] no-underline hover:bg-[rgba(28,24,21,0.05)] hover:text-[var(--accent)]"
+            className="group/drawer flex cursor-pointer items-center gap-[0.65rem] rounded-md px-[0.85rem] py-3 text-base font-semibold text-[var(--fg)] no-underline hover:bg-[rgba(245,241,233,0.07)] hover:text-[var(--accent)]"
             onClick={closeMenu}
           >
             <span
@@ -418,7 +420,7 @@ export function SiteHeader() {
           <div className="flex flex-col gap-[0.05rem]">
             <Link
               href="/catalog"
-              className="group/drawer flex cursor-pointer items-center gap-[0.65rem] rounded-[10px] px-[0.85rem] py-3 text-base font-semibold text-[var(--fg)] no-underline hover:bg-[rgba(28,24,21,0.05)] hover:text-[var(--accent)]"
+              className="group/drawer flex cursor-pointer items-center gap-[0.65rem] rounded-md px-[0.85rem] py-3 text-base font-semibold text-[var(--fg)] no-underline hover:bg-[rgba(245,241,233,0.07)] hover:text-[var(--accent)]"
               onClick={closeMenu}
             >
               <span
@@ -437,7 +439,7 @@ export function SiteHeader() {
                 <li key={code} className="m-0 p-0">
                   <Link
                     href={`/catalog/${encodeURIComponent(code)}`}
-                    className="flex cursor-pointer items-center rounded-[10px] py-[0.55rem] pl-[2.55rem] pr-[0.85rem] text-[0.9375rem] font-semibold leading-snug text-[var(--muted)] no-underline hover:bg-[rgba(28,24,21,0.05)] hover:text-[var(--accent)]"
+                    className="flex cursor-pointer items-center rounded-md py-[0.55rem] pl-[2.55rem] pr-[0.85rem] text-[0.9375rem] font-semibold leading-snug text-[var(--muted)] no-underline hover:bg-[rgba(245,241,233,0.07)] hover:text-[var(--accent)]"
                     onClick={closeMenu}
                   >
                     {displayProductType(code)}
@@ -448,7 +450,7 @@ export function SiteHeader() {
           </div>
           <Link
             href="/card-repair"
-            className="group/drawer flex cursor-pointer items-center gap-[0.65rem] rounded-[10px] px-[0.85rem] py-3 text-base font-semibold text-[var(--fg)] no-underline hover:bg-[rgba(28,24,21,0.05)] hover:text-[var(--accent)]"
+            className="group/drawer flex cursor-pointer items-center gap-[0.65rem] rounded-md px-[0.85rem] py-3 text-base font-semibold text-[var(--fg)] no-underline hover:bg-[rgba(245,241,233,0.07)] hover:text-[var(--accent)]"
             onClick={closeMenu}
           >
             <span
@@ -462,7 +464,7 @@ export function SiteHeader() {
           <div className="flex flex-col gap-[0.05rem]">
             <Link
               href="/services"
-              className="group/drawer flex cursor-pointer items-center gap-[0.65rem] rounded-[10px] px-[0.85rem] py-3 text-base font-semibold text-[var(--fg)] no-underline hover:bg-[rgba(28,24,21,0.05)] hover:text-[var(--accent)]"
+              className="group/drawer flex cursor-pointer items-center gap-[0.65rem] rounded-md px-[0.85rem] py-3 text-base font-semibold text-[var(--fg)] no-underline hover:bg-[rgba(245,241,233,0.07)] hover:text-[var(--accent)]"
               onClick={closeMenu}
             >
               <span
@@ -480,7 +482,7 @@ export function SiteHeader() {
               <li className="m-0 p-0">
                 <Link
                   href="/track"
-                  className="flex cursor-pointer items-center rounded-[10px] py-[0.55rem] pl-[2.55rem] pr-[0.85rem] text-[0.9375rem] font-semibold leading-snug text-[var(--muted)] no-underline hover:bg-[rgba(28,24,21,0.05)] hover:text-[var(--accent)]"
+                  className="flex cursor-pointer items-center rounded-md py-[0.55rem] pl-[2.55rem] pr-[0.85rem] text-[0.9375rem] font-semibold leading-snug text-[var(--muted)] no-underline hover:bg-[rgba(245,241,233,0.07)] hover:text-[var(--accent)]"
                   onClick={closeMenu}
                 >
                   {zhHant.navTrackOrder}
@@ -491,7 +493,7 @@ export function SiteHeader() {
           {showGoogleLogin ? (
             <button
               type="button"
-              className="group/drawer flex w-full cursor-pointer items-center gap-[0.65rem] rounded-[10px] px-[0.85rem] py-3 text-left text-base font-semibold text-[var(--fg)] hover:bg-[rgba(28,24,21,0.05)] hover:text-[var(--accent)]"
+              className="group/drawer flex w-full cursor-pointer items-center gap-[0.65rem] rounded-md px-[0.85rem] py-3 text-left text-base font-semibold text-[var(--fg)] hover:bg-[rgba(245,241,233,0.07)] hover:text-[var(--accent)]"
               onClick={() => {
                 closeMenu();
                 startGoogleLogin("/account");
@@ -509,7 +511,7 @@ export function SiteHeader() {
           ) : (
             <Link
               href="/account"
-              className="group/drawer flex cursor-pointer items-center gap-[0.65rem] rounded-[10px] px-[0.85rem] py-3 text-base font-semibold text-[var(--fg)] no-underline hover:bg-[rgba(28,24,21,0.05)] hover:text-[var(--accent)]"
+              className="group/drawer flex cursor-pointer items-center gap-[0.65rem] rounded-md px-[0.85rem] py-3 text-base font-semibold text-[var(--fg)] no-underline hover:bg-[rgba(245,241,233,0.07)] hover:text-[var(--accent)]"
               onClick={closeMenu}
               aria-label={profileActionLabel}
             >
@@ -524,7 +526,7 @@ export function SiteHeader() {
           )}
           <Link
             href="/cart"
-            className="group/drawer flex cursor-pointer items-center gap-[0.65rem] rounded-[10px] px-[0.85rem] py-3 text-base font-semibold text-[var(--fg)] no-underline hover:bg-[rgba(28,24,21,0.05)] hover:text-[var(--accent)]"
+            className="group/drawer flex cursor-pointer items-center gap-[0.65rem] rounded-md px-[0.85rem] py-3 text-base font-semibold text-[var(--fg)] no-underline hover:bg-[rgba(245,241,233,0.07)] hover:text-[var(--accent)]"
             onClick={closeMenu}
           >
             <span
@@ -552,7 +554,7 @@ export function SiteHeader() {
           <div className="flex flex-wrap items-center gap-[0.35rem]">
 <a
               href={WHATSAPP_CHAT_URL}
-              className="inline-flex cursor-pointer items-center justify-center rounded-[10px] p-[0.65rem] leading-none text-[var(--muted)] no-underline select-none caret-transparent hover:bg-[rgba(28,24,21,0.05)] hover:text-[#25d366]"
+              className="inline-flex cursor-pointer items-center justify-center rounded-md p-[0.65rem] leading-none text-[var(--muted)] no-underline select-none caret-transparent hover:bg-[rgba(245,241,233,0.07)] hover:text-[#25d366]"
               target="_blank"
               rel="noopener noreferrer"
               aria-label={zhHant.floatWhatsAppAria}
@@ -568,7 +570,7 @@ export function SiteHeader() {
             </a>
             <a
               href={THREADS_URL}
-              className="inline-flex cursor-pointer items-center justify-center rounded-[10px] p-[0.65rem] leading-none text-[var(--muted)] no-underline select-none caret-transparent hover:bg-[rgba(28,24,21,0.05)] hover:text-[var(--accent)]"
+              className="inline-flex cursor-pointer items-center justify-center rounded-md p-[0.65rem] leading-none text-[var(--muted)] no-underline select-none caret-transparent hover:bg-[rgba(245,241,233,0.07)] hover:text-[var(--accent)]"
               target="_blank"
               rel="noopener noreferrer"
               aria-label={zhHant.navThreadsAria}

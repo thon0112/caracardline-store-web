@@ -101,7 +101,7 @@ export function CatalogSearchField({
             <button
               type="button"
               className={cn(
-                "inline-flex cursor-pointer items-center justify-center rounded-md border-0 bg-transparent p-0 text-[var(--muted)] hover:bg-[rgba(28,24,21,0.06)] hover:text-[var(--fg)]",
+                "inline-flex cursor-pointer items-center justify-center rounded-md border-0 bg-transparent p-0 text-[var(--muted)] hover:bg-[rgba(245,241,233,0.08)] hover:text-[var(--fg)]",
                 actionBtnClass,
               )}
               onClick={onClear}

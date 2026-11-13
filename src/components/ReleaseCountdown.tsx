@@ -35,7 +35,7 @@ export function ReleaseCountdown({
     return (
       <div
         className={cn(
-          "mb-4 rounded-xl border border-[var(--accent)] bg-[color-mix(in_srgb,var(--accent)_10%,var(--card))] px-4 py-3",
+          "mb-4 rounded-lg border border-[var(--accent)] bg-[color-mix(in_srgb,var(--accent)_10%,var(--card))] px-4 py-3",
           className,
         )}
         role="timer"

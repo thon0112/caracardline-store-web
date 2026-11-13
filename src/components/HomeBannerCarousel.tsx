@@ -103,7 +103,7 @@ export function HomeBannerCarousel() {
       aria-roledescription="carousel"
       aria-label={zhHant.homeBannerAria}
     >
-      <div className="relative flex aspect-video h-auto w-full cursor-default select-none flex-col overflow-hidden rounded-none border border-[var(--border)] bg-[var(--media-bg)] box-border md:aspect-auto md:h-[350px] md:rounded-[14px] [-webkit-user-select:none]">
+      <div className="relative flex aspect-video h-auto w-full cursor-default select-none flex-col overflow-hidden rounded-none border border-[rgba(197,164,109,0.22)] bg-[var(--media-bg)] box-border md:aspect-auto md:h-[380px] md:rounded-lg [-webkit-user-select:none]">
         <div className="min-h-0 w-full flex-1 overflow-hidden" ref={emblaRef}>
           <div className="flex h-full w-full items-stretch">
             {emblaSlides.map((b, i) => {
@@ -154,13 +154,13 @@ export function HomeBannerCarousel() {
           <>
             <button
               type="button"
-              className="absolute left-[0.65rem] top-1/2 z-[3] h-9 w-9 -translate-y-1/2 cursor-pointer rounded-full border border-[rgba(28,24,21,0.12)] bg-[rgba(255,255,255,0.82)] p-0 text-[length:0] text-[var(--fg)] backdrop-blur-sm before:block before:text-[1.1rem] before:font-bold before:leading-none before:content-['‹'] hover:border-[color-mix(in_srgb,var(--accent)_55%,transparent)] hover:text-[var(--accent)] motion-reduce:transition-none"
+              className="absolute left-[0.65rem] top-1/2 z-[3] h-9 w-9 -translate-y-1/2 cursor-pointer rounded-full border border-[rgba(34,34,34,0.12)] bg-[rgba(243,238,228,0.9)] p-0 text-[length:0] text-[#222222] before:block before:text-[1.1rem] before:font-bold before:leading-none before:content-['‹'] hover:border-[var(--accent)] hover:text-[var(--accent)] motion-reduce:transition-none"
               aria-label={zhHant.homeBannerPrev}
               onClick={() => goBanner(-1)}
             />
             <button
               type="button"
-              className="absolute right-[0.65rem] top-1/2 z-[3] h-9 w-9 -translate-y-1/2 cursor-pointer rounded-full border border-[rgba(28,24,21,0.12)] bg-[rgba(255,255,255,0.82)] p-0 text-[length:0] text-[var(--fg)] backdrop-blur-sm before:block before:text-[1.1rem] before:font-bold before:leading-none before:content-['›'] hover:border-[color-mix(in_srgb,var(--accent)_55%,transparent)] hover:text-[var(--accent)] motion-reduce:transition-none"
+              className="absolute right-[0.65rem] top-1/2 z-[3] h-9 w-9 -translate-y-1/2 cursor-pointer rounded-full border border-[rgba(34,34,34,0.12)] bg-[rgba(243,238,228,0.9)] p-0 text-[length:0] text-[#222222] before:block before:text-[1.1rem] before:font-bold before:leading-none before:content-['›'] hover:border-[var(--accent)] hover:text-[var(--accent)] motion-reduce:transition-none"
               aria-label={zhHant.homeBannerNext}
               onClick={() => goBanner(1)}
             />
@@ -185,7 +185,7 @@ export function HomeBannerCarousel() {
                   }}
                 >
                   <span aria-hidden="true" className={cn(
-                    "block h-[1rem] w-[1rem] rounded-full bg-[rgba(28,24,21,0.22)] transition-[width,background-color] duration-150 mx-auto",
+                    "block h-[1rem] w-[1rem] rounded-full bg-[rgba(243,238,228,0.55)] transition-[width,background-color] duration-150 mx-auto",
                     i === selectedIndex && "w-[1.35rem] bg-[var(--accent)]",
                   )}></span>
                 </button>

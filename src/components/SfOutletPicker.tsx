@@ -98,7 +98,7 @@ export function SfOutletPicker({ value, onChange }: Props) {
                 </p>
               ) : (
                 <div
-                  className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[10px] border border-[var(--border)]"
+                  className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-md border border-[var(--border)]"
                   role="listbox"
                   aria-label={zhHant.checkoutSfSearchLabel}
                 >
@@ -109,7 +109,7 @@ export function SfOutletPicker({ value, onChange }: Props) {
                           type="button"
                           role="option"
                           aria-selected={false}
-                          className="w-full cursor-pointer border-none bg-transparent px-3 py-2.5 text-left font-inherit hover:bg-[rgba(28,24,21,0.04)]"
+                          className="w-full cursor-pointer border-none bg-transparent px-3 py-2.5 text-left font-inherit hover:bg-[rgba(245,241,233,0.06)]"
                           onClick={() => onChange(o)}
                         >
                           <span className="block text-[0.8125rem] font-semibold text-[var(--accent)]">
@@ -134,7 +134,7 @@ export function SfOutletPicker({ value, onChange }: Props) {
       )}
 
       {value && (
-        <div className="overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--card)] p-4">
+        <div className="overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--card)] p-4">
           <div className="mb-2 flex items-baseline justify-between gap-3">
             <p className="m-0 text-sm font-semibold text-[var(--muted)]">{zhHant.checkoutSfSelectedLabel}</p>
             <button

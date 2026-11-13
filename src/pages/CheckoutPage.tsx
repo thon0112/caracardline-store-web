@@ -3,6 +3,7 @@ import { Link, useLocation } from "wouter";
 import { cn } from "../cn.js";
 import { isApiError, placeOrder, type PlaceOrderBody } from "../api.js";
 import { cartHasTakenPoolNumbers } from "../cart-pool-conflict.js";
+import { displayTitle } from "../catalog-helpers.js";
 import { useAuth } from "../auth-context.js";
 import { useCart } from "../cart-context.js";
 import {
@@ -173,7 +174,7 @@ export function CheckoutPage() {
   if (error) {
     return (
       <div className="cursor-default select-none caret-transparent [-webkit-user-select:none] [&_.error]:select-text [&_a]:cursor-pointer [&_button]:cursor-pointer">
-        <h1 className="m-0 mb-2 select-text text-[1.75rem] font-bold [-webkit-user-select:text]">
+        <h1 className="m-0 mb-3 select-text text-[2rem] font-medium tracking-[0.03em] [-webkit-user-select:text] md:text-[2.35rem]">
           {zhHant.checkoutTitle}
         </h1>
         <p className="error select-text text-[var(--err)] [-webkit-user-select:text]">
@@ -205,7 +206,7 @@ export function CheckoutPage() {
 
   return (
     <div className="cursor-default select-none caret-transparent [-webkit-user-select:none] [&_.error]:select-text [&_a]:cursor-pointer [&_button]:cursor-pointer [&_input]:cursor-text [&_input]:select-text [&_input]:caret-auto [&_label]:cursor-pointer [&_textarea]:cursor-text [&_textarea]:select-text [&_textarea]:caret-auto">
-      <h1 className="m-0 mb-2 select-text text-[1.75rem] font-bold [-webkit-user-select:text]">
+      <h1 className="m-0 mb-3 select-text text-[2rem] font-medium tracking-[0.03em] [-webkit-user-select:text] md:text-[2.35rem]">
         {zhHant.checkoutTitle}
       </h1>
       <p className="m-0 mb-6 max-w-[42rem] select-text text-[var(--muted)] [-webkit-user-select:text]">
@@ -307,8 +308,8 @@ export function CheckoutPage() {
                 <button
                   type="button"
                   className={cn(
-                    "min-w-[12rem] flex-1 cursor-pointer rounded-[10px] border border-[var(--border)] bg-[var(--card)] px-[0.65rem] py-[0.55rem] font-inherit text-[0.9375rem] font-semibold leading-snug text-[var(--fg)] transition-colors duration-150 hover:border-[color-mix(in_srgb,var(--accent)_38%,var(--border))] hover:text-[var(--accent)]",
-                    shipMode === "sf" && "bg-accent/90 text-white hover:text-white",
+                    "min-w-[12rem] flex-1 cursor-pointer rounded-md border border-[var(--border)] bg-[var(--card)] px-[0.65rem] py-[0.55rem] font-inherit text-[0.9375rem] font-semibold leading-snug text-[var(--fg)] transition-colors duration-150 hover:border-[color-mix(in_srgb,var(--accent)_38%,var(--border))] hover:text-[var(--accent)]",
+                    shipMode === "sf" && "bg-[var(--accent)] text-[#222222] hover:bg-[#d4b57d] hover:!text-[#222222]",
                   )}
                   aria-pressed={shipMode === "sf"}
                   onClick={() => {
@@ -322,8 +323,8 @@ export function CheckoutPage() {
                 <button
                   type="button"
                   className={cn(
-                    "min-w-[12rem] flex-1 cursor-pointer rounded-[10px] border border-[var(--border)] bg-[var(--card)] px-[0.65rem] py-[0.55rem] font-inherit text-[0.9375rem] font-semibold leading-snug text-[var(--fg)] transition-colors duration-150 hover:border-[color-mix(in_srgb,var(--accent)_38%,var(--border))] hover:text-[var(--accent)]",
-                    shipMode === "manual" && "bg-accent/90 text-white hover:text-white",
+                    "min-w-[12rem] flex-1 cursor-pointer rounded-md border border-[var(--border)] bg-[var(--card)] px-[0.65rem] py-[0.55rem] font-inherit text-[0.9375rem] font-semibold leading-snug text-[var(--fg)] transition-colors duration-150 hover:border-[color-mix(in_srgb,var(--accent)_38%,var(--border))] hover:text-[var(--accent)]",
+                    shipMode === "manual" && "bg-[var(--accent)] text-[#222222] hover:bg-[#d4b57d] hover:!text-[#222222]",
                   )}
                   aria-pressed={shipMode === "manual"}
                   onClick={() => {
@@ -405,7 +406,7 @@ export function CheckoutPage() {
           className="min-w-0 min-[880px]:col-start-2 min-[880px]:row-span-2 min-[880px]:row-start-1"
           aria-label={zhHant.checkoutOrderPreview}
         >
-          <div className="overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--card)] px-[1.15rem] py-4">
+          <div className="overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--card)] px-[1.15rem] py-4">
             <p className="m-0 mb-2 select-text text-sm text-[var(--muted)] [-webkit-user-select:text]">
               {zhHant.checkoutOrderPreview}
             </p>
@@ -417,9 +418,7 @@ export function CheckoutPage() {
                 >
                   <span className="max-w-[60%] select-text [-webkit-user-select:text]">
                     <span className="block leading-snug">
-                      {l.catalog.title ||
-                        l.catalog.card?.name ||
-                        zhHant.productFallback}
+                      {displayTitle(l.catalog)}
                     </span>
                     {l.poolNumber != null && (
                       <span className="mt-[0.25rem] block text-sm leading-snug text-[var(--accent)]">
@@ -473,7 +472,7 @@ export function CheckoutPage() {
             <button
               type="submit"
               form="checkout-form"
-              className="mt-4 w-full max-w-full cursor-pointer rounded-lg border border-[var(--accent)] bg-transparent px-[0.85rem] py-2 font-semibold text-[var(--accent)] hover:bg-[color-mix(in_srgb,var(--accent)_16%,transparent)] disabled:cursor-not-allowed disabled:opacity-50"
+              className="mt-4 w-full max-w-full cursor-pointer rounded-md border border-[var(--accent)] bg-[var(--accent)] px-[0.85rem] py-2.5 text-[0.8rem] font-semibold uppercase tracking-[0.14em] text-[#222222] transition-colors duration-200 hover:bg-[#d4b57d] disabled:cursor-not-allowed disabled:opacity-50"
               disabled={submitting || hasSoldOut}
               title={hasSoldOut ? zhHant.checkoutSoldOutBlocked : undefined}
             >

@@ -135,22 +135,22 @@ const ABOUT_SERVICES = [
         {ABOUT_SERVICES.map(({ titleKey, bodyKey, labelKey, chipsKey, icon }, i) => (
           <li
             key={titleKey}
-            className="relative m-0 overflow-hidden rounded-[14px] border border-[var(--border)] bg-[var(--card)] shadow-[0_2px_0_rgba(28,24,21,0.03)] transition-[border-color,box-shadow,transform] duration-200 motion-reduce:transition-none hover:-translate-y-0.5 hover:border-[color-mix(in_srgb,var(--border)_55%,var(--accent)_45%)] hover:shadow-[0_12px_32px_rgba(28,24,21,0.08)] motion-reduce:hover:translate-y-0"
+            className="relative m-0 overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--card)] transition-[border-color] duration-200 motion-reduce:transition-none hover:border-[rgba(197,164,109,0.5)]"
             role="listitem"
           >
             <div
-              className="pointer-events-none absolute inset-0 opacity-55 [background:radial-gradient(120%_85%_at_0%_0%,color-mix(in_srgb,var(--accent-fill)_22%,transparent)_0%,transparent_58%)]"
+              className="pointer-events-none absolute inset-0 opacity-30 [background:radial-gradient(120%_85%_at_0%_0%,color-mix(in_srgb,var(--accent)_16%,transparent)_0%,transparent_58%)]"
               aria-hidden
             />
             <div className="relative z-[1] px-[1.2rem] pb-5 pt-[1.15rem]">
               <div className="mb-3 flex items-start gap-[0.9rem]">
-                <span className="inline-flex h-[2.85rem] w-[2.85rem] shrink-0 items-center justify-center rounded-xl border border-[color-mix(in_srgb,var(--border)_70%,var(--accent)_30%)] bg-gradient-to-br from-[color-mix(in_srgb,var(--accent-fill)_14%,var(--card))] to-[var(--card)] text-[var(--accent-fill)] shadow-[inset_0_1px_0_rgba(255,253,251,0.65)]">
+                <span className="inline-flex h-[2.85rem] w-[2.85rem] shrink-0 items-center justify-center rounded-md border border-[rgba(197,164,109,0.35)] bg-[var(--card)] text-[var(--accent)]">
                   <AboutServiceIcon id={icon} />
                 </span>
                 <div className="min-w-0 flex-1">
                   <span className="mb-[0.35rem] inline-flex items-center gap-[0.45rem] text-[0.72rem] font-bold uppercase tracking-[0.14em] text-[var(--muted)]">
                     <span
-                      className="inline-flex min-w-[1.35rem] items-center justify-center rounded-md bg-gradient-to-br from-[var(--accent-fill)] to-[color-mix(in_srgb,var(--accent-fill)_72%,var(--fg))] px-[0.28rem] py-[0.12rem] text-[0.65rem] font-bold tracking-[0.06em] text-[var(--on-accent-fill)]"
+                      className="inline-flex min-w-[1.35rem] items-center justify-center rounded-sm bg-[var(--accent)] px-[0.28rem] py-[0.12rem] text-[0.65rem] font-bold tracking-[0.06em] text-[#222222]"
                       aria-hidden
                     >
                       {String(i + 1).padStart(2, "0")}

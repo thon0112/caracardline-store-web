@@ -9,7 +9,7 @@ import {
   type CartLine,
 } from "../api.js";
 import { cartHasTakenPoolNumbers, lineHasTakenPoolNumber } from "../cart-pool-conflict.js";
-import { catalogMaxPurchaseQty } from "../catalog-helpers.js";
+import { catalogMaxPurchaseQty, displayTitle } from "../catalog-helpers.js";
 import { useCart } from "../cart-context.js";
 import { cn } from "../cn.js";
 import { formatPriceUsd, zhHant } from "../locale/zh-Hant.js";
@@ -25,10 +25,6 @@ function primaryImage(item: CartCatalogItem): string | null {
   const c = item.card;
   if (!c) return null;
   return c.largeImage || c.image;
-}
-
-function displayTitle(item: CartCatalogItem): string {
-  return item.title || item.card?.name || zhHant.productFallback;
 }
 
 const cartPageRoot =
@@ -205,7 +201,7 @@ export function CartPage() {
   if (error) {
     return (
       <div className={cartPageRoot}>
-        <h1 className="m-0 mb-2 select-text text-[1.75rem] font-bold [-webkit-user-select:text]">
+        <h1 className="m-0 mb-3 select-text text-[2rem] font-medium tracking-[0.03em] [-webkit-user-select:text] md:text-[2.35rem]">
           {zhHant.cartTitle}
         </h1>
         <p className="select-text text-[var(--err)] [-webkit-user-select:text]">{error}</p>
@@ -235,7 +231,7 @@ export function CartPage() {
   if (!cartId || lines.length === 0) {
     return (
       <div className={cartPageRoot}>
-        <h1 className="m-0 mb-2 select-text text-[1.75rem] font-bold [-webkit-user-select:text]">
+        <h1 className="m-0 mb-3 select-text text-[2rem] font-medium tracking-[0.03em] [-webkit-user-select:text] md:text-[2.35rem]">
           {zhHant.cartTitle}
         </h1>
         <p className="m-0 mb-6 max-w-[42rem] select-text text-[var(--muted)] [-webkit-user-select:text]">
@@ -257,7 +253,7 @@ export function CartPage() {
 
   return (
     <div className={cartPageRoot}>
-      <h1 className="m-0 mb-2 select-text text-[1.75rem] font-bold [-webkit-user-select:text]">
+      <h1 className="m-0 mb-3 select-text text-[2rem] font-medium tracking-[0.03em] [-webkit-user-select:text] md:text-[2.35rem]">
         {zhHant.cartTitle}
       </h1>
       <p className="m-0 mb-6 max-w-[42rem] select-text text-[var(--muted)] [-webkit-user-select:text]">
@@ -486,7 +482,7 @@ export function CartPage() {
         ) : (
           <Link
             href="/checkout"
-            className="mx-4 mb-4 mt-3 inline-block cursor-pointer rounded-lg border border-[var(--accent)] bg-transparent px-[0.85rem] py-2 text-center font-semibold text-[var(--accent)] no-underline hover:bg-[color-mix(in_srgb,var(--accent)_16%,transparent)]"
+            className="mx-4 mb-4 mt-3 inline-block cursor-pointer rounded-md border border-[var(--accent)] bg-[var(--accent)] px-[0.85rem] py-2.5 text-center text-[0.8rem] font-semibold uppercase tracking-[0.14em] text-[#222222] no-underline transition-colors duration-200 hover:bg-[#d4b57d] hover:text-[#222222]"
           >
             {zhHant.cartGoCheckout}
           </Link>

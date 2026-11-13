@@ -54,14 +54,14 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       {children}
       {toast ? (
         <div
-          className="pointer-events-none fixed left-1/2 top-[max(1rem,calc(env(safe-area-inset-top,0px)+0.65rem))] z-[9999] max-w-[min(36rem,calc(100vw-1.5rem))] -translate-x-1/2"
+          className="pointer-events-none fixed left-1/2 top-[max(1rem,calc(env(safe-area-inset-top,0px)+0.65rem))] z-[9999] w-max max-w-[calc(100vw-1.5rem)] -translate-x-1/2"
           aria-live="polite"
         >
           <div
             role="alert"
-            className="pointer-events-auto flex animate-[toast-in_0.22s_ease-out] items-start gap-3 rounded-xl border-none bg-[var(--accent-fill)] p-4 pr-[1.15rem] shadow-[0_10px_32px_rgba(28,24,21,0.2)] motion-reduce:animate-none"
+            className="pointer-events-auto flex w-max max-w-full animate-[toast-in_0.22s_ease-out] items-center gap-2 rounded-lg border-none bg-[var(--accent-fill)] px-3.5 py-2.5 shadow-[0_10px_32px_rgba(28,24,21,0.2)] motion-reduce:animate-none md:gap-3 md:px-4 md:py-3.5"
           >
-            <p className="m-0 flex-1 text-[1.0625rem] font-semibold leading-snug tracking-[0.01em] text-[var(--on-accent-fill)]">
+            <p className="m-0 whitespace-nowrap text-[0.9375rem] font-semibold leading-none tracking-[0.01em] text-[var(--on-accent-fill)] md:text-[1.0625rem]">
               {toast.message}
             </p>
             <button

@@ -7,7 +7,7 @@ export function OtherServicesPage() {
   useDocumentMeta(PAGE_META.services);
   return (
     <div>
-      <h1 className="m-0 mb-4 text-[1.75rem] font-bold">{zhHant.otherServicesTitle}</h1>
+      <h1 className="m-0 mb-5 text-[2rem] font-medium tracking-[0.03em] md:text-[2.35rem]">{zhHant.otherServicesTitle}</h1>
       <OurService />
       <section className="mt-4 mb-7 max-w-[42rem]">
         <h2 className="m-0 mb-[0.65rem] text-[1.1rem] font-semibold text-[var(--fg)]">

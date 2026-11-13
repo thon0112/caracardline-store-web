@@ -72,7 +72,7 @@ export function TrackOrderPage() {
 
   return (
     <div className="cursor-default select-none caret-transparent [-webkit-user-select:none] [&_.error]:select-text [&_a]:cursor-pointer [&_button]:cursor-pointer [&_input]:cursor-text [&_input]:select-text [&_input]:caret-auto [&_label]:cursor-pointer">
-      <h1 className="m-0 mb-2 select-text text-[1.75rem] font-bold [-webkit-user-select:text]">
+      <h1 className="m-0 mb-3 select-text text-[2rem] font-medium tracking-[0.03em] [-webkit-user-select:text] md:text-[2.35rem]">
         {zhHant.trackOrderTitle}
       </h1>
       <p className="m-0 mb-6 max-w-[42rem] select-text text-[var(--muted)] [-webkit-user-select:text]">

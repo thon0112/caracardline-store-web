@@ -12,7 +12,7 @@ export const homeBannerSlides = [
   },
   {
     id: "slide-banner-5",
-    src: "https://cdn.caracardline.com/assets/1781256172807-22dcf8925e83cf0f-web-site.webp",
+    src: "https://cdn.caracardline.com/assets/1794579573436-7ae3ddb9cfd055d9.webp",
     alt: "PSA 代鑑服務",
     href: WHATSAPP_CHAT_URL,
   },

@@ -33,8 +33,62 @@ export function collectProductImageUrls(item: CatalogListItem): string[] {
   return out;
 }
 
+/** Drop the repeated region phrase from English single-card titles. */
+const POKEMON_JAPANESE = /\bPOKEMON\s+JAPANESE\b/gi;
+
+/** Grade and set codes that should stay uppercase inside a title-cased name. */
+const TITLE_KEEP_UPPER = new Set([
+  "AA",
+  "AR",
+  "CHR",
+  "CSR",
+  "EX",
+  "FA",
+  "GG",
+  "GX",
+  "HR",
+  "IR",
+  "PR",
+  "PSA",
+  "RR",
+  "SAR",
+  "SIR",
+  "SR",
+  "SSR",
+  "TG",
+  "UR",
+  "V",
+  "VMAX",
+  "VSTAR",
+]);
+
+function capitalizeTitleWord(word: string): string {
+  if (!word || /\d/.test(word)) return word;
+  const upper = word.toUpperCase();
+  if (word.length <= 2 || TITLE_KEEP_UPPER.has(upper)) return upper;
+  const lower = word.toLowerCase();
+  return lower.charAt(0).toUpperCase() + lower.slice(1);
+}
+
+/** Title-case each word, leaving set codes and PSA grades intact. */
+export function toCapitalWords(title: string): string {
+  return title.replace(/(?<!\d)[A-Za-z]+(?!\d)/g, (word) =>
+    capitalizeTitleWord(word),
+  );
+}
+
+export function shortenCardTitle(title: string): string {
+  const raw = title.trim();
+  const shortened = raw
+    .replace(POKEMON_JAPANESE, " ")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+  const cased = toCapitalWords(shortened);
+  return cased || raw;
+}
+
 export function displayTitle(item: CatalogListItem): string {
-  return item.title || item.card?.name || zhHant.productFallback;
+  return shortenCardTitle(item.title || item.card?.name || zhHant.productFallback);
 }
 
 /** True when storefront should show a compare-at strikethrough beside list price. */

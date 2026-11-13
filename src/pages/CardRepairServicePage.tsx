@@ -94,7 +94,7 @@ function TwoUp({
   index: number;
 }) {
   return (
-    <article className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-[0_10px_26px_rgba(28,24,21,0.08)]">
+    <article className="rounded-lg border border-[var(--border)] bg-[var(--card)] p-4 shadow-[0_10px_26px_rgba(28,24,21,0.08)]">
       <div className="mb-3 flex items-start justify-between gap-3">
         <div className="min-w-0">
           <h2 className="m-0 text-[1.05rem] font-bold leading-snug text-[var(--fg)]">
@@ -107,27 +107,27 @@ function TwoUp({
       </div>
 
       <div className="grid gap-1 grid-cols-2 sm:gap-3">
-        <div className="relative rounded-xl border border-[var(--border)] bg-[var(--bg)]">
+        <div className="relative rounded-lg border border-[var(--border)] bg-[var(--bg)]">
           <div className="absolute left-3 top-3 z-[2] rounded-full bg-[rgba(28,24,21,0.72)] px-3 py-1 text-[0.8rem] font-bold tracking-[0.02em] text-white">
             {zhHant.cardRepairBefore}
           </div>
           <img
             src={item.beforeUrl}
             alt={`${item.title} before`}
-            className={`block aspect-[4/4] w-full rounded-xl object-cover ${item.imagePosition === "top" ? "object-top" : item.imagePosition === "center" ? "object-center" : "object-bottom"}`}
+            className={`block aspect-[4/4] w-full rounded-lg object-cover ${item.imagePosition === "top" ? "object-top" : item.imagePosition === "center" ? "object-center" : "object-bottom"}`}
             loading="lazy"
             decoding="async"
           />
         </div>
 
-        <div className="relative rounded-xl border border-[var(--border)] bg-[var(--bg)]">
+        <div className="relative rounded-lg border border-[var(--border)] bg-[var(--bg)]">
           <div className="absolute left-3 top-3 z-[2] rounded-full bg-[rgba(28,24,21,0.72)] px-3 py-1 text-[0.8rem] font-bold tracking-[0.02em] text-white">
             {zhHant.cardRepairAfter}
           </div>
           <img
             src={item.afterUrl}
             alt={`${item.title} after`}
-            className={`block aspect-[4/4] w-full rounded-xl object-cover ${item.imagePosition === "top" ? "object-top" : item.imagePosition === "center" ? "object-center" : "object-bottom"}`}
+            className={`block aspect-[4/4] w-full rounded-lg object-cover ${item.imagePosition === "top" ? "object-top" : item.imagePosition === "center" ? "object-center" : "object-bottom"}`}
             loading="lazy"
             decoding="async"
           />
@@ -143,7 +143,7 @@ export function CardRepairServicePage() {
     <div>
       <CardRepairJsonLd gallery={CARD_REPAIR_GALLERY} />
       <header className="mb-5">
-        <h1 className="m-0 text-[1.75rem] font-bold">
+        <h1 className="m-0 text-[2rem] font-medium tracking-[0.04em] md:text-[2.4rem]">
           {zhHant.cardRepairTitle}
         </h1>
         <div className="flex flex-wrap w-full gap-4">
@@ -154,10 +154,10 @@ export function CardRepairServicePage() {
             decoding="async"
           />
           <section
-            className="mt-4 flex-1 rounded-2xl border border-[color-mix(in_srgb,var(--border)_78%,var(--accent)_22%)] bg-gradient-to-br from-[color-mix(in_srgb,var(--card)_92%,var(--accent))] via-[var(--card)] to-[var(--card)] p-4 shadow-[0_10px_36px_rgba(28,24,21,0.06)] sm:p-5"
+            className="mt-4 flex-1 rounded-lg border border-[rgba(197,164,109,0.28)] bg-[var(--card)] p-4 sm:p-5"
             aria-label={zhHant.cardRepairTitle}
           >
-            <div className="mt-4 min-w-[300px] flex flex-col gap-3 rounded-xl border border-[var(--border)] bg-[var(--bg)] p-4">
+            <div className="mt-4 min-w-[300px] flex flex-col gap-3 rounded-lg border border-[var(--border)] bg-[var(--bg)] p-4">
               <div className="flex min-w-0 items-baseline gap-2">
                 <span className="shrink-0 text-[0.9375rem] font-semibold text-[var(--fg)]">
                   {zhHant.cardRepairPriceLabel}
@@ -177,7 +177,7 @@ export function CardRepairServicePage() {
             <div className="mt-4 md:mt-8 md:pt-8 flex flex-col items-center md:items-start gap-2 border-t border-[var(--border)] pt-4">
               <a
                 href={WHATSAPP_CHAT_URL}
-                className="inline-flex cursor-pointer items-center justify-center rounded-xl border border-[var(--border)] bg-[#25d366] px-4 py-2 text-[0.95rem] font-semibold text-white no-underline hover:bg-[#25d366]/80"
+                className="inline-flex cursor-pointer items-center justify-center rounded-lg border border-[var(--border)] bg-[#25d366] px-4 py-2 text-[0.95rem] font-semibold text-white no-underline hover:bg-[#25d366]/80"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -193,7 +193,7 @@ export function CardRepairServicePage() {
       {/* <img
         src="https://cdn.caracardline.com/assets/1780582479414-4238e26fe63f0393-fix-step.webp"
         alt=""
-        className="w-full rounded-2xl border border-[var(--border)] object-cover"
+        className="w-full rounded-lg border border-[var(--border)] object-cover"
       /> */}
       <h2 className="mt-8 text-[1.75rem] font-bold">{zhHant.cardRepairStepsTitle}</h2>
       <p className="mt-2 mb-4 leading-[1.65] text-[var(--muted)] max-w-[680px]">
@@ -201,7 +201,7 @@ export function CardRepairServicePage() {
       </p>
 
       {CARD_REPAIR_GALLERY.length === 0 ? (
-        <section className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4">
+        <section className="rounded-lg border border-[var(--border)] bg-[var(--card)] p-4">
           <h2 className="m-0 text-[1.05rem] font-bold">
             {zhHant.cardRepairEmptyTitle}
           </h2>
@@ -217,7 +217,7 @@ export function CardRepairServicePage() {
         </section>
       )}
 
-      <section className="mt-6 mb-4 max-w-[50rem] rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4">
+      <section className="mt-6 mb-4 max-w-[50rem] rounded-lg border border-[var(--border)] bg-[var(--card)] p-4">
         <h2 className="m-0 text-[1.1rem] font-bold">
           {zhHant.cardRepairNotesTitle}
         </h2>

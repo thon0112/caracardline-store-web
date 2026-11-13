@@ -15,6 +15,7 @@ import {
 import { useDocumentMeta } from "../document-meta.js";
 import { PageLoadingSkeleton } from "../components/PageLoadingSkeleton.js";
 import { PAGE_META } from "../page-meta.js";
+import { shortenCardTitle } from "../catalog-helpers.js";
 import { formatZhHantDeadline } from "../format-zh-hant-deadline.js";
 import { tryToastBadRequest } from "../notify-bad-request.js";
 import { useToast } from "../toast-context.js";
@@ -157,7 +158,7 @@ export function OrderPage() {
   if (loadErr || !order) {
     return (
       <div className={orderRoot}>
-        <h1 className="m-0 mb-2 select-text text-[1.75rem] font-bold [-webkit-user-select:text]">
+        <h1 className="m-0 mb-3 select-text text-[2rem] font-medium tracking-[0.03em] [-webkit-user-select:text] md:text-[2.35rem]">
           {zhHant.orderTitle}
         </h1>
         <p className="error select-text text-[var(--err)] [-webkit-user-select:text]">
@@ -181,7 +182,7 @@ export function OrderPage() {
 
   return (
     <div className={orderRoot}>
-      <h1 className="m-0 mb-[0.4rem] select-text text-[1.75rem] font-bold [-webkit-user-select:text]">
+      <h1 className="m-0 mb-2 select-text text-[2rem] font-medium tracking-[0.03em] [-webkit-user-select:text] md:text-[2.35rem]">
         {zhHant.orderTitle}
       </h1>
       <p className="m-0 mb-[1.2rem] max-w-[42rem] select-text leading-[1.55] text-[var(--muted)] [-webkit-user-select:text]">
@@ -205,7 +206,7 @@ export function OrderPage() {
           >
             <div className="min-w-0">
               <span className="block select-text font-semibold leading-snug [-webkit-user-select:text]">
-                {item.title}
+                {shortenCardTitle(item.title)}
               </span>
               <span className="inline select-text text-sm leading-normal text-[var(--muted)] [-webkit-user-select:text]">
                 {" "}
@@ -306,7 +307,7 @@ export function OrderPage() {
         </section>
       )}
 
-      <div className="mb-[1.35rem] block overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--card)] px-[1.05rem] py-[1.05rem] md:px-[1.45rem] md:py-5">
+      <div className="mb-[1.35rem] block overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--card)] px-[1.05rem] py-[1.05rem] md:px-[1.45rem] md:py-5">
         <p className="m-0 mb-[0.4rem] select-text leading-snug [-webkit-user-select:text]">
           <strong>{zhHant.orderStatus}</strong> {statusLabel}
         </p>
@@ -315,13 +316,13 @@ export function OrderPage() {
           order.reservationExpiresAt && (
           <div
             role="status"
-            className="mb-[0.75rem] max-w-full select-text overflow-hidden rounded-lg border border-[#b6effb] bg-[#cff4fc] px-[1rem] py-[0.85rem] text-[#055160] shadow-[0_0.125rem_0.25rem_rgba(5,81,96,0.075)] [-webkit-user-select:text] md:px-[1.15rem] md:py-[0.95rem]"
+            className="mb-[0.75rem] max-w-full select-text overflow-hidden rounded-md border border-[rgba(197,164,109,0.55)] bg-[#F3EEE4] px-[1rem] py-[0.85rem] text-[#222222] [-webkit-user-select:text] md:px-[1.15rem] md:py-[0.95rem]"
           >
-            <p className="m-0 text-center text-[1.05rem] font-bold leading-snug tracking-[0.01em] text-[#055160] min-[520px]:text-left min-[520px]:text-[1.15rem] md:text-[1.2rem]">
+            <p className="m-0 text-center text-[1.05rem] font-bold leading-snug tracking-[0.01em] text-[#222222] min-[520px]:text-left min-[520px]:text-[1.15rem] md:text-[1.2rem]">
               {zhHant.orderPaymentDeadlineLabel}
               <time
                 dateTime={order.reservationExpiresAt}
-                className="font-bold tabular-nums text-[#055160] [overflow-wrap:anywhere]"
+                className="font-bold tabular-nums text-[#222222] [overflow-wrap:anywhere]"
               >
                 {deadline}
               </time>
@@ -459,7 +460,7 @@ export function OrderPage() {
                 <img
                   src={paymentMethod === "fps" ? fpsQrSrc : paymeQrSrc}
                   alt={paymentMethod === "fps" ? zhHant.fpsQrAlt : zhHant.paymeQrAlt}
-                  className="block h-auto max-w-[min(100%,232px)] rounded-[10px] border border-[var(--border)] md:inline-block md:align-top"
+                  className="block h-auto max-w-[min(100%,232px)] rounded-md border border-[var(--border)] md:inline-block md:align-top"
                   decoding="async"
                 />
               </div>

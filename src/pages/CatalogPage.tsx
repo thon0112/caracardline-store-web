@@ -61,7 +61,7 @@ function CatalogLoadMorePlaceholder({ cardPool = false }: { cardPool?: boolean }
       {Array.from({ length: CATALOG_PAGE_LIMIT }, (_, i) => (
         <li
           key={i}
-          className="flex flex-col overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--card)]"
+          className="flex flex-col overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--card)]"
         >
           <div
             className={
@@ -329,7 +329,7 @@ export function CatalogPage() {
 
   return (
     <div className="box-border w-full min-w-0 max-w-[68rem]">
-      <h1 className="m-0 mb-4 text-[1.75rem] font-bold">
+      <h1 className="m-0 mb-6 text-[2rem] font-medium tracking-[0.04em] max-md:absolute max-md:-m-px max-md:h-px max-md:w-px max-md:overflow-hidden max-md:whitespace-nowrap max-md:border-0 max-md:p-0 max-md:[clip:rect(0,0,0,0)] md:text-[1.5rem]">
         {qFromUrl
           ? zhHant.catalogSearchResultsTitle
           : activeCatalogTypeCode
@@ -352,17 +352,17 @@ export function CatalogPage() {
         </div>
       ) : null}
 
-      <div className="mb-5 rounded-xl border border-[var(--border)] bg-[var(--card)] px-[1.15rem] py-4">
-        <div className="flex max-w-[32rem] flex-row gap-x-3 gap-y-3 flex-wrap sm:flex-nowrap">
-          <div className="min-w-[min(100%,12rem)] flex-1 sm:min-w-[200px]">
+      <div className="mb-4 rounded-lg border border-[var(--border)] bg-[var(--card)] px-3 py-2.5 md:mb-6 md:px-[1.15rem] md:py-4">
+        <div className="flex flex-nowrap items-center gap-2 md:max-w-[32rem] md:items-end md:gap-x-3">
+          <div className="flex min-w-0 flex-1 items-center gap-1.5 md:block md:min-w-[200px]">
             <label
-              className="mb-[0.35rem] block text-sm font-semibold"
+              className="mb-0 shrink-0 text-[0.68rem] font-medium text-[var(--muted)] md:mb-[0.4rem] md:block md:uppercase md:tracking-[0.14em]"
               htmlFor="catalog-sort"
             >
               {zhHant.catalogSort}
             </label>
             <select
-              className="w-full rounded-lg border border-[var(--border)] bg-[var(--card)] px-[0.65rem] py-2 disabled:cursor-not-allowed disabled:opacity-55"
+              className="min-w-0 w-full flex-1 rounded-lg border border-[var(--border)] bg-[var(--card)] px-2 py-1.5 text-[0.8125rem] disabled:cursor-not-allowed disabled:opacity-55 md:px-[0.65rem] md:py-2 md:text-base"
               id="catalog-sort"
               value={sortFilter}
               disabled={qFromUrl.length > 0}
@@ -379,15 +379,15 @@ export function CatalogPage() {
               <option value="price_desc">{zhHant.catalogSortPriceDesc}</option>
             </select>
           </div>
-          <div className="min-w-[min(100%,12rem)] flex-1 sm:min-w-[200px]">
+          <div className="flex min-w-0 flex-1 items-center gap-1.5 md:block md:min-w-[200px]">
             <label
-              className="mb-[0.35rem] block text-sm font-semibold"
+              className="mb-0 shrink-0 text-[0.68rem] font-medium text-[var(--muted)] md:mb-[0.4rem] md:block md:uppercase md:tracking-[0.14em]"
               htmlFor="catalog-filter-availability"
             >
               {zhHant.catalogFilterAvailability}
             </label>
             <select
-              className="w-full rounded-lg border border-[var(--border)] bg-[var(--card)] px-[0.65rem] py-2"
+              className="min-w-0 w-full flex-1 rounded-lg border border-[var(--border)] bg-[var(--card)] px-2 py-1.5 text-[0.8125rem] md:px-[0.65rem] md:py-2 md:text-base"
               id="catalog-filter-availability"
               value={availabilityFilter}
               onChange={(e) =>
@@ -430,7 +430,7 @@ export function CatalogPage() {
               return (
               <li
                 key={item.productId}
-                className="flex flex-col overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--card)]"
+                className="group flex flex-col overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--card)] transition-[border-color,transform] duration-300 hover:-translate-y-0.5 hover:border-[rgba(197,164,109,0.55)] motion-reduce:transition-none motion-reduce:hover:translate-y-0"
               >
                 <Link
                   href={`/item/${encodeURIComponent(item.slug)}`}
@@ -440,12 +440,12 @@ export function CatalogPage() {
                     className={
                       isCardPoolItem
                         ? "relative aspect-[1050/1300] bg-[var(--media-bg)]"
-                        : "relative aspect-[3/5] bg-white"
+                        : "relative aspect-[3/5] overflow-hidden bg-[#F3EEE4]"
                     }
                   >
                     {item.soldOut && (
                       <span
-                        className="absolute right-2 top-2 z-[1] rounded-md bg-[color-mix(in_srgb,var(--err)_88%,transparent)] px-[0.45rem] py-0.5 text-xs font-bold leading-snug text-[var(--card)]"
+                        className="absolute right-2 top-2 z-[1] rounded-md bg-[color-mix(in_srgb,var(--err)_88%,transparent)] px-[0.45rem] py-0.5 text-xs font-bold leading-snug text-[#F5F1E9]"
                         aria-hidden
                       >
                         {zhHant.soldOutBadge}
@@ -459,11 +459,11 @@ export function CatalogPage() {
                         className={
                           isCardPoolItem
                             ? item.soldOut
-                              ? "block h-full w-full object-contain opacity-72 grayscale-[25%]"
-                              : "block h-full w-full object-contain"
+                              ? "block h-full w-full object-contain opacity-72 grayscale-[25%] transition-transform duration-500 ease-out group-hover:scale-[1.02] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+                              : "block h-full w-full object-contain transition-transform duration-500 ease-out group-hover:scale-[1.02] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
                             : item.soldOut
-                              ? "block h-full w-full object-cover opacity-72 grayscale-[25%]"
-                              : "block h-full w-full object-cover"
+                              ? "block h-full w-full object-cover opacity-72 grayscale-[25%] transition-transform duration-500 ease-out group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+                              : "block h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
                         }
                         src={primaryImage(item) || ""}
                         alt={displayTitle(item)}
@@ -473,7 +473,7 @@ export function CatalogPage() {
                   </div>
                   <div className="flex-1 px-3 pb-[0.35rem] pt-[0.65rem]">
                     {!isCardPoolItem && (
-                      <h3 className="mb-1 line-clamp-2 select-text text-[0.8125rem] font-semibold leading-snug [-webkit-user-select:text] min-h-[36px]">
+                      <h3 className="mb-1 line-clamp-2 min-h-[36px] select-text font-sans text-[0.8125rem] font-semibold leading-snug tracking-normal [-webkit-user-select:text]">
                         {displayTitle(item)}
                       </h3>
                     )}
@@ -500,12 +500,12 @@ export function CatalogPage() {
                     <AskForPriceWhatsAppButton
                       title={displayTitle(item)}
                       slug={item.slug}
-                      className="mx-4 mb-4 mt-3"
+                      className="mx-4 mb-4 mt-3 text-[0.75rem]"
                     />
                   ) : (
                   <button
                     type="button"
-                    className="mx-4 mb-4 mt-3 cursor-pointer rounded-lg border border-[var(--accent)] bg-transparent px-[0.85rem] py-2 font-semibold text-[var(--accent)] hover:bg-[color-mix(in_srgb,var(--accent)_16%,transparent)] disabled:cursor-not-allowed disabled:opacity-50"
+                    className="mx-4 mb-4 mt-3 cursor-pointer rounded-md border border-[var(--accent)] bg-transparent px-[0.85rem] py-2 text-[0.75rem] font-semibold uppercase tracking-[0.12em] text-[var(--accent)] transition-colors duration-200 hover:bg-[color-mix(in_srgb,var(--accent)_16%,transparent)] disabled:cursor-not-allowed disabled:opacity-50"
                     disabled={
                       adding === item.productId ||
                       item.soldOut ||

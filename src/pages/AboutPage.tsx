@@ -7,7 +7,7 @@ export function AboutPage() {
   useDocumentMeta(PAGE_META.about);
   return (
     <div className="max-w-[46rem]">
-      <h1 className="m-0 mb-2 text-[1.75rem] font-bold">{zhHant.aboutTitle}</h1>
+      <h1 className="m-0 mb-3 text-[2rem] font-medium tracking-[0.03em] md:text-[2.35rem]">{zhHant.aboutTitle}</h1>
       <p className="m-0 mb-[0.85rem] max-w-[42rem] leading-[1.55] text-[var(--muted)]">
         {zhHant.aboutIntroP2}
       </p>
@@ -16,12 +16,12 @@ export function AboutPage() {
       </p>
 
       <section
-        className="mb-7 rounded-2xl border border-[color-mix(in_srgb,var(--border)_78%,var(--accent)_22%)] bg-gradient-to-br from-[color-mix(in_srgb,var(--card)_92%,var(--accent))] via-[var(--card)] to-[var(--card)] px-[1.15rem] pb-[1.35rem] pt-5 shadow-[0_10px_36px_rgba(28,24,21,0.06)]"
+        className="mb-7 rounded-lg border border-[rgba(197,164,109,0.28)] bg-[var(--card)] px-[1.15rem] pb-[1.35rem] pt-5"
         aria-labelledby="about-services-heading"
       >
         <h2
           id="about-services-heading"
-          className="m-0 mb-[1.05rem] flex flex-wrap items-center gap-[0.65rem] text-[1.15rem] font-bold tracking-[0.02em] text-[var(--fg)] before:block before:h-[1.15em] before:w-1 before:rounded-full before:bg-gradient-to-b before:from-[var(--accent-fill)] before:to-[color-mix(in_srgb,var(--accent-fill)_35%,var(--border))] before:content-['']"
+          className="m-0 mb-[1.05rem] flex flex-wrap items-center gap-[0.65rem] text-[1.45rem] font-medium tracking-[0.04em] text-[var(--fg)] before:block before:h-[1.05em] before:w-px before:bg-[var(--accent)] before:content-['']"
         >
           {zhHant.aboutServicesHeading}
         </h2>

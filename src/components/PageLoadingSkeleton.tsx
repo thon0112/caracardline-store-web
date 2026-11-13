@@ -32,7 +32,7 @@ export function HomeCatalogSkeleton() {
               {Array.from({ length: 5 }, (_, j) => (
                 <li
                   key={j}
-                  className="flex w-[min(42vw,11rem)] max-w-[11rem] shrink-0 flex-col overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--card)]"
+                  className="flex w-[min(42vw,11rem)] max-w-[11rem] shrink-0 flex-col overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--card)]"
                 >
                   <div className="aspect-[3/5] animate-pulse bg-[var(--media-bg)]" />
                   <div className="px-3 pb-2 pt-[0.65rem]">
@@ -54,7 +54,7 @@ function HomeSkeleton() {
   return (
     <div className="-mt-1">
       <div className="mb-6 box-border w-screen max-w-[100vw] [margin-left:calc(50%-50vw)]" aria-hidden>
-        <div className="aspect-video w-full animate-pulse rounded-none border border-[var(--border)] bg-[var(--media-bg)] md:h-[350px] md:rounded-[14px]" />
+        <div className="aspect-video w-full animate-pulse rounded-none border border-[var(--border)] bg-[var(--media-bg)] md:h-[350px] md:rounded-lg" />
       </div>
       <HomeCatalogSkeleton />
     </div>
@@ -70,7 +70,7 @@ function CatalogSkeleton() {
       {Array.from({ length: 8 }, (_, i) => (
         <li
           key={i}
-          className="flex flex-col overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--card)]"
+          className="flex flex-col overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--card)]"
         >
           <div className="aspect-[3/4] animate-pulse bg-[var(--media-bg)]" />
           <div className="px-4 pb-2 pt-[0.85rem]">
@@ -91,7 +91,7 @@ function ProductSkeleton() {
       <SkeletonLine className="mb-4 h-[0.85rem] w-20" />
       <div className="grid gap-8 max-[720px]:grid-cols-1 md:grid-cols-2">
         <div>
-          <div className="aspect-[3/4] animate-pulse rounded-xl border border-[var(--border)] bg-[var(--media-bg)]" />
+          <div className="aspect-[3/4] animate-pulse rounded-lg border border-[var(--border)] bg-[var(--media-bg)]" />
         </div>
         <div className="flex flex-col gap-2">
           <SkeletonLine className="h-6 w-[min(100%,16rem)]" />
@@ -126,7 +126,7 @@ function OrderSkeleton() {
         <SkeletonLine className="h-4 w-20" />
         <SkeletonLine className="h-5 w-16" />
       </div>
-      <div className="mt-6 h-40 animate-pulse rounded-xl border border-[var(--border)] bg-[var(--media-bg)]" />
+      <div className="mt-6 h-40 animate-pulse rounded-lg border border-[var(--border)] bg-[var(--media-bg)]" />
     </div>
   );
 }
@@ -147,7 +147,7 @@ function CheckoutSkeleton() {
           <SkeletonLine className="h-3 w-[min(100%,22rem)]" />
         </div>
         <aside>
-          <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-4">
+          <div className="rounded-lg border border-[var(--border)] bg-[var(--card)] p-4">
             <SkeletonLine className="mb-2 h-3 w-32" />
             <ul className="m-0 mt-2 list-none p-0">
               {Array.from({ length: 2 }, (_, i) => (

@@ -156,7 +156,7 @@ export const zhHant = {
   catalogTitle: "商品目錄",
   /** Catalog — keyword search (title, SKU, card name, etc.) */
   catalogSearchLabel: "關鍵字搜尋",
-  catalogSearchPlaceholder: "輸入名稱、編號、系列（中英文均可）",
+  catalogSearchPlaceholder: "輸入名稱、編號、系列（中/英）",
   catalogSearchSubmit: "搜尋",
   catalogSearchClear: "清除",
   /** Catalog page `<h1>` when `?q=` is set */
@@ -184,6 +184,10 @@ export const zhHant = {
   catalogSortPriceDesc: "價格（高→低）",
   /** Catalog card_pool listing — total pool numbers */
   catalogPoolSize: (poolSize: number) => `共 ${poolSize} 口`,
+  /** PDP card_pool — label above slot price */
+  productPoolPriceLabel: "每口",
+  /** PDP card_pool — label above total slots */
+  productPoolTotalLabel: "總口數",
   /** Scheduled release countdown (card_pool) */
   releaseCountdownLabel: "距離開賣",
   releaseCountdownAria: (clock: string) => `距離開賣倒數 ${clock}`,
@@ -232,13 +236,17 @@ export const zhHant = {
   productBack: "返回",
   productBackCatalog: "返回商品目錄",
   productPsaId: "PSA 編號",
+  productSpecCollection: "系列",
+  productSpecRare: "稀有度",
+  productSpecCondition: "評級",
   productSoldOut: "此商品已售罄，僅供瀏覽。",
   productPoolPickHint: (poolSize: number) =>
-    `請選擇 1 至 ${poolSize} 的號碼（可複選）；點選已選號碼可取消。已在購物車的號碼會以醒目樣式標示。已售出會顯示為售罄。`,
+    `請選擇 01 至 ${String(poolSize).padStart(2, "0")} 的號碼（可複選）；點選已選號碼可取消。已在購物車的號碼會以醒目樣式標示。已售出會顯示為售罄。`,
   productPoolNumberInCart: "已在購物車",
-  productPoolSelected: (n: number) => `已選號碼：${n}`,
+  productPoolSelected: (n: number) =>
+    `已選號碼：${String(n).padStart(2, "0")}`,
   productPoolSelectedMany: (nums: number[]) =>
-    `已選號碼（${nums.length}）：${nums.join("、")}`,
+    `已選號碼（${nums.length}）：${nums.map((n) => String(n).padStart(2, "0")).join("、")}`,
   productPoolSelectRequired: "請至少選擇一個福袋號碼。",
   productPoolAddToCartMany: (n: number) => `加入購物車（${n} 個號碼）`,
   productPoolAddMultiSuccess: (n: number) =>
@@ -246,6 +254,19 @@ export const zhHant = {
   productPoolAddPartialSuccess: (added: number, tried: number) =>
     `已加入 ${added} / ${tried} 個號碼；其餘可能已被選走，請重新選號。`,
   productPoolPickFromDetail: "到商品頁選號",
+  /** Product detail — random available pool number picker */
+  productPoolRandomPick: "隨機選號！",
+  productPoolRandomTitle: "命運轉盤啟動！",
+  productPoolRandomEyebrow: "碰碰運氣",
+  productPoolRandomHint: "猶豫不決？交給運氣幫你挑一個還在的號碼吧。",
+  productPoolRandomSpinning: "號碼正在飛奔中…",
+  productPoolRandomResult: (n: number) =>
+    `就是你了！抽中 ${String(n).padStart(2, "0")} 號`,
+  productPoolRandomAgain: "再轉一次",
+  productPoolRandomEmpty: "哇，號碼都被搶光了，晚點再來碰運氣吧。",
+  productPoolRandomClose: "關閉",
+  productPoolRandomUnavailable: "現在沒有空號可以抽了，去看看其他選項吧。",
+  productPoolRandomPokemonAlt: (n: number) => `圖鑑編號 ${n} 的寶可夢`,
   /** Product detail — image gallery */
   productImageGalleryAria: "商品圖片",
   productImagePrev: "上一張",

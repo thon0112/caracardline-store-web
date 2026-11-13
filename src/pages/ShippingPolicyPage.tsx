@@ -22,7 +22,7 @@ export function ShippingPolicyPage() {
   useDocumentMeta(PAGE_META.shipping);
   return (
     <div className="max-w-[46rem]">
-      <h1 className="m-0 mb-2 text-[1.75rem] font-bold">
+      <h1 className="m-0 mb-3 text-[2rem] font-medium tracking-[0.03em] md:text-[2.35rem]">
         {zhHant.shippingPolicyTitle}
       </h1>
       <p className="m-0 mb-6 max-w-[42rem] text-[var(--muted)]">

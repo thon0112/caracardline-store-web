@@ -197,22 +197,38 @@ export function HomePage() {
                 className="mb-8 select-none [-webkit-user-select:none]"
                 aria-labelledby={`home-grp-${gi}`}
               >
-                <div className="mb-3 flex cursor-default items-baseline justify-between gap-4 caret-transparent">
+                <div className="mb-4 flex cursor-default items-center justify-between gap-4 caret-transparent">
                   <h2
-                    className="m-0 select-text text-[1.15rem] font-bold [-webkit-user-select:text]"
+                    className="m-0 flex select-text items-center gap-3 text-[1.3rem] font-medium leading-none tracking-[0.28em] text-[var(--fg)] [-webkit-user-select:text] sm:text-[1.9rem]"
                     id={`home-grp-${gi}`}
                   >
+                    <span
+                      aria-hidden
+                      className="inline-block h-px w-7 shrink-0 bg-[var(--accent)] sm:w-10"
+                    />
                     {label}
                   </h2>
                   <Link
                     href={catalogHref}
-                    className="shrink-0 cursor-pointer select-none text-sm font-semibold text-[var(--accent)] no-underline caret-transparent hover:underline"
+                    className="inline-flex shrink-0 cursor-pointer select-none items-center gap-1.5 rounded-md border border-[var(--accent)] bg-transparent px-3 py-1.5 text-[0.8125rem] font-medium tracking-[0.08em] text-[var(--accent)] no-underline caret-transparent transition-colors hover:bg-[var(--accent)] hover:text-[#222222]"
                   >
                     {zhHant.homeViewAll}
+                    <svg
+                      aria-hidden
+                      viewBox="0 0 16 16"
+                      className="h-3.5 w-3.5 shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.6"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M3 8h10M9 4l4 4-4 4" />
+                    </svg>
                   </Link>
                 </div>
                 <div
-                  className="-mx-6 cursor-default select-none overflow-x-auto overflow-y-hidden px-6 pb-1 caret-transparent outline-none [-webkit-overflow-scrolling:touch] [-webkit-user-select:none] [scrollbar-width:thin] [scroll-snap-type:x_mandatory] focus-visible:rounded-[10px] focus-visible:shadow-[inset_0_0_0_2px_color-mix(in_srgb,var(--accent)_42%,transparent)]"
+                  className="-mx-6 cursor-default select-none overflow-x-auto overflow-y-hidden px-6 pb-1 caret-transparent outline-none [-webkit-overflow-scrolling:touch] [-webkit-user-select:none] [scrollbar-width:thin] [scroll-snap-type:x_mandatory] focus-visible:rounded-md focus-visible:shadow-[inset_0_0_0_2px_color-mix(in_srgb,var(--accent)_42%,transparent)]"
                   tabIndex={0}
                   aria-label={homeRailAriaLabel(label)}
                 >
@@ -258,12 +274,12 @@ function HomeRailCard({
   const notYetReleased = releaseAt != null && !releaseCountdown.done;
 
   return (
-    <li className="flex max-w-[11rem] min-w-0 shrink-0 basis-[min(41vw,11rem)] select-none flex-col overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--card)] caret-transparent [-webkit-user-select:none]">
+    <li className="group flex max-w-[11rem] min-w-0 shrink-0 basis-[min(41vw,11rem)] select-none flex-col overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--card)] caret-transparent transition-[border-color,transform] duration-300 hover:-translate-y-0.5 hover:border-[rgba(197,164,109,0.55)] motion-reduce:transition-none motion-reduce:hover:translate-y-0 [-webkit-user-select:none]">
       <Link
         href={`/item/${encodeURIComponent(item.slug)}`}
         className="flex min-h-0 flex-1 cursor-pointer select-none flex-col text-inherit no-underline caret-transparent [-webkit-user-select:none]"
       >
-        <div className="relative aspect-[3/5] shrink-0 bg-white">
+        <div className="relative aspect-[3/5] shrink-0 overflow-hidden bg-[#F3EEE4]">
           {showNewBadge && !notYetReleased && (
             <span
               className="absolute left-[0.35rem] top-[0.35rem] z-[1] rounded-[5px] bg-[color-mix(in_srgb,var(--accent)_92%,transparent)] px-[0.35rem] py-[0.15rem] text-[1rem] font-bold leading-snug text-[var(--card)]"
@@ -280,7 +296,7 @@ function HomeRailCard({
           ) : null}
           {item.soldOut && (
             <span
-              className="absolute right-[0.35rem] top-[0.35rem] z-[1] rounded-[5px] bg-[color-mix(in_srgb,var(--err)_88%,transparent)] px-[0.35rem] py-[0.15rem] text-[0.6875rem] font-bold leading-snug text-[var(--card)]"
+              className="absolute right-[0.35rem] top-[0.35rem] z-[1] rounded-[5px] bg-[color-mix(in_srgb,var(--err)_88%,transparent)] px-[0.35rem] py-[0.15rem] text-[0.6875rem] font-bold leading-snug text-[#F5F1E9]"
               aria-hidden
             >
               {zhHant.soldOutBadge}
@@ -289,7 +305,7 @@ function HomeRailCard({
           {primaryImage(item) ? (
             <img
               className={cn(
-                "block h-full w-full object-cover",
+                "block h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100",
                 item.soldOut && "opacity-72 grayscale-[25%]",
               )}
               src={primaryImage(item) || ""}
@@ -299,7 +315,7 @@ function HomeRailCard({
           ) : null}
         </div>
         <div className="flex-1 px-3 pb-[0.35rem] pt-[0.65rem]">
-          <h3 className="mb-1 line-clamp-2 select-text text-[0.8125rem] font-semibold leading-snug [-webkit-user-select:text] min-h-[36px]">
+          <h3 className="mb-1 line-clamp-2 min-h-[36px] select-text font-sans text-[0.8125rem] font-semibold leading-snug tracking-normal [-webkit-user-select:text]">
             {displayTitle(item)}
           </h3>
           <ProductPrice
@@ -320,7 +336,7 @@ function HomeRailCard({
       ) : notYetReleased ? null : (
         <button
           type="button"
-          className="mx-[0.65rem] mb-[0.65rem] mt-0 cursor-pointer rounded-lg border border-[var(--accent)] bg-transparent px-[0.55rem] py-[0.4rem] text-[0.8125rem] font-semibold text-[var(--accent)] hover:bg-[color-mix(in_srgb,var(--accent)_16%,transparent)] disabled:cursor-not-allowed disabled:opacity-50"
+          className="mx-[0.65rem] mb-[0.65rem] mt-0 cursor-pointer rounded-md border border-[var(--accent)] bg-transparent px-[0.55rem] py-[0.45rem] text-[0.68rem] font-semibold uppercase tracking-[0.12em] text-[var(--accent)] transition-colors duration-200 hover:bg-[color-mix(in_srgb,var(--accent)_16%,transparent)] disabled:cursor-not-allowed disabled:opacity-50"
           disabled={adding || item.soldOut}
           title={item.soldOut ? zhHant.soldOutAddDisabled : undefined}
           onClick={onAdd}

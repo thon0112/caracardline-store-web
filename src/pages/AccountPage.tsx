@@ -187,13 +187,13 @@ export function AccountPage() {
   if (!user) {
     return (
       <div className="mx-auto max-w-lg py-8">
-        <h1 className="mb-3 text-2xl font-bold text-[var(--fg)]">
+        <h1 className="mb-3 text-[2rem] font-medium tracking-[0.03em] text-[var(--fg)]">
           {zhHant.accountTitle}
         </h1>
         <p className="mb-6 text-[var(--muted)]">{zhHant.accountNeedLogin}</p>
         <button
           type="button"
-          className="rounded-xl bg-[var(--accent-fill)] px-5 py-3 font-semibold text-[var(--on-accent-fill)]"
+          className="rounded-lg bg-[var(--accent-fill)] px-5 py-3 font-semibold text-[var(--on-accent-fill)]"
           onClick={() => startGoogleLogin("/account")}
         >
           {zhHant.navLoginGoogle}
@@ -206,7 +206,7 @@ export function AccountPage() {
     <div className="mx-auto max-w-2xl py-8">
       <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
         <div className="min-w-0">
-          <h1 className="text-2xl font-bold text-[var(--fg)]">
+          <h1 className="text-[2rem] font-medium tracking-[0.03em] text-[var(--fg)]">
             {zhHant.accountTitle}
           </h1>
           <p className="mt-1 truncate text-sm text-[var(--muted)]">
@@ -216,7 +216,7 @@ export function AccountPage() {
       </div>
       <section
         aria-labelledby="acct-orders-heading"
-        className="mb-10 rounded-xl border border-[var(--border)] bg-[var(--card)] p-5"
+        className="mb-10 rounded-lg border border-[var(--border)] bg-[var(--card)] p-5"
       >
         <h2
           id="acct-orders-heading"
@@ -235,7 +235,7 @@ export function AccountPage() {
             {orders.map((o) => (
               <li
                 key={o.orderId}
-                className="rounded-xl border border-[var(--border)] bg-[var(--card)] px-4 py-3"
+                className="rounded-lg border border-[var(--border)] bg-[var(--card)] px-4 py-3"
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="min-w-0">
@@ -270,7 +270,7 @@ export function AccountPage() {
       </section>
       <section
         aria-labelledby="acct-shipping-heading"
-        className="mb-10 rounded-xl border border-[var(--border)] bg-[var(--card)] p-5"
+        className="mb-10 rounded-lg border border-[var(--border)] bg-[var(--card)] p-5"
       >
         <h2
           id="acct-shipping-heading"
@@ -326,9 +326,9 @@ export function AccountPage() {
               <button
                 type="button"
                 className={cn(
-                  "min-w-[12rem] flex-1 cursor-pointer rounded-[10px] border border-[var(--border)] bg-[var(--card)] px-[0.65rem] py-[0.55rem] font-inherit text-[0.9375rem] font-semibold leading-snug text-[var(--fg)] transition-colors duration-150 hover:border-[color-mix(in_srgb,var(--accent)_38%,var(--border))] hover:text-[var(--accent)]",
+                  "min-w-[12rem] flex-1 cursor-pointer rounded-md border border-[var(--border)] bg-[var(--card)] px-[0.65rem] py-[0.55rem] font-inherit text-[0.9375rem] font-semibold leading-snug text-[var(--fg)] transition-colors duration-150 hover:border-[color-mix(in_srgb,var(--accent)_38%,var(--border))] hover:text-[var(--accent)]",
                   shipMode === "sf" &&
-                    "bg-accent/90 text-white hover:text-white",
+                    "bg-[var(--accent)] text-[#222222] hover:bg-[#d4b57d] hover:!text-[#222222]",
                 )}
                 aria-pressed={shipMode === "sf"}
                 onClick={() => {
@@ -342,9 +342,9 @@ export function AccountPage() {
               <button
                 type="button"
                 className={cn(
-                  "min-w-[12rem] flex-1 cursor-pointer rounded-[10px] border border-[var(--border)] bg-[var(--card)] px-[0.65rem] py-[0.55rem] font-inherit text-[0.9375rem] font-semibold leading-snug text-[var(--fg)] transition-colors duration-150 hover:border-[color-mix(in_srgb,var(--accent)_38%,var(--border))] hover:text-[var(--accent)]",
+                  "min-w-[12rem] flex-1 cursor-pointer rounded-md border border-[var(--border)] bg-[var(--card)] px-[0.65rem] py-[0.55rem] font-inherit text-[0.9375rem] font-semibold leading-snug text-[var(--fg)] transition-colors duration-150 hover:border-[color-mix(in_srgb,var(--accent)_38%,var(--border))] hover:text-[var(--accent)]",
                   shipMode === "manual" &&
-                    "bg-accent/90 text-white hover:text-white",
+                    "bg-[var(--accent)] text-[#222222] hover:bg-[#d4b57d] hover:!text-[#222222]",
                 )}
                 aria-pressed={shipMode === "manual"}
                 onClick={() => {
@@ -406,7 +406,7 @@ export function AccountPage() {
           <button
             type="submit"
             disabled={shippingSaving}
-            className="rounded-xl bg-[var(--accent-fill)] px-5 py-2.5 font-semibold text-[var(--on-accent-fill)] disabled:opacity-60"
+            className="rounded-lg bg-[var(--accent-fill)] px-5 py-2.5 font-semibold text-[var(--on-accent-fill)] disabled:opacity-60"
           >
             {shippingSaving
               ? zhHant.accountDefaultShippingSaving
@@ -416,7 +416,7 @@ export function AccountPage() {
       </section>
       <button
         type="button"
-        className="rounded-xl border border-[var(--border)] bg-[var(--card)] px-4 py-2 text-sm font-semibold text-[var(--fg)]"
+        className="rounded-lg border border-[var(--border)] bg-[var(--card)] px-4 py-2 text-sm font-semibold text-[var(--fg)]"
         onClick={() => void logout()}
       >
         {zhHant.accountLogout}

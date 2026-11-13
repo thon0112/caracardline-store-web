@@ -15,13 +15,12 @@ export function buildAskForPriceWhatsAppUrl(
   return `${WHATSAPP_CHAT_URL}?text=${text}`;
 }
 
-function IconWhatsApp({ size = 33.6 }: { size?: number }) {
+function IconWhatsApp() {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
-      width={size}
-      height={size}
+      className="h-[1.7rem] w-[1.7rem] md:h-[2.1rem] md:w-[2.1rem]"
       aria-hidden="true"
       focusable="false"
     >
@@ -37,7 +36,7 @@ export function WhatsAppFloat() {
   return (
     <a
       href={WHATSAPP_CHAT_URL}
-      className="fixed mb-8 bottom-[max(1rem,env(safe-area-inset-bottom,0px))] right-[max(1rem,env(safe-area-inset-right,0px))] z-40 flex h-[calc(3.35rem*1.5*0.8)] w-[calc(3.35rem*1.5*0.8)] items-center justify-center rounded-full bg-[#25d366] text-white no-underline shadow-[0_4px_14px_rgba(28,24,21,0.2)] transition-[transform,box-shadow] duration-150 ease-out hover:scale-[1.06] hover:shadow-[0_6px_18px_rgba(28,24,21,0.24)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--accent)] motion-reduce:transform-none motion-reduce:transition-none"
+      className="fixed mb-8 bottom-[max(1rem,env(safe-area-inset-bottom,0px))] right-[max(1rem,env(safe-area-inset-right,0px))] z-40 flex h-14 w-14 items-center justify-center rounded-full bg-[#25d366] text-white no-underline shadow-[0_8px_24px_rgba(0,0,0,0.35)] ring-1 ring-black/20 transition-[transform,box-shadow] duration-150 ease-out hover:scale-[1.04] hover:shadow-[0_10px_28px_rgba(0,0,0,0.4)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--accent)] motion-reduce:transform-none motion-reduce:transition-none md:h-[calc(3.35rem*1.5*0.8)] md:w-[calc(3.35rem*1.5*0.8)]"
       target="_blank"
       rel="noopener noreferrer"
       aria-label={zhHant.floatWhatsAppAria}

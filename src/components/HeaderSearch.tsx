@@ -187,7 +187,7 @@ export function HeaderSearchMobile() {
       <button
         type="button"
         className={cn(
-          "inline-flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-[10px] border border-[var(--border)] bg-[var(--card)] p-0 font-inherit text-[var(--fg)] md:hidden",
+          "inline-flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-md border border-[var(--border)] bg-[var(--card)] p-0 font-inherit text-[var(--fg)] md:hidden",
           borderHover,
           "hover:text-[var(--accent)]",
         )}
@@ -233,7 +233,7 @@ export function HeaderSearchDesktop() {
 
   return (
     <div
-      className="hidden w-[15rem] shrink-0 md:block xl:w-[20rem]"
+      className="hidden w-[11rem] shrink md:block lg:w-[14rem] xl:w-[18rem]"
  
       role="search"
       aria-label={zhHant.catalogSearchLabel}

@@ -41,8 +41,9 @@ function AppShell() {
   }, [location]);
 
   return (
-    <div className="mx-auto box-border flex min-h-screen w-full max-w-[1100px] flex-col px-4 pb-6">
+    <div className="flex min-h-screen w-full flex-col bg-[var(--bg)] text-[var(--fg)]">
       <SiteHeader />
+      <div className="shell flex min-h-0 w-full flex-1 flex-col pb-12 pt-3">
       <main className="min-h-0 min-w-0 w-full flex-1 overflow-x-clip">
         <Switch>
           <Route path="/" component={HomePage} />
@@ -63,6 +64,7 @@ function AppShell() {
           <Route component={NotFoundPage} />
         </Switch>
       </main>
+      </div>
       <SiteFooter />
       <WhatsAppFloat />
     </div>
