@@ -20,8 +20,8 @@ const ToastContext = createContext<ToastContextValue | null>(null);
 
 /** Default auto-dismiss for general toasts (errors, API messages). */
 export const TOAST_DURATION_DEFAULT_MS = 5200;
-/** Brief confirmation toasts (e.g. add to cart). */
-export const TOAST_DURATION_SHORT_MS = 1000;
+/** Short toasts (add to cart, inline notices). Long enough to read a sentence. */
+export const TOAST_DURATION_SHORT_MS = 3000;
 
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [toast, setToast] = useState<ToastItem | null>(null);
