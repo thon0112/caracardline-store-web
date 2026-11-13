@@ -176,7 +176,7 @@ export function HomePage() {
   );
 
   return (
-    <div className="-mt-1">
+    <div>
       <h1 className="sr-only">{SITE_TITLE}</h1>
       <HomeBannerCarousel />
 
@@ -228,7 +228,7 @@ export function HomePage() {
                   </Link>
                 </div>
                 <div
-                  className="-mx-6 cursor-default select-none overflow-x-auto overflow-y-hidden px-6 pb-1 caret-transparent outline-none [-webkit-overflow-scrolling:touch] [-webkit-user-select:none] [scrollbar-width:thin] [scroll-snap-type:x_mandatory] focus-visible:rounded-md focus-visible:shadow-[inset_0_0_0_2px_color-mix(in_srgb,var(--accent)_42%,transparent)]"
+                  className="-mx-5 cursor-default select-none overflow-x-auto overflow-y-hidden px-5 pb-1 caret-transparent outline-none [-webkit-overflow-scrolling:touch] [-webkit-user-select:none] [scrollbar-width:thin] [scroll-snap-type:x_mandatory] focus-visible:rounded-md focus-visible:shadow-[inset_0_0_0_2px_color-mix(in_srgb,var(--accent)_42%,transparent)] md:-mx-6 md:px-6"
                   tabIndex={0}
                   aria-label={homeRailAriaLabel(label)}
                 >

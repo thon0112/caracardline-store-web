@@ -164,7 +164,7 @@ function ProductImageGallery({
       className="flex flex-col gap-2"
       aria-label={zhHant.productImageGalleryAria}
     >
-      <div className="relative overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--media-bg)]">
+      <div className="relative overflow-hidden border border-[var(--border)] bg-[var(--media-bg)] max-md:-mx-5 max-md:w-[calc(100%+2.5rem)] max-md:rounded-none max-md:border-x-0 md:rounded-lg">
         <button
           type="button"
           className={cn(
@@ -180,14 +180,14 @@ function ProductImageGallery({
                 src={src}
                 alt={imageAlt}
                 draggable={false}
-                className="mx-auto block max-h-[500px] min-h-[260px] w-full max-w-full select-none object-contain md:min-h-[300px] scale-[1.33]"
+                className="mx-auto block max-h-[350px] min-h-[260px] w-full max-w-full select-none object-contain md:max-h-[500px] md:min-h-[300px] scale-[1.33]"
               />
             ) : (
               <img
                 src={src}
                 alt={imageAlt}
                 draggable={false}
-                className="mx-auto block max-h-[500px] min-h-[260px] w-full max-w-full select-none object-contain md:min-h-[300px]"
+                className="mx-auto block max-h-[350px] min-h-[260px] w-full max-w-full select-none object-contain md:max-h-[500px] md:min-h-[300px]"
               />
             )}
           </div>
@@ -267,7 +267,7 @@ function ProductImageGallery({
               className="relative flex max-h-[100dvh] max-w-[min(100vw,1600px)] flex-col items-center justify-center"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="rounded-lg bg-[var(--media-bg)] p-2 shadow-lg md:p-4">
+              <div className="rounded-lg bg-[#F3EEE4] p-2 shadow-lg md:p-4">
                 <img
                   src={lightboxSrc}
                   alt={imageAlt}
@@ -788,11 +788,11 @@ function ProductPageBody({
       <ProductJsonLd data={data} catalogListHref={catalogListHref} />
       <Link
         href={catalogListHref}
-        className="mb-4 inline-block cursor-pointer select-none text-[var(--muted)] no-underline caret-transparent"
+        className="mb-4 inline-block cursor-pointer select-none text-[var(--muted)] no-underline caret-transparent max-md:hidden"
       >
         ← {zhHant.productBackCatalog}
       </Link>
-      <div className="grid select-none gap-8 caret-transparent [-webkit-user-select:none] max-[720px]:grid-cols-1 md:grid-cols-3 [&_.product-description]:select-text [&_code]:select-text [&_h1]:select-text [&_p]:select-text">
+      <div className="grid select-none gap-4 caret-transparent [-webkit-user-select:none] max-[720px]:grid-cols-1 md:grid-cols-3 [&_.product-description]:select-text [&_code]:select-text [&_h1]:select-text [&_p]:select-text">
         <div className="relative md:col-span-1">
           {data.soldOut && (
             <span
@@ -810,7 +810,7 @@ function ProductPageBody({
           />
         </div>
         <div className="md:col-span-2">
-          <h1 className="m-0 mb-2 font-sans text-[1.65rem] font-semibold leading-tight tracking-normal text-[var(--fg)] md:text-[2rem]">{displayTitle(data)}</h1>
+          <h1 className="m-0 mb-2 font-sans text-[1.25rem] font-semibold leading-tight tracking-normal text-[var(--fg)] md:text-[1.5rem]">{displayTitle(data)}</h1>
           {data.productType === "card" ? (
             <CardSpecStrip data={data} />
           ) : (

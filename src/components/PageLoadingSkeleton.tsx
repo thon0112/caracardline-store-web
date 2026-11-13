@@ -72,13 +72,15 @@ function CatalogSkeleton() {
           key={i}
           className="flex flex-col overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--card)]"
         >
-          <div className="aspect-[3/4] animate-pulse bg-[var(--media-bg)]" />
-          <div className="px-4 pb-2 pt-[0.85rem]">
-            <SkeletonLine className="h-4 w-[90%]" />
-            <SkeletonLine className="mt-2 h-3 w-[70%]" />
-            <SkeletonLine className="mt-2 h-4 w-16" />
+          <div className="aspect-[3/5] animate-pulse bg-[#F3EEE4]" />
+          <div className="px-3 pb-[0.35rem] pt-[0.65rem]">
+            <div className="mb-1 min-h-[36px]">
+              <SkeletonLine className="h-[0.8125rem] w-[92%]" />
+              <SkeletonLine className="mt-1 h-[0.8125rem] w-[64%]" />
+            </div>
+            <SkeletonLine className="h-[0.9rem] w-16" />
           </div>
-          <span className="mx-4 mb-4 mt-3 h-[2.35rem] animate-pulse rounded-lg bg-[var(--media-bg)]" />
+          <span className="mx-4 mb-4 mt-3 h-8 animate-pulse rounded-md bg-[var(--media-bg)]" />
         </li>
       ))}
     </ul>
@@ -88,10 +90,10 @@ function CatalogSkeleton() {
 function ProductSkeleton() {
   return (
     <article className="select-none" aria-hidden>
-      <SkeletonLine className="mb-4 h-[0.85rem] w-20" />
+      <SkeletonLine className="mb-4 hidden h-[0.85rem] w-20 md:block" />
       <div className="grid gap-8 max-[720px]:grid-cols-1 md:grid-cols-2">
         <div>
-          <div className="aspect-[3/4] animate-pulse rounded-lg border border-[var(--border)] bg-[var(--media-bg)]" />
+          <div className="aspect-[3/4] max-h-[350px] animate-pulse border border-[var(--border)] bg-[var(--media-bg)] max-md:-mx-5 max-md:w-[calc(100%+2.5rem)] max-md:rounded-none max-md:border-x-0 md:max-h-[500px] md:rounded-lg" />
         </div>
         <div className="flex flex-col gap-2">
           <SkeletonLine className="h-6 w-[min(100%,16rem)]" />

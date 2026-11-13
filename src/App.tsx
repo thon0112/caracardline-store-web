@@ -43,8 +43,22 @@ function AppShell() {
   return (
     <div className="flex min-h-screen w-full flex-col bg-[var(--bg)] text-[var(--fg)]">
       <SiteHeader />
-      <div className="shell flex min-h-0 w-full flex-1 flex-col pb-12 pt-3">
-      <main className="min-h-0 min-w-0 w-full flex-1 overflow-x-clip">
+      <div
+        className={`shell flex min-h-0 w-full flex-1 flex-col pb-12 ${
+          location === "/"
+            ? ""
+            : location.startsWith("/item/")
+              ? "md:pt-3"
+              : "pt-3"
+        }`}
+      >
+      <main
+        className={`min-h-0 min-w-0 w-full flex-1 ${
+          location === "/" || location.startsWith("/item/")
+            ? "overflow-x-visible"
+            : "overflow-x-clip"
+        }`}
+      >
         <Switch>
           <Route path="/" component={HomePage} />
           <Route path="/catalog/:type" component={CatalogPage} />

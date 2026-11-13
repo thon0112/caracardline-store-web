@@ -99,11 +99,11 @@ export function HomeBannerCarousel() {
 
   return (
     <section
-      className="mb-6 box-border w-[calc(100vw-12px)] max-w-[100vw] [margin-left:calc(50%-50vw)]"
+      className="mb-6 max-md:-mx-5 max-md:w-[calc(100%+2.5rem)] md:w-full"
       aria-roledescription="carousel"
       aria-label={zhHant.homeBannerAria}
     >
-      <div className="relative flex aspect-video h-auto w-full cursor-default select-none flex-col overflow-hidden rounded-none border border-[rgba(197,164,109,0.22)] bg-[var(--media-bg)] box-border md:aspect-auto md:h-[380px] md:rounded-lg [-webkit-user-select:none]">
+      <div className="relative flex aspect-video h-auto w-full cursor-default select-none flex-col overflow-hidden rounded-none border border-[rgba(197,164,109,0.22)] border-x-0 bg-[var(--media-bg)] box-border md:aspect-auto md:h-[380px] md:rounded-lg md:border-x [-webkit-user-select:none]">
         <div className="min-h-0 w-full flex-1 overflow-hidden" ref={emblaRef}>
           <div className="flex h-full w-full items-stretch">
             {emblaSlides.map((b, i) => {
@@ -165,7 +165,7 @@ export function HomeBannerCarousel() {
               onClick={() => goBanner(1)}
             />
             <div
-              className="absolute bottom-[0.85rem] left-0 right-0 z-[3] flex justify-center gap-[8px]"
+              className="absolute bottom-[0.35rem] left-0 right-0 z-[3] flex justify-center gap-[8px]"
               role="tablist"
               aria-label={zhHant.homeBannerDots}
             >

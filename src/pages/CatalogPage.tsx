@@ -66,24 +66,25 @@ function CatalogLoadMorePlaceholder({ cardPool = false }: { cardPool?: boolean }
           <div
             className={
               cardPool
-                ? "aspect-[9/16] animate-pulse bg-[var(--media-bg)]"
-                : "aspect-[3/4] animate-pulse bg-[var(--media-bg)]"
+                ? "aspect-[1050/1300] animate-pulse bg-[var(--media-bg)]"
+                : "aspect-[3/5] animate-pulse bg-[#F3EEE4]"
             }
           />
           <div className="px-3 pb-[0.35rem] pt-[0.65rem]">
             {!cardPool && (
-              <div className="h-[0.8125rem] max-w-[90%] animate-pulse rounded-md bg-[var(--media-bg)]" />
+              <div className="mb-1 min-h-[36px]">
+                <div className="h-[0.8125rem] max-w-[92%] animate-pulse rounded-md bg-[var(--media-bg)]" />
+                <div className="mt-1 h-[0.8125rem] max-w-[64%] animate-pulse rounded-md bg-[var(--media-bg)]" />
+              </div>
             )}
             <div
               className={
-                cardPool
-                  ? "h-[0.9rem] w-16 animate-pulse rounded-md bg-[var(--media-bg)]"
-                  : "mt-2 h-[0.9rem] w-16 animate-pulse rounded-md bg-[var(--media-bg)]"
+                "h-[0.9rem] w-16 animate-pulse rounded-md bg-[var(--media-bg)]"
               }
             />
           </div>
           {!cardPool && (
-            <span className="mx-4 mb-4 mt-3 h-[2.35rem] animate-pulse rounded-lg bg-[var(--media-bg)]" />
+            <span className="mx-4 mb-4 mt-3 h-8 animate-pulse rounded-md bg-[var(--media-bg)]" />
           )}
         </li>
       ))}
