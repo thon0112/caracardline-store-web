@@ -8,6 +8,9 @@ const RETURN_POLICY_URL = `${SITE_ORIGIN}/refund`;
 /**
  * Store-wide return policy for Product/Offer JSON-LD.
  * Aligned with the refund policy page (7-day window; collectibles may have exceptions).
+ *
+ * Emit this object once per page `@graph`. Offers / Organization should link via
+ * {@link merchantReturnPolicyRef} to avoid duplicate fields under a shared `@id`.
  */
 export function buildMerchantReturnPolicy(): JsonLd {
   return {
@@ -21,4 +24,9 @@ export function buildMerchantReturnPolicy(): JsonLd {
     returnMethod: "https://schema.org/ReturnByMail",
     returnFees: "https://schema.org/ReturnFeesCustomerResponsibility",
   };
+}
+
+/** `@id` pointer for hasMerchantReturnPolicy — pair with one full graph node. */
+export function merchantReturnPolicyRef(): JsonLd {
+  return { "@id": MERCHANT_RETURN_POLICY_ID };
 }

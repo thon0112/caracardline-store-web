@@ -9,8 +9,8 @@ import {
   normalizeCatalogTypeFilter,
 } from "./locale/zh-Hant.js";
 import { BRAND_NAME, SITE_ORIGIN, type JsonLd } from "./site-seo.js";
-import { buildMerchantReturnPolicy } from "./merchant-return-policy.js";
-import { buildOfferShippingDetails } from "./offer-shipping-details.js";
+import { merchantReturnPolicyRef } from "./merchant-return-policy.js";
+import { offerShippingDetailsRef } from "./offer-shipping-details.js";
 import {
   looksLikeProductDescriptionHtml,
   plainTextFromProductDescription,
@@ -143,8 +143,8 @@ export function buildProductOfferJsonLd(
           name: BRAND_NAME,
           url: SITE_ORIGIN,
         },
-    hasMerchantReturnPolicy: buildMerchantReturnPolicy(),
-    shippingDetails: buildOfferShippingDetails(),
+    hasMerchantReturnPolicy: merchantReturnPolicyRef(),
+    shippingDetails: offerShippingDetailsRef(),
   };
 }
 

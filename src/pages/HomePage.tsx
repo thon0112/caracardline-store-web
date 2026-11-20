@@ -199,7 +199,7 @@ export function HomePage() {
               >
                 <div className="mb-4 flex cursor-default items-center justify-between gap-4 caret-transparent">
                   <h2
-                    className="m-0 flex select-text items-center gap-3 text-[1.3rem] font-medium leading-none tracking-[0.28em] text-[var(--fg)] [-webkit-user-select:text] sm:text-[1.9rem]"
+                    className="m-0 flex select-text items-center gap-3 text-[1.15rem] font-medium leading-none tracking-[0.28em] text-[var(--fg)] [-webkit-user-select:text] sm:text-[1.3rem]"
                     id={`home-grp-${gi}`}
                   >
                     <span

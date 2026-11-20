@@ -64,7 +64,7 @@ function HomeSkeleton() {
 function CatalogSkeleton() {
   return (
     <ul
-      className="m-0 grid list-none grid-cols-2 gap-5 p-0 md:grid-cols-[repeat(auto-fill,minmax(240px,1fr))]"
+      className="catalog-grid m-0 grid list-none gap-5 p-0"
       aria-hidden
     >
       {Array.from({ length: 8 }, (_, i) => (

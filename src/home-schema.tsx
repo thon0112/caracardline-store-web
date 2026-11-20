@@ -11,7 +11,11 @@ import {
   SITE_TITLE,
   type JsonLd,
 } from "./site-seo.js";
-import { buildMerchantReturnPolicy } from "./merchant-return-policy.js";
+import {
+  buildMerchantReturnPolicy,
+  merchantReturnPolicyRef,
+} from "./merchant-return-policy.js";
+import { buildOfferShippingDetails } from "./offer-shipping-details.js";
 
 const HOME_URL = `${SITE_ORIGIN}/`;
 const ORGANIZATION_ID = `${SITE_ORIGIN}/#organization`;
@@ -38,7 +42,7 @@ function buildOrganizationJsonLd(): JsonLd {
       availableLanguage: ["zh-Hant"],
       url: WHATSAPP_CHAT_URL,
     },
-    hasMerchantReturnPolicy: buildMerchantReturnPolicy(),
+    hasMerchantReturnPolicy: merchantReturnPolicyRef(),
   };
 }
 
@@ -120,6 +124,8 @@ function buildFeaturedItemListJsonLd(
 
 export function buildHomeJsonLd(items: CatalogListItem[]): JsonLd {
   const graph: JsonLd[] = [
+    buildMerchantReturnPolicy(),
+    buildOfferShippingDetails(),
     buildOrganizationJsonLd(),
     buildWebSiteJsonLd(),
     buildWebPageJsonLd(),

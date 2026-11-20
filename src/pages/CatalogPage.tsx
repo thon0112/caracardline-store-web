@@ -51,7 +51,7 @@ const CATALOG_PAGE_LIMIT = 12;
 function catalogGridListClass(cardPool: boolean, extra = "") {
   const base = cardPool
     ? "m-0 grid list-none grid-cols-1 gap-5 p-0 md:grid-cols-3"
-    : "m-0 grid list-none grid-cols-2 gap-5 p-0 md:grid-cols-[repeat(auto-fill,minmax(240px,1fr))]";
+    : "catalog-grid m-0 grid list-none gap-5 p-0";
   return extra ? `${base} ${extra}` : base;
 }
 
@@ -154,6 +154,25 @@ export function CatalogPage() {
   const [loadingMore, setLoadingMore] = useState(false);
   const loadMoreInFlightRef = useRef(false);
   const loadMoreSentinelRef = useRef<HTMLDivElement | null>(null);
+  const appendScrollTopRef = useRef<number | null>(null);
+  // Stays set while the sentinel remains inside the prefetch zone, so a
+  // viewport glued to the bottom cannot chain another page. Cleared once
+  // the sentinel leaves that zone, or when the catalog query changes.
+  const sentinelLatchedRef = useRef(false);
+
+  function holdScrollForAppend() {
+    appendScrollTopRef.current =
+      document.scrollingElement?.scrollTop ?? window.scrollY;
+  }
+
+  useLayoutEffect(() => {
+    const y = appendScrollTopRef.current;
+    if (y == null) return;
+    appendScrollTopRef.current = null;
+    const scroller = document.scrollingElement;
+    if (!scroller || Math.abs(scroller.scrollTop - y) < 1) return;
+    scroller.scrollTop = y;
+  }, [items.length, loadingMore]);
 
   const visibleItems = useMemo(() => {
     const base = isCardPoolEnabled
@@ -185,6 +204,7 @@ export function CatalogPage() {
   }
 
   useEffect(() => {
+    sentinelLatchedRef.current = false;
     if (invalidTypedCatalog) {
       setLoading(false);
       return;
@@ -242,6 +262,7 @@ export function CatalogPage() {
       return;
     }
     loadMoreInFlightRef.current = true;
+    holdScrollForAppend();
     setLoadingMore(true);
     try {
       const avail = availabilityFilter === "in_stock" ? "in_stock" : undefined;
@@ -260,6 +281,7 @@ export function CatalogPage() {
               sort: sortFilter,
               availability: avail,
             });
+      holdScrollForAppend();
       setItems((prev) => [...prev, ...data.items]);
       setNextCursor(data.nextCursor);
     } catch (e) {
@@ -268,6 +290,7 @@ export function CatalogPage() {
       }
     } finally {
       loadMoreInFlightRef.current = false;
+      holdScrollForAppend();
       setLoadingMore(false);
     }
   }, [
@@ -286,7 +309,21 @@ export function CatalogPage() {
     if (!el) return;
     const obs = new IntersectionObserver(
       (entries) => {
-        if (!entries[0]?.isIntersecting) return;
+        const visible = Boolean(entries[0]?.isIntersecting);
+        if (!visible) {
+          sentinelLatchedRef.current = false;
+          return;
+        }
+        const scroller = document.scrollingElement;
+        const scrollTop = scroller?.scrollTop ?? window.scrollY;
+        const overflows =
+          (scroller?.scrollHeight ?? 0) > window.innerHeight + 24;
+        // Page already scrolls and this sentinel never left the prefetch
+        // zone: the viewport is stuck on the bottom. Wait until the user
+        // scrolls it out and back in. A short first screen (scrollTop ~ 0)
+        // may keep loading so the list can fill the viewport.
+        if (sentinelLatchedRef.current && overflows && scrollTop > 1) return;
+        sentinelLatchedRef.current = true;
         void loadMore();
       },
       { root: null, rootMargin: "280px 0px", threshold: 0 },
@@ -330,7 +367,7 @@ export function CatalogPage() {
 
   return (
     <div className="box-border w-full min-w-0 max-w-[68rem]">
-      <h1 className="m-0 mb-6 text-[2rem] font-medium tracking-[0.04em] max-md:absolute max-md:-m-px max-md:h-px max-md:w-px max-md:overflow-hidden max-md:whitespace-nowrap max-md:border-0 max-md:p-0 max-md:[clip:rect(0,0,0,0)] md:text-[1.5rem]">
+      <h1 className="m-0 mb-6 text-[1.5rem] font-medium tracking-[0.04em] max-md:absolute max-md:-m-px max-md:h-px max-md:w-px max-md:overflow-hidden max-md:whitespace-nowrap max-md:border-0 max-md:p-0 max-md:[clip:rect(0,0,0,0)] md:text-[1.15rem]">
         {qFromUrl
           ? zhHant.catalogSearchResultsTitle
           : activeCatalogTypeCode
@@ -542,7 +579,7 @@ export function CatalogPage() {
             </p>
           )}
           {(nextCursor || loadingMore) && (
-            <div className="mx-0 mb-0 mt-6 w-full min-w-0">
+            <div className="catalog-append-tail mx-0 mb-0 mt-6 w-full min-w-0">
               {loadingMore && (
                 <div
                   className="mb-0"

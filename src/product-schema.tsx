@@ -6,6 +6,8 @@ import {
   buildCatalogProductJsonLd,
   productPageUrl,
 } from "./catalog-product-schema.js";
+import { buildMerchantReturnPolicy } from "./merchant-return-policy.js";
+import { buildOfferShippingDetails } from "./offer-shipping-details.js";
 
 function buildBreadcrumbJsonLd(
   data: CatalogListItem,
@@ -53,6 +55,8 @@ export function buildProductJsonLd(
   return {
     "@context": "https://schema.org",
     "@graph": [
+      buildMerchantReturnPolicy(),
+      buildOfferShippingDetails(),
       buildBreadcrumbJsonLd(data, catalogListHref),
       buildCatalogProductJsonLd(data),
     ],

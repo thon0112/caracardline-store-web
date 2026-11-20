@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Noto Sans TC", "DM Sans", system-ui, sans-serif;
+  --font-sans: "Noto Sans TC", "Roboto", system-ui, sans-serif;
   --color-bg: #111111;
   --color-fg: #f5f1e9;
   --color-muted: #a8a095;
@@ -33,7 +33,7 @@
   --ivory: #f3eee4;
   --ink: #222222;
   --err: #d4655d;
-  font-family: "Noto Sans TC", "DM Sans", system-ui, sans-serif;
+  font-family: "Noto Sans TC", "Roboto", system-ui, sans-serif;
 }
 
 * {
@@ -74,7 +74,7 @@ body {
   min-height: 100vh;
   background: var(--bg);
   color: var(--fg);
-  font-family: "Noto Sans TC", "DM Sans", system-ui, sans-serif;
+  font-family: "Noto Sans TC", "Roboto", system-ui, sans-serif;
   text-rendering: optimizeLegibility;
 }
 
@@ -110,9 +110,35 @@ textarea:-webkit-autofill {
   padding-inline: 1.25rem;
 }
 
+/* Catalog pages append rows above the footer. If the footer or the
+   load-more sentinel is the scroll anchor, the viewport stays glued to
+   the bottom and the infinite-scroll trigger never leaves the screen. */
+.catalog-append-tail,
+.catalog-append-tail *,
+.site-footer,
+.site-footer * {
+  overflow-anchor: none;
+}
+
 @media (min-width: 768px) {
   .shell {
     padding-inline: 2rem;
+  }
+}
+
+.catalog-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (min-width: 768px) {
+  .catalog-grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  }
+}
+
+@media (min-width: 1100px) {
+  .catalog-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
   }
 }
 
